@@ -5,15 +5,17 @@ import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.data.IOUtil;
 import cn.feng.aluminium.util.data.ResourceType;
 import cn.feng.aluminium.util.data.ResourceUtil;
+import cn.feng.aluminium.util.render.RenderUtil;
 import io.github.humbleui.skija.*;
-import io.github.humbleui.skija.paragraph.*;
 import io.github.humbleui.skija.shaper.Shaper;
-import io.github.humbleui.skija.shaper.ShapingOptions;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -21,18 +23,42 @@ import static org.lwjgl.opengl.GL11.*;
  * @since 2024/9/16
  **/
 public class SkijaFontRenderer extends Util {
-    private final Typeface typeface;
-    private final Font font;
+    private Font font;
+    private final SkijaFontRenderer boldRenderer;
+
+    private final List<SkijaFontCache> cacheList = new ArrayList<>();
 
     public SkijaFontRenderer(String resourceName) {
         try (InputStream inputStream = ResourceUtil.getResourceAsStream(resourceName + ".ttf", ResourceType.FONT)) {
             byte[] byteArray = IOUtil.toByteArray(inputStream);
-            typeface = Typeface.makeFromData(Data.makeFromBytes(byteArray));
+            Typeface typeface = Typeface.makeFromData(Data.makeFromBytes(byteArray));
             font = new Font(typeface, 25);
             font.setSubpixel(true);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            boldRenderer = new SkijaFontRenderer(resourceName, font);
         }
+    }
+
+    private SkijaFontRenderer(String resourceName, Font plainFont) {
+        try (InputStream inputStream = ResourceUtil.getResourceAsStream(resourceName + "-bold.ttf", ResourceType.FONT)) {
+            byte[] byteArray = IOUtil.toByteArray(inputStream);
+            Typeface typeface = Typeface.makeFromData(Data.makeFromBytes(byteArray));
+            font = new Font(typeface, 25);
+            font.setSubpixel(true);
+        } catch (NullPointerException e) {
+            font = plainFont;
+            font.setSubpixel(true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            boldRenderer = this;
+        }
+    }
+
+    public SkijaFontRenderer bold() {
+        return boldRenderer;
     }
 
     public float getHeight() {
@@ -40,7 +66,7 @@ public class SkijaFontRenderer extends Util {
         return metrics.getHeight();
     }
 
-    private Image createTextImage(String text, float size, java.awt.Color color) {
+    private Image createTextImage(String text, float size, java.awt.Color color, boolean glow, boolean shadow) {
         font.setSize(size);
         Shaper shaper = Shaper.makeShapeDontWrapOrReorder();
         TextLine textLine = shaper.shapeLine(text, font);
@@ -57,14 +83,25 @@ public class SkijaFontRenderer extends Util {
         Canvas canvas = surface.getCanvas();
 
         Paint paint = SkijaUtil.getColor(color);
+        Paint shadowPaint = SkijaUtil.getColor(new java.awt.Color(20, 20, 20, color.getAlpha()));
         paint.setAntiAlias(true);
+        shadowPaint.setAntiAlias(true);
+
+        if (shadow) {
+            canvas.drawTextLine(textLine, 0.5f, getHeight() / 2f + 3.5f, shadowPaint);
+        }
+
         canvas.drawTextLine(textLine, 0, getHeight() / 2f + 3f, paint);
-        paint.setMaskFilter(MaskFilter.makeBlur(FilterBlurMode.SOLID, 2f));
-        canvas.drawTextLine(textLine, 0, getHeight() / 2f + 3f, paint);
+
+        if (glow) {
+            paint.setMaskFilter(MaskFilter.makeBlur(FilterBlurMode.SOLID, 2f));
+            canvas.drawTextLine(textLine, 0, getHeight() / 2f + 3f, paint);
+        }
 
         Image image = surface.makeImageSnapshot();
 
         paint.close();
+        shadowPaint.close();
         shaper.close();
         surface.close();
         return image;
@@ -88,30 +125,40 @@ public class SkijaFontRenderer extends Util {
         return textureID;
     }
 
-    public void drawString(String text, float x, float y, float size, java.awt.Color color) {
-        ScaledResolution sr = new ScaledResolution(mc);
-        Image textImage = createTextImage(text, size, color);
-        int texture = createTexture(textImage);
+    private SkijaFontCache getFontCache(String text, float size, java.awt.Color color, boolean glow, boolean shadow) {
+        for (SkijaFontCache cache : cacheList) {
+            if (cache.match(text, color, size, glow, shadow)) {
+                return cache;
+            }
+        }
 
+        Image textImage = createTextImage(text, size, color, glow, shadow);
+        int texture = createTexture(textImage);
+        SkijaFontCache cache = new SkijaFontCache(text, size, glow, shadow, color, textImage, texture);
+        cacheList.add(cache);
+
+        return cache;
+    }
+
+    private void drawImage(int texture, float x, float y, Image textImage) {
+        ScaledResolution sr = new ScaledResolution(mc);
         GlStateManager.enableAlpha();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(770, 771);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glBegin(GL_QUADS);
-        // 修正纹理坐标和顶点坐标，翻转 Y 轴
-        glTexCoord2f(0.0f, 1.0f);  // 左上角
-        glVertex2f(x, y + (float) textImage.getHeight() / sr.getScaleFactor());
+        RenderUtil.drawTexturedRect(texture, x, y, (float) textImage.getWidth() / sr.getScaleFactor(), (float) textImage.getHeight() / sr.getScaleFactor());
+    }
 
-        glTexCoord2f(1.0f, 1.0f);  // 右上角
-        glVertex2f(x + (float) textImage.getWidth() / sr.getScaleFactor(), y + (float) textImage.getHeight() / sr.getScaleFactor());
+    public void drawString(String text, float x, float y, float size, java.awt.Color color, boolean shadow) {
+        SkijaFontCache fontCache = getFontCache(text, size, color, false, shadow);
+        Image textImage = fontCache.getTextImage();
+        int texture = fontCache.getTexture();
+        drawImage(texture, x, y, textImage);
+    }
 
-        glTexCoord2f(1.0f, 0.0f);  // 右下角
-        glVertex2f(x + (float) textImage.getWidth() / sr.getScaleFactor(), y);
-
-        glTexCoord2f(0.0f, 0.0f);  // 左下角
-        glVertex2f(x, y);
-        glEnd();
-
-        glDeleteTextures(texture);
+    public void drawGlowString(String text, float x, float y, float size, java.awt.Color color, boolean shadow) {
+        SkijaFontCache fontCache = getFontCache(text, size, color, true, shadow);
+        Image textImage = fontCache.getTextImage();
+        int texture = fontCache.getTexture();
+        drawImage(texture, x, y, textImage);
     }
 }

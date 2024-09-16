@@ -1,6 +1,7 @@
 package cn.feng.aluminium.music;
 
-import cn.feng.aluminium.ui.nano.NanoUtil;
+import cn.feng.aluminium.ui.font.SkijaFontLoader;
+import cn.feng.aluminium.util.render.RoundedUtil;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.awt.*;
@@ -12,8 +13,7 @@ import java.awt.*;
 public class MusicScreen extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        NanoUtil.beginFrame();
-        NanoUtil.drawRoundedRect(10, 10, 100, 100, 3f, Color.BLACK);
-        NanoUtil.endFrame();
+        RoundedUtil.drawRound(10, 10, 200, 200, 3, Color.BLACK);
+        SkijaFontLoader.noto.bold().drawGlowString("网易云音乐", 10, 10, 30, Color.WHITE, false);
     }
 }
