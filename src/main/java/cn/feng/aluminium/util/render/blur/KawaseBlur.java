@@ -3,7 +3,7 @@ package cn.feng.aluminium.util.render.blur;
 import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.render.GLUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
-import cn.feng.aluminium.util.render.ShaderUtil;
+import cn.feng.aluminium.util.render.shader.Shader;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.GL11;
@@ -16,8 +16,8 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 
 public class KawaseBlur extends Util {
-    public static ShaderUtil kawaseDown = new ShaderUtil("kawaseDown");
-    public static ShaderUtil kawaseUp = new ShaderUtil("kawaseUp");
+    public static Shader kawaseDown = new Shader("kawaseDown");
+    public static Shader kawaseUp = new Shader("kawaseUp");
 
     public static Framebuffer framebuffer = new Framebuffer(1, 1, false);
 
@@ -81,19 +81,19 @@ public class KawaseBlur extends Util {
         RenderUtil.bindTexture(stencilFrameBufferTexture);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         RenderUtil.bindTexture(framebufferList.get(1).framebufferTexture);
-        ShaderUtil.drawQuads();
+        Shader.drawQuads();
         kawaseUp.unload();
 
         mc.getFramebuffer().bindFramebuffer(true);
         RenderUtil.bindTexture(framebufferList.get(0).framebufferTexture);
         RenderUtil.setAlphaLimit(0);
         GLUtil.startBlend();
-        ShaderUtil.drawQuads();
+        Shader.drawQuads();
         GlStateManager.bindTexture(0);
         GLUtil.endBlend();
     }
 
-    private static void renderFBO(Framebuffer framebuffer, int framebufferTexture, ShaderUtil shader, float offset) {
+    private static void renderFBO(Framebuffer framebuffer, int framebufferTexture, Shader shader, float offset) {
         framebuffer.framebufferClear();
         framebuffer.bindFramebuffer(false);
         shader.init();
@@ -103,7 +103,7 @@ public class KawaseBlur extends Util {
         shader.setUniformi("check", 0);
         shader.setUniformf("halfpixel", 1.0f / framebuffer.framebufferWidth, 1.0f / framebuffer.framebufferHeight);
         shader.setUniformf("iResolution", framebuffer.framebufferWidth, framebuffer.framebufferHeight);
-        ShaderUtil.drawQuads();
+        Shader.drawQuads();
         shader.unload();
     }
 }

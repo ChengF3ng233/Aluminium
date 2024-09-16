@@ -5,6 +5,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
@@ -12,6 +13,7 @@ import org.lwjgl.opengl.GL13;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +24,8 @@ import static org.lwjgl.opengl.GL11.*;
  * @since 2024/9/16
  **/
 public class RenderUtil extends Util {
-    private static final Map<BufferedImage, DynamicTexture> textureMap = new HashMap<>();
+    private static final Map<BufferedImage, DynamicTexture> bufferedImageMap = new HashMap<>();
+    private static final Map<ResourceLocation, BufferedImage> svgMap = new HashMap<>();
 
     // 上一帧的帧时间
     public static double lastFrame = System.nanoTime();
@@ -37,19 +40,19 @@ public class RenderUtil extends Util {
     }
 
     public static void uploadTexture(BufferedImage image) {
-        if (textureMap.containsKey(image)) return;
-        textureMap.put(image, new DynamicTexture(image));
+        if (bufferedImageMap.containsKey(image)) return;
+        bufferedImageMap.put(image, new DynamicTexture(image));
     }
 
     public static void deleteTexture(BufferedImage image) {
-        if (!textureMap.containsKey(image)) return;
-        textureMap.get(image).deleteGlTexture();
-        textureMap.remove(image);
+        if (!bufferedImageMap.containsKey(image)) return;
+        bufferedImageMap.get(image).deleteGlTexture();
+        bufferedImageMap.remove(image);
     }
 
     public static void bindTexture(BufferedImage image) {
         uploadTexture(image);
-        GlStateManager.bindTexture(textureMap.get(image).getGlTextureId());
+        GlStateManager.bindTexture(bufferedImageMap.get(image).getGlTextureId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
@@ -206,6 +209,19 @@ public class RenderUtil extends Util {
         GLUtil.endBlend();
     }
 
+    public static void drawSVG(ResourceLocation resourceLocation, float x, float y, float imgWidth, float imgHeight) {
+        try {
+            if (!svgMap.containsKey(resourceLocation)) {
+                IResource resource = mc.getResourceManager().getResource(resourceLocation);
+                BufferedImage image = ImageUtil.svgToBufferedImage(resource.getInputStream(), imgWidth, imgHeight);
+                svgMap.put(resourceLocation, image);
+            }
+            drawImage(svgMap.get(resourceLocation), x, y, imgWidth, imgHeight);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void drawImage(DynamicTexture image, float x, float y, float imgWidth, float imgHeight) {
         GLUtil.startBlend();
 
@@ -227,7 +243,7 @@ public class RenderUtil extends Util {
 
     public static void drawImage(BufferedImage image, float x, float y, float imgWidth, float imgHeight) {
         uploadTexture(image);
-        drawImage(textureMap.get(image), x, y, imgWidth, imgHeight);
+        drawImage(bufferedImageMap.get(image), x, y, imgWidth, imgHeight);
     }
 
     public static void drawImage(ResourceLocation resourceLocation, float x, float y, float imgWidth, float imgHeight, Color color) {

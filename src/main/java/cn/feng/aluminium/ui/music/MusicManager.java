@@ -2,6 +2,7 @@ package cn.feng.aluminium.ui.music;
 
 import cn.feng.aluminium.ui.music.api.bean.Music;
 import cn.feng.aluminium.ui.music.api.bean.User;
+import cn.feng.aluminium.ui.music.ui.MusicScreen;
 
 import java.util.ArrayList;
 import java.util.List;

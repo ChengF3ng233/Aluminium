@@ -1,12 +1,13 @@
-package cn.feng.aluminium.ui.music;
+package cn.feng.aluminium.ui.music.ui;
 
+import cn.feng.aluminium.ui.music.ui.component.impl.CategorySidebarComponent;
 import cn.feng.aluminium.util.animation.advanced.Animation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
 import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import cn.feng.aluminium.util.render.RenderUtil;
-import cn.feng.aluminium.util.render.RoundedUtil;
+import cn.feng.aluminium.util.render.shader.ShaderUtil;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -34,6 +35,9 @@ public class MusicScreen extends GuiScreen {
     // Color
     private boolean dark;
     private ColorAnimation backgroundColor;
+
+    // UI
+    private final CategorySidebarComponent sidebar = new CategorySidebarComponent();
 
     public MusicScreen() {
         // Constants
@@ -79,9 +83,13 @@ public class MusicScreen extends GuiScreen {
             lastMouseY = mouseY;
         } else if (dragging) dragging = false;
 
+        // Update component position
+        sidebar.update(x + 10f, y + 50f, 25f, 0f, mouseX, mouseY);
+
         // Render
         RenderUtil.scaleStart(x + width / 2f, y + height / 2f, windowScale.getOutput().floatValue());
-        RoundedUtil.drawRound(x, y, width, height, 3f, backgroundColor.getOutput());
+        ShaderUtil.drawRound(x, y, width, height, 3f, backgroundColor.getOutput());
+        sidebar.render();
         RenderUtil.scaleEnd();
     }
 

@@ -1,4 +1,4 @@
-package cn.feng.aluminium.util.render;
+package cn.feng.aluminium.util.render.shader;
 
 import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.data.FileUtil;
@@ -12,19 +12,16 @@ import java.io.InputStream;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderUtil extends Util {
+public class Shader extends Util {
     private final int programID;
 
-    public ShaderUtil(String fragmentShaderLoc, String vertexShaderLoc) {
+    public Shader(String fragmentShaderLoc, String vertexShaderLoc) {
         int program = glCreateProgram();
         try {
             int fragmentShaderID;
             switch (fragmentShaderLoc) {
                 case "kawaseUpGlow":
                     fragmentShaderID = createShader(new ByteArrayInputStream(kawaseUpGlow.getBytes()), GL_FRAGMENT_SHADER);
-                    break;
-                case "glow":
-                    fragmentShaderID = createShader(new ByteArrayInputStream(glowShader.getBytes()), GL_FRAGMENT_SHADER);
                     break;
                 case "chams":
                     fragmentShaderID = createShader(new ByteArrayInputStream(chams.getBytes()), GL_FRAGMENT_SHADER);
@@ -59,9 +56,6 @@ public class ShaderUtil extends Util {
                 case "gradient":
                     fragmentShaderID = createShader(new ByteArrayInputStream(gradient.getBytes()), GL_FRAGMENT_SHADER);
                     break;
-                case "clickgui":
-                    fragmentShaderID = createShader(new ByteArrayInputStream(clickgui.getBytes()), GL_FRAGMENT_SHADER);
-                    break;
                 case "roundedRect":
                     fragmentShaderID = createShader(new ByteArrayInputStream(roundedRect.getBytes()), GL_FRAGMENT_SHADER);
                     break;
@@ -74,8 +68,8 @@ public class ShaderUtil extends Util {
                 case "arc":
                     fragmentShaderID = createShader(new ByteArrayInputStream(arc.getBytes()), GL_FRAGMENT_SHADER);
                     break;
-                case "bloom":
-                    fragmentShaderID = createShader(new ByteArrayInputStream(bloom.getBytes()), GL_FRAGMENT_SHADER);
+                case "circle":
+                    fragmentShaderID = createShader(new ByteArrayInputStream(circle.getBytes()), GL_FRAGMENT_SHADER);
                     break;
                 default:
                     fragmentShaderID = createShader(mc.getResourceManager().getResource(new ResourceLocation(fragmentShaderLoc)).getInputStream(), GL_FRAGMENT_SHADER);
@@ -100,31 +94,9 @@ public class ShaderUtil extends Util {
         this.programID = program;
     }
 
-    public ShaderUtil(String fragmentShadersrc, boolean notUsed) {
-        int program = glCreateProgram();
-        int fragmentShaderID = createShader(new ByteArrayInputStream(fragmentShadersrc.getBytes()), GL_FRAGMENT_SHADER);
-        int vertexShaderID = 0;
-        try {
-            vertexShaderID = createShader(mc.getResourceManager().getResource(new ResourceLocation("aluminium/shader/vertex.vsh")).getInputStream(), GL_VERTEX_SHADER);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        glAttachShader(program, fragmentShaderID);
-        glAttachShader(program, vertexShaderID);
-        glLinkProgram(program);
-        int status = glGetProgrami(program, GL_LINK_STATUS);
-        if (status == 0) {
-            throw new IllegalStateException("Shader failed to link!");
-        }
-        this.programID = program;
-
-    }
-
-    public ShaderUtil(String fragmentShaderLoc) {
+    public Shader(String fragmentShaderLoc) {
         this(fragmentShaderLoc, "aluminium/shader/vertex.vsh");
     }
-
 
     public void init() {
         glUseProgram(programID);
@@ -137,7 +109,6 @@ public class ShaderUtil extends Util {
     public int getUniform(String name) {
         return glGetUniformLocation(programID, name);
     }
-
 
     public void setUniformf(String name, float... args) {
         int loc = glGetUniformLocation(programID, name);
@@ -192,19 +163,6 @@ public class ShaderUtil extends Util {
         glEnd();
     }
 
-    public static void drawQuads(float width, float height) {
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex2f(0, 0);
-        glTexCoord2f(0, 0);
-        glVertex2f(0, height);
-        glTexCoord2f(1, 0);
-        glVertex2f(width, height);
-        glTexCoord2f(1, 1);
-        glVertex2f(width, 0);
-        glEnd();
-    }
-
 
     private int createShader(InputStream inputStream, int shaderType) {
         int shader = glCreateShader(shaderType);
@@ -220,83 +178,6 @@ public class ShaderUtil extends Util {
         return shader;
     }
 
-    private final String clickgui = "#define M_PI 3.1415926535897932384626433832795\n" +
-            "#define M_TWO_PI (2.0 * M_PI)\n" +
-            "\n" +
-            "uniform float iTime;\n" +
-            "uniform vec2 iResolution;\n" +
-            "uniform vec4 iMouse;\n" +
-            "uniform vec2 rectsize;\n" +
-            "float rand(vec2 n) {\n" +
-            "    return fract(sin(dot(n, vec2(12.9898,12.1414))) * 83758.5453);\n" +
-            "}\n" +
-            "\n" +
-            "float noise(vec2 n) {\n" +
-            "    const vec2 d = vec2(0.0, 1.0);\n" +
-            "    vec2 b = floor(n);\n" +
-            "    vec2 f = smoothstep(vec2(0.0), vec2(1.0), fract(n));\n" +
-            "    return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);\n" +
-            "}\n" +
-            "\n" +
-            "vec3 ramp(float t) {\n" +
-            "    return t <= .5 ? vec3( 1. - t * 1.4, .2, 1.05 ) / t : vec3( .3 * (1. - t) * 2., .2, 1.05 ) / t;\n" +
-            "}\n" +
-            "vec2 polarMap(vec2 uv, float shift, float inner) {\n" +
-            "\n" +
-            "    uv = vec2(0.5) - uv;\n" +
-            "\n" +
-            "\n" +
-            "    float px = 1.0 - fract(atan(uv.y, uv.x) / 6.28 + 0.25) + shift;\n" +
-            "    float py = (sqrt(uv.x * uv.x + uv.y * uv.y) * (1.0 + inner * 2.0) - inner) * 2.0;\n" +
-            "\n" +
-            "    return vec2(px, py);\n" +
-            "}\n" +
-            "float fire(vec2 n) {\n" +
-            "    return noise(n) + noise(n * 2.1) * .6 + noise(n * 5.4) * .42;\n" +
-            "}\n" +
-            "\n" +
-            "float shade(vec2 uv, float t) {\n" +
-            "    uv.x += uv.y < .5 ? 23.0 + t * .035 : -11.0 + t * .03;\n" +
-            "    uv.y = abs(uv.y - .5);\n" +
-            "    uv.x *= 35.0;\n" +
-            "\n" +
-            "    float q = fire(uv - t * .013) / 2.0;\n" +
-            "    vec2 r = vec2(fire(uv + q / 2.0 + t - uv.x - uv.y), fire(uv + q - t));\n" +
-            "\n" +
-            "    return pow((r.y + r.y) * max(.0, uv.y) + .1, 4.0);\n" +
-            "}\n" +
-            "\n" +
-            "vec3 color(float grad) {\n" +
-            "\n" +
-            "    float m2 = iMouse.z < 0.0001 ? 1.15 : iMouse.y * 3.0 / iResolution.y;\n" +
-            "    grad =sqrt( grad);\n" +
-            "    vec3 color = vec3(1.0 / (pow(vec3(0.5, 0.0, .1) + 2.61, vec3(2.0))));\n" +
-            "    vec3 color2 = color;\n" +
-            "    color = ramp(grad);\n" +
-            "    color /= (m2 + max(vec3(0), color));\n" +
-            "\n" +
-            "    return color;\n" +
-            "\n" +
-            "}\n" +
-            "\n" +
-            "void mainImage(out vec4 fragColor, in vec2 fragCoord) {\n" +
-            "\n" +
-            "    float m1 = iMouse.z < 0.0001 ? 3.6 : iMouse.x * 5.0 / iResolution.x;\n" +
-            "\n" +
-            "    float t = iTime;\n" +
-            "    vec2 uv = fragCoord.xy / rectsize.xy;\n" +
-            "    float ff = 1.0 - uv.y;\n" +
-            "    uv.x -= (rectsize.x / rectsize.y - 1.0) / 2.0;\n" +
-            "    vec2 uv2 = uv;\n" +
-            "    uv2.y = 1.0 - uv2.y;\n" +
-            "    uv = polarMap(uv, 1.3, m1);\n" +
-            "    uv2 = polarMap(uv2, 1.9, m1);\n" +
-            "\n" +
-            "    vec3 c1 = color(shade(uv, t)) * ff;\n" +
-            "    vec3 c2 = color(shade(uv2, t)) * (1.0 - ff);\n" +
-            "\n" +
-            "    fragColor = vec4(c1 + c2, 1.0);\n" +
-            "}\n";
     private final String kawaseUpGlow = "#version 120\n" +
             "\n" +
             "uniform sampler2D inTexture, textureToCheck;\n" +
@@ -335,6 +216,7 @@ public class ShaderUtil extends Util {
             "    vec4 result = sum / 12.0;\n" +
             "    gl_FragColor = vec4(result.rgb / result.a, mix(result.a, 1.0 - exp(-result.a * exposure), step(0.0, lastPass)));\n" +
             "}";
+
     private final String gradientround = "#version 120\n" +
             "\n" +
             "uniform vec2 u_size;\n" +
@@ -349,36 +231,6 @@ public class ShaderUtil extends Util {
             "    vec4 color = mix(u_first_color, u_second_color, u_direction > 0.0 ? tex_coord.y : tex_coord.x);\n" +
             "    gl_FragColor = vec4(color.rgb, color.a * smoothstep(1.0, 0.0, length(max((abs(tex_coord - 0.5) + 0.5) * u_size - u_size + u_radius, 0.0)) - u_radius + 0.5));\n" +
             "}";
-    private final String glowShader = "#version 120\n" +
-            "\n" +
-            "uniform sampler2D textureIn, textureToCheck;\n" +
-            "uniform vec2 texelSize, direction;\n" +
-            "uniform vec3 color;\n" +
-            "uniform bool avoidTexture;\n" +
-            "uniform float exposure, radius;\n" +
-            "uniform float weights[256];\n" +
-            "\n" +
-            "#define offset direction * texelSize\n" +
-            "\n" +
-            "void main() {\n" +
-            "    if (direction.y == 1 && avoidTexture) {\n" +
-            "        if (texture2D(textureToCheck, gl_TexCoord[0].st).a != 0.0) discard;\n" +
-            "    }\n" +
-            "    vec4 innerColor = texture2D(textureIn, gl_TexCoord[0].st);\n" +
-            "    innerColor.rgb *= innerColor.a;\n" +
-            "    innerColor *= weights[0];\n" +
-            "    for (float r = 1.0; r <= radius; r++) {\n" +
-            "        vec4 colorCurrent1 = texture2D(textureIn, gl_TexCoord[0].st + offset * r);\n" +
-            "        vec4 colorCurrent2 = texture2D(textureIn, gl_TexCoord[0].st - offset * r);\n" +
-            "\n" +
-            "        colorCurrent1.rgb *= colorCurrent1.a;\n" +
-            "        colorCurrent2.rgb *= colorCurrent2.a;\n" +
-            "\n" +
-            "        innerColor += (colorCurrent1 + colorCurrent2) * weights[int(r)];\n" +
-            "    }\n" +
-            "\n" +
-            "    gl_FragColor = vec4(innerColor.rgb / innerColor.a, mix(innerColor.a, 1.0 - exp(-innerColor.a * exposure), step(0.0, direction.y)));\n" +
-            "}\n";
 
     private final String chams =
             "#version 120\n" +
@@ -464,34 +316,7 @@ public class ShaderUtil extends Util {
             "    vec4 result = sum / 12.0;\n" +
             "    gl_FragColor = vec4(result.rgb / result.a, mix(result.a, result.a * (1.0 - texture2D(textureToCheck, gl_TexCoord[0].st).a),check));\n" +
             "}";
-    private final String bloom = "#version 120\n" +
-            "\n" +
-            "uniform sampler2D inTexture, textureToCheck;\n" +
-            "uniform vec2 texelSize, direction;\n" +
-            "uniform float radius;\n" +
-            "uniform float weights[256];\n" +
-            "\n" +
-            "#define offset texelSize * direction\n" +
-            "\n" +
-            "float smoothAlpha(sampler2D tex, vec2 uv, float threshold, float smoothing) {\n" +
-            "    float alpha = texture2D(tex, uv).a;\n" +
-            "    float edge0 = threshold * (1.0 - smoothing);\n" +
-            "    float edge1 = threshold * (1.0 + smoothing);\n" +
-            "    alpha = smoothstep(edge0, edge1, alpha);\n" +
-            "    return alpha;\n" +
-            "}\n" +
-            "\n" +
-            "void main() {\n" +
-            "    if (direction.y > 0 && texture2D(textureToCheck, gl_TexCoord[0].st).a != 0.0) discard;\n" +
-            "    float blr = smoothAlpha(inTexture, gl_TexCoord[0].st, 0.5, 0.5) * weights[0];\n" +
-            "\n" +
-            "    for (float f = 1.0; f <= radius; f++) {\n" +
-            "        blr += smoothAlpha(inTexture, gl_TexCoord[0].st + f * offset, 0.5, 0.5) * (weights[int(abs(f))]);\n" +
-            "        blr += smoothAlpha(inTexture, gl_TexCoord[0].st - f * offset, 0.5, 0.5) * (weights[int(abs(f))]);\n" +
-            "    }\n" +
-            "\n" +
-            "    gl_FragColor = vec4(0.0, 0.0, 0.0, blr);\n" +
-            "}\n";
+
     private final String arc = "#version 120\n" +
             "\n" +
             "#define PI 3.14159265359\n" +
@@ -712,4 +537,29 @@ public class ShaderUtil extends Util {
             "    float smoothedAlpha = (1.0 - smoothstep(0.0, 1.0, roundSDF(rectHalf - pos, rectHalf - radius - 1.0, radius))) * color.a;\n" +
             "    gl_FragColor = vec4(color.rgb, smoothedAlpha);\n" +
             "}";
+
+    private final String circle = "#version 120\n" +
+            "\n" +
+            "uniform vec2 center;  // 圆心坐标 (x, y)\n" +
+            "uniform float radius; // 圆的半径\n" +
+            "uniform vec4 color;   // 颜色 (包括透明度)\n" +
+            "\n" +
+            "float circleSDF(vec2 p, vec2 center, float radius) {\n" +
+            "    // 计算当前位置和圆心的距离，返回 SDF 值\n" +
+            "    return length(p - center) - radius;\n" +
+            "}\n" +
+            "\n" +
+            "void main() {\n" +
+            "    // 获取当前片段的位置\n" +
+            "    vec2 p = gl_TexCoord[0].st;\n" +
+            "\n" +
+            "    // 计算 signed distance function (SDF)\n" +
+            "    float dist = circleSDF(p, center, radius);\n" +
+            "\n" +
+            "    // 平滑的 alpha 值，用于抗锯齿\n" +
+            "    float smoothedAlpha = smoothstep(0.0, 1.0, -dist);\n" +
+            "\n" +
+            "    // 设置片段颜色，包括平滑的 alpha 值\n" +
+            "    gl_FragColor = vec4(color.rgb, smoothedAlpha);\n" +
+            "}\n";
 }

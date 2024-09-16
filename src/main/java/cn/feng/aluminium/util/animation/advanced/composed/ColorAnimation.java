@@ -75,6 +75,21 @@ public class ColorAnimation extends ComposedAnimation<Color> {
         alphaAnim.changeDirection();
     }
 
+    public void reset() {
+        redAnim.getAnimation().reset();
+        greenAnim.getAnimation().reset();
+        blueAnim.getAnimation().reset();
+        alphaAnim.getAnimation().reset();
+    }
+
+    public Color getStartColor() {
+        return startColor;
+    }
+
+    public Color getEndColor() {
+        return endColor;
+    }
+
     public Direction getDirection() {
         return redAnim.getAnimation().getDirection();
     }

@@ -1,5 +1,8 @@
-package cn.feng.aluminium.util.render;
+package cn.feng.aluminium.util.render.shader;
 
+import cn.feng.aluminium.util.render.ColorUtil;
+import cn.feng.aluminium.util.render.GLUtil;
+import cn.feng.aluminium.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
@@ -7,12 +10,13 @@ import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class RoundedUtil {
-    public static ShaderUtil roundedShader = new ShaderUtil("roundedRect");
-    public static ShaderUtil roundedVaryingShader = new ShaderUtil("roundedVaryingRect");
-    public static ShaderUtil roundedOutlineShader = new ShaderUtil("roundRectOutline");
-    private static final ShaderUtil roundedTexturedShader = new ShaderUtil("roundRectTexture");
-    private static final ShaderUtil roundedGradientShader = new ShaderUtil("roundedRectGradient");
+public class ShaderUtil {
+    private static final Shader roundedShader = new Shader("roundedRect");
+    private static final Shader roundedVaryingShader = new Shader("roundedVaryingRect");
+    private static final Shader roundedOutlineShader = new Shader("roundRectOutline");
+    private static final Shader roundedTexturedShader = new Shader("roundRectTexture");
+    private static final Shader roundedGradientShader = new Shader("roundedRectGradient");
+    private static final Shader circleShader = new Shader("circle");
 
     public static void drawGradientHorizontal(float x, float y, float width, float height, float radius, Color left, Color right) {
         drawGradientRound(x, y, width, height, radius, left, left, right, right);
@@ -46,11 +50,10 @@ public class RoundedUtil {
         roundedGradientShader.setUniformf("color3", topRight.getRed() / 255f, topRight.getGreen() / 255f, topRight.getBlue() / 255f, topRight.getAlpha() / 255f);
         //Bottom Right
         roundedGradientShader.setUniformf("color4", bottomRight.getRed() / 255f, bottomRight.getGreen() / 255f, bottomRight.getBlue() / 255f, bottomRight.getAlpha() / 255f);
-        ShaderUtil.drawQuads(x, y, width, height);
+        Shader.drawQuads(x, y, width, height);
         roundedGradientShader.unload();
         GLUtil.endBlend();
     }
-
 
     public static void drawRound(float x, float y, float width, float height, float radius, Color color) {
         RenderUtil.resetColor();
@@ -62,9 +65,27 @@ public class RoundedUtil {
         setupRoundedRectUniforms(x, y, width, height, radius, roundedShader);
         roundedShader.setUniformf("color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
-        ShaderUtil.drawQuads(x, y, width, height);
+        Shader.drawQuads(x, y, width, height);
         roundedShader.unload();
         GLUtil.endBlend();
+    }
+
+    public static void drawCircle(float centerX, float centerY, float radius, Color color) {
+        drawRound(centerX - radius, centerY - radius, radius * 2f, radius * 2f, radius, color);
+/*        RenderUtil.resetColor();
+        GLUtil.startBlend();
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderUtil.setAlphaLimit(0);
+        circleShader.init();
+
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        circleShader.setUniformf("center", centerX * sr.getScaleFactor(), centerY * sr.getScaleFactor());
+        circleShader.setUniformf("radius", radius * sr.getScaleFactor());
+        circleShader.setUniformf("color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+
+        Shader.drawQuads(centerX - radius, centerY - radius, radius * 2f, radius * 2f);
+        circleShader.unload();
+        GLUtil.endBlend();*/
     }
 
     public static void drawVaryingRound(float x, float y, float width, float height, float radiusTL, float radiusTR, float radiusBL, float radiusBR, Color color) {
@@ -77,7 +98,7 @@ public class RoundedUtil {
         setupRoundedVaryingRectUniforms(x, y, width, height, radiusTL, radiusTR, radiusBL, radiusBR, roundedVaryingShader);
         roundedVaryingShader.setUniformf("color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
-        ShaderUtil.drawQuads(x, y, width, height);
+        Shader.drawQuads(x, y, width, height);
         roundedVaryingShader.unload();
         GLUtil.endBlend();
     }
@@ -95,7 +116,7 @@ public class RoundedUtil {
         roundedOutlineShader.setUniformf("color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
         roundedOutlineShader.setUniformf("outlineColor", outlineColor.getRed() / 255f, outlineColor.getGreen() / 255f, outlineColor.getBlue() / 255f, outlineColor.getAlpha() / 255f);
 
-        ShaderUtil.drawQuads(x - outlineThickness, y - outlineThickness, width + (outlineThickness * 2), height + (outlineThickness * 2));
+        Shader.drawQuads(x - outlineThickness, y - outlineThickness, width + (outlineThickness * 2), height + (outlineThickness * 2));
         roundedOutlineShader.unload();
         GLUtil.endBlend();
     }
@@ -109,12 +130,12 @@ public class RoundedUtil {
         roundedTexturedShader.setUniformi("textureIn", 0);
         setupRoundedRectUniforms(x, y, width, height, radius, roundedTexturedShader);
         roundedTexturedShader.setUniformf("alpha", alpha);
-        ShaderUtil.drawQuads(x, y, width, height);
+        Shader.drawQuads(x, y, width, height);
         roundedTexturedShader.unload();
         GLUtil.endBlend();
     }
 
-    private static void setupRoundedRectUniforms(float x, float y, float width, float height, float radius, ShaderUtil roundedTexturedShader) {
+    private static void setupRoundedRectUniforms(float x, float y, float width, float height, float radius, Shader roundedTexturedShader) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         roundedTexturedShader.setUniformf("location", x * sr.getScaleFactor(),
                 (Minecraft.getMinecraft().displayHeight - (height * sr.getScaleFactor())) - (y * sr.getScaleFactor()));
@@ -122,7 +143,7 @@ public class RoundedUtil {
         roundedTexturedShader.setUniformf("radius", radius * sr.getScaleFactor());
     }
 
-    private static void setupRoundedVaryingRectUniforms(float x, float y, float width, float height, float radiusTL, float radiusTR, float radiusBL, float radiusBR, ShaderUtil roundedTexturedShader) {
+    private static void setupRoundedVaryingRectUniforms(float x, float y, float width, float height, float radiusTL, float radiusTR, float radiusBL, float radiusBR, Shader roundedTexturedShader) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         roundedTexturedShader.setUniformf("location", x * sr.getScaleFactor(),
                 (Minecraft.getMinecraft().displayHeight - (height * sr.getScaleFactor())) - (y * sr.getScaleFactor()));
