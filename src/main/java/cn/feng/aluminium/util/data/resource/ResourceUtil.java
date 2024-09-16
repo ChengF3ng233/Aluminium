@@ -1,4 +1,4 @@
-package cn.feng.aluminium.util.data;
+package cn.feng.aluminium.util.data.resource;
 
 import cn.feng.aluminium.util.Util;
 import net.minecraft.util.ResourceLocation;

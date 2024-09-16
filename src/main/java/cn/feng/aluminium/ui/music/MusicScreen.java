@@ -1,17 +1,15 @@
-package cn.feng.aluminium.music;
+package cn.feng.aluminium.ui.music;
 
-import cn.feng.aluminium.ui.font.SkijaFontLoader;
 import cn.feng.aluminium.util.animation.advanced.Animation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
 import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.RoundedUtil;
-import cn.feng.aluminium.util.render.blur.BlurUtil;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -47,7 +45,6 @@ public class MusicScreen extends GuiScreen {
         // Position
         x = 20f;
         y = 20f;
-        windowScale = new EaseBackIn(300, 1.0, 2f);
         shouldClose = true;
 
         // Color
@@ -57,7 +54,7 @@ public class MusicScreen extends GuiScreen {
 
     @Override
     public void initGui() {
-        windowScale.reset();
+        windowScale = new EaseBackIn(300, 1.0, 2f);
     }
 
     @Override
@@ -90,6 +87,12 @@ public class MusicScreen extends GuiScreen {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == Keyboard.KEY_ESCAPE && shouldClose) windowScale.changeDirection();
+        if (keyCode == Keyboard.KEY_ESCAPE && shouldClose) {
+            if (windowScale instanceof EaseBackIn) {
+                windowScale = new EaseOutCubic(300, 1.0, Direction.BACKWARDS);
+            } else {
+                windowScale = new EaseBackIn(300, 1.0, 2f);
+            }
+        }
     }
 }

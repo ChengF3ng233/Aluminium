@@ -873,6 +873,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         try {
             logger.info("Stopping!");
 
+            Aluminium.INSTANCE.stop();
+
             try {
                 this.loadWorld(null);
             } catch (Throwable var5) {

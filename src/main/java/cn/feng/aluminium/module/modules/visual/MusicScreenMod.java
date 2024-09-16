@@ -1,8 +1,9 @@
 package cn.feng.aluminium.module.modules.visual;
 
+import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.module.Module;
 import cn.feng.aluminium.module.ModuleCategory;
-import cn.feng.aluminium.music.MusicScreen;
+import cn.feng.aluminium.ui.music.MusicScreen;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -17,6 +18,6 @@ public class MusicScreenMod extends Module {
 
     @Override
     protected void onEnable() {
-        mc.displayGuiScreen(new MusicScreen());
+        mc.displayGuiScreen(Aluminium.INSTANCE.musicManager.getScreen());
     }
 }

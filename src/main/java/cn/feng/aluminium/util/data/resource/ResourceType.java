@@ -1,4 +1,4 @@
-package cn.feng.aluminium.util.data;
+package cn.feng.aluminium.util.data.resource;
 
 public enum ResourceType {
     FONT,

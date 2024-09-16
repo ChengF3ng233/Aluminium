@@ -1,4 +1,4 @@
-package cn.feng.aluminium.music;
+package cn.feng.aluminium.ui.music;
 
 import java.awt.*;
 

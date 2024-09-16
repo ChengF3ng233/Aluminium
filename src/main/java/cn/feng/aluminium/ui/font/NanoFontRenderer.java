@@ -2,8 +2,8 @@ package cn.feng.aluminium.ui.font;
 
 import cn.feng.aluminium.ui.nano.NanoUtil;
 import cn.feng.aluminium.util.data.IOUtil;
-import cn.feng.aluminium.util.data.ResourceType;
-import cn.feng.aluminium.util.data.ResourceUtil;
+import cn.feng.aluminium.util.data.resource.ResourceType;
+import cn.feng.aluminium.util.data.resource.ResourceUtil;
 import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
