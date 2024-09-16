@@ -9,13 +9,10 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RoundedUtil {
     public static ShaderUtil roundedShader = new ShaderUtil("roundedRect");
+    public static ShaderUtil roundedVaryingShader = new ShaderUtil("roundedVaryingRect");
     public static ShaderUtil roundedOutlineShader = new ShaderUtil("roundRectOutline");
     private static final ShaderUtil roundedTexturedShader = new ShaderUtil("roundRectTexture");
     private static final ShaderUtil roundedGradientShader = new ShaderUtil("roundedRectGradient");
-
-    public static void drawRound(float x, float y, float width, float height, float radius, Color color) {
-        drawRound(x, y, width, height, radius, false, color);
-    }
 
     public static void drawGradientHorizontal(float x, float y, float width, float height, float radius, Color left, Color right) {
         drawGradientRound(x, y, width, height, radius, left, left, right, right);
@@ -49,13 +46,13 @@ public class RoundedUtil {
         roundedGradientShader.setUniformf("color3", topRight.getRed() / 255f, topRight.getGreen() / 255f, topRight.getBlue() / 255f, topRight.getAlpha() / 255f);
         //Bottom Right
         roundedGradientShader.setUniformf("color4", bottomRight.getRed() / 255f, bottomRight.getGreen() / 255f, bottomRight.getBlue() / 255f, bottomRight.getAlpha() / 255f);
-        ShaderUtil.drawQuads(x - 1, y - 1, width + 2, height + 2);
+        ShaderUtil.drawQuads(x, y, width, height);
         roundedGradientShader.unload();
         GLUtil.endBlend();
     }
 
 
-    public static void drawRound(float x, float y, float width, float height, float radius, boolean blur, Color color) {
+    public static void drawRound(float x, float y, float width, float height, float radius, Color color) {
         RenderUtil.resetColor();
         GLUtil.startBlend();
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -63,14 +60,27 @@ public class RoundedUtil {
         roundedShader.init();
 
         setupRoundedRectUniforms(x, y, width, height, radius, roundedShader);
-        roundedShader.setUniformi("blur", blur ? 1 : 0);
         roundedShader.setUniformf("color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
-        ShaderUtil.drawQuads(x - 1, y - 1, width + 2, height + 2);
+        ShaderUtil.drawQuads(x, y, width, height);
         roundedShader.unload();
         GLUtil.endBlend();
     }
 
+    public static void drawVaryingRound(float x, float y, float width, float height, float radiusTL, float radiusTR, float radiusBL, float radiusBR, Color color) {
+        RenderUtil.resetColor();
+        GLUtil.startBlend();
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderUtil.setAlphaLimit(0);
+        roundedVaryingShader.init();
+
+        setupRoundedVaryingRectUniforms(x, y, width, height, radiusTL, radiusTR, radiusBL, radiusBR, roundedVaryingShader);
+        roundedVaryingShader.setUniformf("color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+
+        ShaderUtil.drawQuads(x, y, width, height);
+        roundedVaryingShader.unload();
+        GLUtil.endBlend();
+    }
 
     public static void drawRoundOutline(float x, float y, float width, float height, float radius, float outlineThickness, Color color, Color outlineColor) {
         RenderUtil.resetColor();
@@ -84,7 +94,6 @@ public class RoundedUtil {
         roundedOutlineShader.setUniformf("outlineThickness", outlineThickness * sr.getScaleFactor());
         roundedOutlineShader.setUniformf("color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
         roundedOutlineShader.setUniformf("outlineColor", outlineColor.getRed() / 255f, outlineColor.getGreen() / 255f, outlineColor.getBlue() / 255f, outlineColor.getAlpha() / 255f);
-
 
         ShaderUtil.drawQuads(x - outlineThickness, y - outlineThickness, width + (outlineThickness * 2), height + (outlineThickness * 2));
         roundedOutlineShader.unload();
@@ -100,7 +109,7 @@ public class RoundedUtil {
         roundedTexturedShader.setUniformi("textureIn", 0);
         setupRoundedRectUniforms(x, y, width, height, radius, roundedTexturedShader);
         roundedTexturedShader.setUniformf("alpha", alpha);
-        ShaderUtil.drawQuads(x - 1, y - 1, width + 2, height + 2);
+        ShaderUtil.drawQuads(x, y, width, height);
         roundedTexturedShader.unload();
         GLUtil.endBlend();
     }
@@ -111,5 +120,16 @@ public class RoundedUtil {
                 (Minecraft.getMinecraft().displayHeight - (height * sr.getScaleFactor())) - (y * sr.getScaleFactor()));
         roundedTexturedShader.setUniformf("rectSize", width * sr.getScaleFactor(), height * sr.getScaleFactor());
         roundedTexturedShader.setUniformf("radius", radius * sr.getScaleFactor());
+    }
+
+    private static void setupRoundedVaryingRectUniforms(float x, float y, float width, float height, float radiusTL, float radiusTR, float radiusBL, float radiusBR, ShaderUtil roundedTexturedShader) {
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        roundedTexturedShader.setUniformf("location", x * sr.getScaleFactor(),
+                (Minecraft.getMinecraft().displayHeight - (height * sr.getScaleFactor())) - (y * sr.getScaleFactor()));
+        roundedTexturedShader.setUniformf("rectSize", width * sr.getScaleFactor(), height * sr.getScaleFactor());
+        roundedTexturedShader.setUniformf("radiusTL", radiusTL * sr.getScaleFactor());
+        roundedTexturedShader.setUniformf("radiusTR", radiusTR * sr.getScaleFactor());
+        roundedTexturedShader.setUniformf("radiusBL", radiusBL * sr.getScaleFactor());
+        roundedTexturedShader.setUniformf("radiusBR", radiusBR * sr.getScaleFactor());
     }
 }
