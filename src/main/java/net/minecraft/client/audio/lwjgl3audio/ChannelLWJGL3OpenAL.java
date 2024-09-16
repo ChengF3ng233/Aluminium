@@ -92,7 +92,7 @@ public class ChannelLWJGL3OpenAL extends Channel {
         }
 
         this.ALformat = soundFormat;
-        this.sampleRate = (int)audioFormat.getSampleRate();
+        this.sampleRate = (int) audioFormat.getSampleRate();
     }
 
     public void setFormat(int format, int rate) {
@@ -139,7 +139,7 @@ public class ChannelLWJGL3OpenAL extends Channel {
             } else {
                 ByteBuffer byteBuffer = null;
 
-                for(int i = 0; i < bufferList.size(); ++i) {
+                for (int i = 0; i < bufferList.size(); ++i) {
                     byteBuffer = (ByteBuffer) BufferUtils.createByteBuffer(bufferList.get(i).length).put(bufferList.get(i)).flip();
 
                     try {
@@ -251,13 +251,13 @@ public class ChannelLWJGL3OpenAL extends Channel {
     }
 
     public float millisInBuffer(int alBufferi) {
-        return (float)AL10.alGetBufferi(alBufferi, 8196) / (float)AL10.alGetBufferi(alBufferi, 8195) / ((float)AL10.alGetBufferi(alBufferi, 8194) / 8.0F) / (float)this.sampleRate * 1000.0F;
+        return (float) AL10.alGetBufferi(alBufferi, 8196) / (float) AL10.alGetBufferi(alBufferi, 8195) / ((float) AL10.alGetBufferi(alBufferi, 8194) / 8.0F) / (float) this.sampleRate * 1000.0F;
     }
 
     public float millisecondsPlayed() {
-        float offset = (float)AL10.alGetSourcei(this.ALSource.get(0), 4134);
+        float offset = (float) AL10.alGetSourcei(this.ALSource.get(0), 4134);
         float bytesPerFrame = 1.0F;
-        switch(this.ALformat) {
+        switch (this.ALformat) {
             case 4352:
                 bytesPerFrame = 1.0F;
                 break;
@@ -271,7 +271,7 @@ public class ChannelLWJGL3OpenAL extends Channel {
                 bytesPerFrame = 4.0F;
         }
 
-        offset = offset / bytesPerFrame / (float)this.sampleRate * 1000.0F;
+        offset = offset / bytesPerFrame / (float) this.sampleRate * 1000.0F;
         if (this.channelType == 1) {
             offset += this.millisPreviouslyPlayed;
         }
@@ -292,7 +292,7 @@ public class ChannelLWJGL3OpenAL extends Channel {
         if (this.channelType == 1) {
             int queued = AL10.alGetSourcei(this.ALSource.get(0), 4117);
             if (!this.checkALError()) {
-                for(IntBuffer intBuffer = BufferUtils.createIntBuffer(1); queued > 0; --queued) {
+                for (IntBuffer intBuffer = BufferUtils.createIntBuffer(1); queued > 0; --queued) {
                     try {
                         AL10.alSourceUnqueueBuffers(this.ALSource.get(0), intBuffer);
                     } catch (Exception var4) {
@@ -360,7 +360,7 @@ public class ChannelLWJGL3OpenAL extends Channel {
     }
 
     private boolean checkALError() {
-        switch(AL10.alGetError()) {
+        switch (AL10.alGetError()) {
             case 0:
                 return false;
             case 40961:

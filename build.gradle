@@ -13,10 +13,27 @@ repositories {
         url "https://nexus.velocitypowered.com/repository/maven-public/"
     }
 }
-
+project.ext.lwjglVersion = "3.3.4"
+project.ext.lwjglNatives = "natives-windows"
 dependencies {
+   // implementation fileTree(dir: 'libs', include: '*.jar')
+
     // LWJGL
-    implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    implementation "org.lwjgl:lwjgl"
+    implementation "org.lwjgl:lwjgl-glfw"
+    implementation "org.lwjgl:lwjgl-nanovg"
+    implementation "org.lwjgl:lwjgl-openal"
+    implementation "org.lwjgl:lwjgl-opengl"
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+
+    implementation "io.github.humbleui:skija-windows-x64:0.116.2"
+    implementation "io.github.humbleui:types:0.2.0"
 
     // Vanilla Minecraft Libraries
     implementation group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.3.3'

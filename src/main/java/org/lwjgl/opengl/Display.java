@@ -4,10 +4,11 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import cn.feng.aluminium.ui.font.NanoFontLoader;
+import cn.feng.aluminium.ui.nano.NanoLoader;
 import org.lwjgl.glfw.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCharCallback;
@@ -19,8 +20,6 @@ import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.glfw.GLFWWindowIconifyCallback;
 import org.lwjgl.glfw.GLFWWindowPosCallback;
 import org.lwjgl.glfw.GLFWWindowRefreshCallback;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 import org.lwjgl.input.KeyCodes;
@@ -306,6 +305,8 @@ public class Display {
         glfwMakeContextCurrent(Window.handle);
         drawable = new DrawableGL();
         GL.createCapabilities();
+        NanoLoader.init();
+        NanoFontLoader.init();
 
         if (savedIcons != null) {
             setIcon(savedIcons);
@@ -387,6 +388,7 @@ public class Display {
 
     public static void destroy() {
         Window.releaseCallbacks();
+        NanoLoader.destroy();
         glfwDestroyWindow(Window.handle);
 
         /*
