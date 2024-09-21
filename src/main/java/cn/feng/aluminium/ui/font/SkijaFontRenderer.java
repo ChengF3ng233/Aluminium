@@ -66,15 +66,37 @@ public class SkijaFontRenderer extends Util {
         return metrics.getHeight();
     }
 
+    public float getHeight(float size) {
+        float oldSize = font.getSize();
+        font.setSize(size);
+        FontMetrics metrics = font.getMetrics();
+        float height = metrics.getHeight();
+        font.setSize(oldSize);
+        return height;
+    }
+
+    public float getStringWidth(String text, float size) {
+        font.setSize(size);
+        Shaper shaper = Shaper.makeShapeDontWrapOrReorder();
+        TextLine textLine = shaper.shapeLine(text, font);
+        shaper.close();
+        return textLine.getWidth();
+    }
+
+    public float getCenterCorrectedPos(String text, float size, float centerX) {
+        return centerX - getStringWidth(text, size) / 2f;
+    }
+
     private Image createTextImage(String text, float size, java.awt.Color color, boolean glow, boolean shadow) {
         font.setSize(size);
         Shaper shaper = Shaper.makeShapeDontWrapOrReorder();
         TextLine textLine = shaper.shapeLine(text, font);
+        ScaledResolution sr = new ScaledResolution(mc);
 
         Surface surface = Surface.makeRaster(
                 new ImageInfo(
-                        (int) textLine.getWidth() + 6,
-                        (int) getHeight() / 2 + 6,
+                        (int) (textLine.getWidth()),
+                        (int) (textLine.getHeight()),
                         ColorType.RGBA_8888,
                         ColorAlphaType.UNPREMUL
                 )
@@ -153,6 +175,14 @@ public class SkijaFontRenderer extends Util {
         Image textImage = fontCache.getTextImage();
         int texture = fontCache.getTexture();
         drawImage(texture, x, y, textImage);
+    }
+
+    public void drawCenteredString(String text, float x, float y, float size, java.awt.Color color, boolean shadow) {
+        ScaledResolution sr = new ScaledResolution(mc);
+        SkijaFontCache fontCache = getFontCache(text, size, color, false, shadow);
+        Image textImage = fontCache.getTextImage();
+        int texture = fontCache.getTexture();
+        drawImage(texture, x - (float) textImage.getWidth() / sr.getScaleFactor() / 2f, y, textImage);
     }
 
     public void drawGlowString(String text, float x, float y, float size, java.awt.Color color, boolean shadow) {

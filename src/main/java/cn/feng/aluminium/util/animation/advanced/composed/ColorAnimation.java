@@ -27,6 +27,13 @@ public class ColorAnimation extends ComposedAnimation<Color> {
         createAnim(startColor, endColor, duration);
     }
 
+    public void change(Color newColor) {
+        if (endColor.equals(newColor)) return;
+        setStartColor(getOutput());
+        setEndColor(newColor);
+        reset();
+    }
+
     private void createAnim(Color startColor, Color endColor, int duration) {
         this.redAnim = new CustomAnimation(EaseOutSine.class, duration, startColor.getRed(), endColor.getRed());
         this.greenAnim = new CustomAnimation(EaseOutSine.class, duration, startColor.getGreen(), endColor.getGreen());
@@ -44,10 +51,10 @@ public class ColorAnimation extends ComposedAnimation<Color> {
 
     public void setEndColor(Color endColor) {
         this.endColor = endColor;
-        redAnim.setStartPoint(this.endColor.getRed());
-        greenAnim.setStartPoint(this.endColor.getGreen());
-        blueAnim.setStartPoint(this.endColor.getBlue());
-        alphaAnim.setStartPoint(this.endColor.getAlpha());
+        redAnim.setEndPoint(this.endColor.getRed());
+        greenAnim.setEndPoint(this.endColor.getGreen());
+        blueAnim.setEndPoint(this.endColor.getBlue());
+        alphaAnim.setEndPoint(this.endColor.getAlpha());
     }
 
     public void setDuration(int duration) {

@@ -1,7 +1,6 @@
 package cn.feng.aluminium.ui.music.api.bean;
 
-import net.minecraft.client.renderer.texture.DynamicTexture;
-
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +17,27 @@ public class Playlist {
     private final String description;
     private final String author;
     private final String coverUrl;
-    private DynamicTexture coverTexture;
+    private BufferedImage coverImage;
 
     // Content
     private final List<Music> musicList = new ArrayList<>();
 
-    public Playlist(long id, String title, String description, String coverUrl, String author) {
+    public Playlist(long id, String title, String description, String author, String coverUrl, BufferedImage coverImage) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.coverUrl = coverUrl;
         this.author = author;
+        this.coverUrl = coverUrl;
+        this.coverImage = coverImage;
+    }
+    public Playlist(long id, String title, String description, String author, String coverUrl, BufferedImage coverImage, List<Music> musicList) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.author = author;
+        this.coverUrl = coverUrl;
+        this.coverImage = coverImage;
+        this.musicList.addAll(musicList);
     }
 
     public long getId() {
@@ -51,11 +60,15 @@ public class Playlist {
         return coverUrl;
     }
 
-    public DynamicTexture getCoverTexture() {
-        return coverTexture;
+    public BufferedImage getCoverImage() {
+        return coverImage;
     }
 
     public List<Music> getMusicList() {
         return musicList;
+    }
+
+    public void setCoverImage(BufferedImage coverImage) {
+        this.coverImage = coverImage;
     }
 }

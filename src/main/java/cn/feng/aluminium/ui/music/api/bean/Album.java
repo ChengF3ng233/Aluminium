@@ -1,6 +1,6 @@
 package cn.feng.aluminium.ui.music.api.bean;
 
-import net.minecraft.client.renderer.texture.DynamicTexture;
+import java.awt.image.BufferedImage;
 
 /**
  * @author ChengFeng
@@ -12,20 +12,17 @@ public class Album {
 
     // Display information
     private final String title;
-    private final String artist;
     private final String coverUrl;
-    private DynamicTexture coverTexture;
+    private final BufferedImage coverImage;
 
     // Content
-    private final Playlist playlist;
+    private Playlist playlist;
 
-    public Album(long id, String title, String artist, String coverUrl, DynamicTexture coverTexture, Playlist playlist) {
+    public Album(long id, String title, String coverUrl, BufferedImage coverImage) {
         this.id = id;
         this.title = title;
-        this.artist = artist;
         this.coverUrl = coverUrl;
-        this.coverTexture = coverTexture;
-        this.playlist = playlist;
+        this.coverImage = coverImage;
     }
 
     public long getId() {
@@ -36,23 +33,19 @@ public class Album {
         return title;
     }
 
-    public String getArtist() {
-        return artist;
-    }
-
     public String getCoverUrl() {
         return coverUrl;
     }
 
-    public DynamicTexture getCoverTexture() {
-        return coverTexture;
+    public BufferedImage getCoverImage() {
+        return coverImage;
     }
 
     public Playlist getPlaylist() {
         return playlist;
     }
 
-    public void setCoverTexture(DynamicTexture coverTexture) {
-        this.coverTexture = coverTexture;
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
     }
 }

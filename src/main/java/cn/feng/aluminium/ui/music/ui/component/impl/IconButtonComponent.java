@@ -1,13 +1,12 @@
 package cn.feng.aluminium.ui.music.ui.component.impl;
 
+import cn.feng.aluminium.ui.music.ui.Theme;
 import cn.feng.aluminium.ui.music.ui.component.AbstractComponent;
 import cn.feng.aluminium.util.animation.advanced.Animation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
 import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
-import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
-import cn.feng.aluminium.util.render.shader.ShaderUtil;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -18,40 +17,62 @@ import java.awt.*;
  **/
 public class IconButtonComponent extends AbstractComponent {
 
-    private final ResourceLocation iconLocation;
-    private final ColorAnimation backgroundColor;
+    protected ResourceLocation iconLocation;
+    private final ColorAnimation iconColor;
     private final Animation scaleAnimation;
-    private final Runnable action;
+    private Runnable action;
+    private boolean selectable;
+    private boolean selected;
+
+    public void setAction(Runnable action) {
+        this.action = action;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public ResourceLocation getIconLocation() {
+        return iconLocation;
+    }
 
     public IconButtonComponent(ResourceLocation iconLocation, Runnable action) {
         this.iconLocation = iconLocation;
         this.action = action;
-        backgroundColor = new ColorAnimation(ColorUtil.TRANSPARENT_COLOR, ColorUtil.TRANSPARENT_COLOR, 300);
-        scaleAnimation = new EaseOutCubic(300, 0.2, Direction.BACKWARDS);
+        iconColor = new ColorAnimation(Theme.grey, Theme.grey, 300);
+        scaleAnimation = new EaseOutCubic(150, 0.1, Direction.BACKWARDS);
+        selectable = false;
+    }
+
+    public IconButtonComponent(ResourceLocation iconLocation, Runnable action, boolean selectable) {
+        this(iconLocation, action);
+        this.selectable = selectable;
     }
 
     @Override
     public void render() {
-        Color targetColor = hovering ? (holding ? new Color(255, 255, 255, 120) : new Color(200, 200, 200, 100)) : ColorUtil.TRANSPARENT_COLOR;
+        Color targetColor = (hovering || (selected && selectable)) ? ((holding || (selected && selectable)) ? Theme.secondary : new Color(200, 200, 200, 200)) : Theme.grey;
+        iconColor.change(targetColor);
 
-        if (!backgroundColor.getEndColor().equals(targetColor)) {
-            backgroundColor.setEndColor(targetColor);
-            backgroundColor.reset();
-        }
-
-        if (scaleAnimation.finished(Direction.FORWARDS)) scaleAnimation.changeDirection();
+        if (scaleAnimation.finished(Direction.FORWARDS) && !holding) scaleAnimation.changeDirection();
 
         RenderUtil.scaleStart(renderX + width / 2f, renderY + height / 2f, 1f - scaleAnimation.getOutput().floatValue());
-        ShaderUtil.drawCircle(renderX + width / 2f, renderY + height / 2f, width, backgroundColor.getOutput());
-        RenderUtil.drawImage(iconLocation, renderX + 2f, renderY + 2f, width - 4f, height - 4f);
+        RenderUtil.drawImage(iconLocation, renderX + 2f, renderY + 2f, width - 4f, height - 4f, iconColor.getOutput());
         RenderUtil.scaleEnd();
     }
 
     @Override
-    public void onMouseClicked(int mouseButton) {
+    public void mouseClicked(int mouseButton) {
         if (hovering) {
             scaleAnimation.setDirection(Direction.FORWARDS);
             scaleAnimation.reset();
+            if (selectable && !selected) {
+                selected = true;
+            }
             action.run();
         }
     }

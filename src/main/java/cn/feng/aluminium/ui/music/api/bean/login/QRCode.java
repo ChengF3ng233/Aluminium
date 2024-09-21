@@ -34,6 +34,11 @@ public class QRCode {
             do {
                 result = MusicApi.getLoginResult(key);
                 if (parent != null) parent.result = result;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } while (result.getState() == LoginState.WAITING_SCAN || result.getState() == LoginState.WAITING_CONFIRM);
 
             if (result.getState() == LoginState.SUCCEEDED) return;

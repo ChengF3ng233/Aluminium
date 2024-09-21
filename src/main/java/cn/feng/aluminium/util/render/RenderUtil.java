@@ -198,13 +198,9 @@ public class RenderUtil extends Util {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        // 启用多重采样
-        glEnable(GL13.GL_MULTISAMPLE);
 
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
 
-        // 禁用多重采样
-        glDisable(GL13.GL_MULTISAMPLE);
 
         GLUtil.endBlend();
     }
@@ -299,6 +295,31 @@ public class RenderUtil extends Util {
         double finalWidth = width * scale;
         glScissor((int) finalX, (int) (finalY - finalHeight), (int) finalWidth, (int) finalHeight);
     }
+
+    public static void scissorStart(double x, double y, double width, double height, double centerX, double centerY, double scale) {
+        glPushMatrix();
+        glEnable(GL_SCISSOR_TEST);
+
+        // 获取Minecraft的分辨率信息
+        ScaledResolution sr = new ScaledResolution(mc);
+        double resolutionScale = sr.getScaleFactor();
+
+        // 计算基于缩放的最终剪裁范围
+        double finalWidth = width * scale * resolutionScale;
+        double finalHeight = height * scale * resolutionScale;
+
+        // 调整剪裁矩形的左下角坐标
+        double adjustedX = (x - centerX) * scale + centerX;
+        double adjustedY = (y - centerY) * scale + centerY;
+
+        // 将调整后的坐标转换为屏幕坐标
+        double finalX = adjustedX * resolutionScale;
+        double finalY = (sr.getScaledHeight() - adjustedY) * resolutionScale;
+
+        // 调整 glScissor 的参数
+        glScissor((int) finalX, (int) (finalY - finalHeight), (int) finalWidth, (int) finalHeight);
+    }
+
 
     /**
      * End GL Scissor

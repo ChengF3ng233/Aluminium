@@ -1,6 +1,6 @@
 package cn.feng.aluminium.ui.music.api.bean;
 
-import net.minecraft.client.renderer.texture.DynamicTexture;
+import java.awt.image.BufferedImage;
 
 /**
  * @author ChengFeng
@@ -15,19 +15,43 @@ public class User {
     private String nickname;
     private String avatarUrl;
     private String signature;
-    private transient DynamicTexture avatarTexture;
+    private int level;
+    private int listenedSongs;
+    private long createTime;
 
-    public User(long id, String nickname, String avatarUrl, String signature, String cookie, DynamicTexture avatarTexture) {
-        this.id = id;
-        this.nickname = nickname;
-        this.avatarUrl = avatarUrl;
-        this.signature = signature;
-        this.cookie = cookie;
-        this.avatarTexture = avatarTexture;
+    private transient BufferedImage avatarImage;
+
+    public void logout() {
+        id = 0;
+        cookie = "";
+        nickname = null;
+        avatarUrl = null;
+        signature = null;
+        avatarImage = null;
     }
 
-    public User() {
+    public int getLevel() {
+        return level;
+    }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getListenedSongs() {
+        return listenedSongs;
+    }
+
+    public void setListenedSongs(int listenedSongs) {
+        this.listenedSongs = listenedSongs;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 
     public long getId() {
@@ -50,8 +74,8 @@ public class User {
         return cookie;
     }
 
-    public DynamicTexture getAvatarTexture() {
-        return avatarTexture;
+    public BufferedImage getAvatarImage() {
+        return avatarImage;
     }
 
     public void setId(long id) {
@@ -74,7 +98,7 @@ public class User {
         this.signature = signature;
     }
 
-    public void setAvatarTexture(DynamicTexture avatarTexture) {
-        this.avatarTexture = avatarTexture;
+    public void setAvatarImage(BufferedImage avatarImage) {
+        this.avatarImage = avatarImage;
     }
 }

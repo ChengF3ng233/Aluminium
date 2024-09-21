@@ -7,7 +7,7 @@ import cn.feng.aluminium.util.render.RenderUtil;
  * @since 2024/9/16
  **/
 public abstract class AbstractComponent {
-    protected float renderX, renderY, width, height;
+    protected float renderX, renderY, width, height, mouseX, mouseY;
     protected boolean hovering = false;
     protected boolean holding = false;
 
@@ -18,15 +18,17 @@ public abstract class AbstractComponent {
         this.renderY = renderY;
         this.width = width;
         this.height = height;
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
         this.hovering = RenderUtil.hovering(mouseX, mouseY, renderX, renderY, width, height);
         this.holding = RenderUtil.holding(mouseX, mouseY, renderX, renderY, width, height, 0);
     }
 
-    public void onMouseClicked(int mouseButton) {
+    public void mouseClicked(int mouseButton) {
 
     }
 
-    public void onMouseReleased() {
+    public void mouseReleased() {
 
     }
 

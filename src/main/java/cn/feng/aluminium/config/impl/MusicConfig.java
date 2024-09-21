@@ -2,8 +2,10 @@ package cn.feng.aluminium.config.impl;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.config.Config;
+import cn.feng.aluminium.ui.music.api.MusicApi;
 import cn.feng.aluminium.ui.music.api.bean.User;
 import cn.feng.aluminium.util.data.DataUtil;
+import cn.feng.aluminium.util.data.HttpUtil;
 import com.google.gson.JsonObject;
 
 /**
@@ -18,6 +20,10 @@ public class MusicConfig extends Config {
     @Override
     public void loadConfig(JsonObject object) {
         Aluminium.INSTANCE.musicManager.setUser(DataUtil.gson.fromJson(object, User.class));
+        User user = Aluminium.INSTANCE.musicManager.getUser();
+        if (user.getId() != 0) {
+            MusicApi.updateUserInfo();
+        }
     }
 
     @Override

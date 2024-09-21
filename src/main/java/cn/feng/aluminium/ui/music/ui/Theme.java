@@ -12,5 +12,6 @@ public class Theme {
     secondary = new Color(250, 205, 102),
     primary = new Color(48, 125, 184),
     darkAlt = new Color(26, 30, 31),
-    alt = new Color(164, 199, 198);
+    alt = new Color(164, 199, 198),
+    grey = new Color(100, 100, 100, 200);
 }
