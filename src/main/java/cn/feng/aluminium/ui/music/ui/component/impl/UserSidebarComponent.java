@@ -1,6 +1,7 @@
 package cn.feng.aluminium.ui.music.ui.component.impl;
 
 import cn.feng.aluminium.Aluminium;
+import cn.feng.aluminium.ui.music.ui.component.type.SidebarComponent;
 import cn.feng.aluminium.ui.music.ui.page.Pages;
 import cn.feng.aluminium.ui.music.ui.page.impl.UserPage;
 import cn.feng.aluminium.util.data.resource.ResourceType;

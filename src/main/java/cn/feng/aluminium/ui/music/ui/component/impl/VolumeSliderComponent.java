@@ -3,6 +3,7 @@ package cn.feng.aluminium.ui.music.ui.component.impl;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
 import cn.feng.aluminium.ui.music.ui.Theme;
+import cn.feng.aluminium.ui.music.ui.component.type.SliderComponent;
 import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
 
@@ -32,7 +33,7 @@ public class VolumeSliderComponent extends SliderComponent {
         }
 
         if (player.available() && dragging) {
-            player.setVolume(dragDelta / width);
+            player.setVolume((dragDelta / width));
         }
     }
 

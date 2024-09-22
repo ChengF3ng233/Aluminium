@@ -16,8 +16,6 @@ repositories {
 project.ext.lwjglVersion = "3.3.4"
 project.ext.lwjglNatives = "natives-windows"
 dependencies {
-   // implementation fileTree(dir: 'libs', include: '*.jar')
-
     // LWJGL
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
@@ -71,7 +69,6 @@ dependencies {
     implementation group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
     implementation group: 'javax.vecmath', name: 'vecmath', version: '1.5.2'
     implementation group: 'com.mojang', name: 'authlib', version: '1.5.21'
-    implementation group: 'oshi-project', name: 'oshi-core', version: '1.1'
     implementation 'io.netty:netty-all:4.0.23.Final'
     implementation 'com.mojang:netty:1.8.8'
 }

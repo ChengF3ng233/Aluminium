@@ -3,6 +3,7 @@ package cn.feng.aluminium.ui.music.ui.component.impl;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
 import cn.feng.aluminium.ui.music.ui.Theme;
+import cn.feng.aluminium.ui.music.ui.component.type.SliderComponent;
 import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
 
@@ -38,7 +39,7 @@ public class PlayerSliderComponent extends SliderComponent {
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
 
         if (player.available() && dragging) {
-            player.seek((dragDelta / width) * player.getCurrentMusic().getDuration());
+            player.seek(((dragDelta / width) * player.getCurrentMusic().getDuration()));
         }
 
         super.mouseReleased();

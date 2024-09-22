@@ -39,6 +39,13 @@ public class RenderUtil extends Util {
         lastFrame = System.nanoTime();
     }
 
+    public static float[] getBounds(int texture) {
+        glBindTexture(GL_TEXTURE_2D, texture);
+        float width = glGetTexLevelParameterf(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
+        float height = glGetTexLevelParameterf(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
+        return new float[] {width, height};
+    }
+
     public static void uploadTexture(BufferedImage image) {
         if (bufferedImageMap.containsKey(image)) return;
         bufferedImageMap.put(image, new DynamicTexture(image));

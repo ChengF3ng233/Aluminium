@@ -190,6 +190,11 @@ public class ColorUtil {
         return new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, opacity);
     }
 
+    public static Color applyOpacity(Color color, int opacity) {
+        opacity = Math.min(255, Math.max(0, opacity));
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
+    }
+
     public static Color darker(Color color, float FACTOR) {
         return new Color(Math.max((int) (color.getRed() * FACTOR), 0),
                 Math.max((int) (color.getGreen() * FACTOR), 0),

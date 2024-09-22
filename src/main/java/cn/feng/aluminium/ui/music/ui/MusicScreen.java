@@ -1,9 +1,11 @@
 package cn.feng.aluminium.ui.music.ui;
 
 import cn.feng.aluminium.Aluminium;
-import cn.feng.aluminium.ui.font.SkijaFontLoader;
+import cn.feng.aluminium.ui.font.awt.AWTFontLoader;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
 import cn.feng.aluminium.ui.music.ui.component.impl.*;
+import cn.feng.aluminium.ui.music.ui.component.type.SidebarComponent;
+import cn.feng.aluminium.ui.music.ui.component.type.SliderComponent;
 import cn.feng.aluminium.ui.music.ui.page.AbstractPage;
 import cn.feng.aluminium.ui.music.ui.page.Pages;
 import cn.feng.aluminium.util.animation.advanced.Animation;
@@ -13,7 +15,6 @@ import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import cn.feng.aluminium.util.data.resource.ResourceType;
 import cn.feng.aluminium.util.data.resource.ResourceUtil;
-import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
 import net.minecraft.client.gui.GuiScreen;
@@ -154,8 +155,8 @@ public class MusicScreen extends GuiScreen {
         if (player.available()) {
             RenderUtil.bindTexture(player.getCurrentMusic().getAlbum().getCoverImage());
             ShaderUtil.drawRoundTextured(x + 21f, y + height - bottomHeight / 2f - 14f, 28f, 28f, 14f, 1f);
-            SkijaFontLoader.noto.drawString(player.getCurrentMusic().getTitle(), x + 53f, y + height - bottomHeight / 2f - 12f, 15f, Color.WHITE, true);
-            SkijaFontLoader.noto.drawString(player.getCurrentMusic().getArtist(), x + 53f, y + height - bottomHeight / 2f, 13f, Theme.grey, false);
+            AWTFontLoader.noto(20f).drawString(player.getCurrentMusic().getTitle(), x + 53f, y + height - bottomHeight / 2f - 12f, Color.WHITE);
+            AWTFontLoader.noto(17f).drawString(player.getCurrentMusic().getArtist(), x + 53f, y + height - bottomHeight / 2f, Theme.grey);
         }
         RenderUtil.scaleEnd();
     }

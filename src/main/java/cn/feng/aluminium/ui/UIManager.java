@@ -21,7 +21,7 @@ public class UIManager extends Util {
 
     @EventTarget
     private void onRender2D(EventRender2D event) {
-        SkijaFontLoader.playwrite.drawGlowString("aluminium", 10, 10, 45, Color.WHITE, false);
+        SkijaFontLoader.playwrite.drawGlowString("aluminium", 10, 10, 45f, Color.WHITE, false);
         ShaderUtil.drawVaryingRound(150, 50, 100, 100, 0, 0, 5, 5, Theme.light);
         ShaderUtil.drawCircle(150, 30, 10, Color.PINK);
     }

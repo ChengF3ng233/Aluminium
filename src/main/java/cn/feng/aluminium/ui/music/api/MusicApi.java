@@ -20,6 +20,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -32,7 +34,8 @@ public class MusicApi extends Util {
     private static final String host = "https://music.chengf3ng.top";
 
     public static String fetch(String api, String cookie) {
-        OkHttpClient client = new OkHttpClient.Builder().build();
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7897));
+        OkHttpClient client = new OkHttpClient.Builder().proxy(proxy).build();
         RequestBody body = new FormBody.Builder()
                 .add("cookie", cookie)
                 .build();
