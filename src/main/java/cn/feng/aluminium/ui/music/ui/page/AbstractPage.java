@@ -16,7 +16,7 @@ public abstract class AbstractPage {
     protected float pageHeight;
     protected boolean hovering = false;
     protected CustomAnimation scrollAnimation = new CustomAnimation(EaseOutCubic.class, 120, 0d, 0d);
-    private CustomAnimation switchAnimation = new CustomAnimation(EaseOutCubic.class, 300, 0d, 0d);
+    private final CustomAnimation switchAnimation = new CustomAnimation(EaseOutCubic.class, 500, 0d, 0d);
     protected AbstractPage parent;
 
     public void setParent(AbstractPage parent) {
@@ -71,16 +71,19 @@ public abstract class AbstractPage {
         switchAnimation.getAnimation().reset();
     }
 
-    protected void preDraw() {
+    protected void animate() {
         GL11.glPushMatrix();
         if (parent != null && switchAnimation.getEndPoint() == 0d && !switchAnimation.getAnimation().finished(Direction.FORWARDS)) {
             parent.render();
         }
         RenderUtil.scissorStart(renderX, renderY, width, height, centerX, centerY, scale);
         GL11.glTranslated(switchAnimation.getOutput(), 0d, 0d);
+        if (switchAnimation.getOutput() != 0d) {
+            System.out.println(switchAnimation.getOutput());
+        }
     }
 
-    protected void postDraw() {
+    protected void animateEnd() {
         RenderUtil.scissorEnd();
         GL11.glPopMatrix();
     }

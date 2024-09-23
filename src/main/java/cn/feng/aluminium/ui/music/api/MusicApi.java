@@ -75,7 +75,9 @@ public class MusicApi extends Util {
             JsonObject artistObj = e.getAsJsonObject();
             artist.append(artistObj.get("name").getAsString()).append(",");
         }
-        if (artist.length() == 0) artist.append("未知音乐家");
+        if (artist.length() == 0) {
+            artist.append("未知音乐家");
+        } else artist.deleteCharAt(artist.length() - 1);
         int duration = musicObj.get("dt").getAsInt();
         Album album = parseAlbum(musicObj.get("al").getAsJsonObject());
         Music music = new Music(

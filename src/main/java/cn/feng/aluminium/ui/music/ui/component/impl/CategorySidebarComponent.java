@@ -16,5 +16,6 @@ public class CategorySidebarComponent extends SidebarComponent {
         iconList.add(new IconButtonComponent(ResourceUtil.getResource("home.png", ResourceType.ICON), () -> Aluminium.INSTANCE.musicManager.getScreen().setCurrentPage(Pages.HOME), true));
         iconList.add(new IconButtonComponent(ResourceUtil.getResource("library_music.png", ResourceType.ICON), () -> ChatUtil.sendMessage("Library"), true));
         iconList.add(new IconButtonComponent(ResourceUtil.getResource("favorite.png", ResourceType.ICON), () -> ChatUtil.sendMessage("Favorite"), true));
+        iconList.add(new IconButtonComponent(ResourceUtil.getResource("cloud.png", ResourceType.ICON), () -> ChatUtil.sendMessage("Cloud"), true));
     }
 }

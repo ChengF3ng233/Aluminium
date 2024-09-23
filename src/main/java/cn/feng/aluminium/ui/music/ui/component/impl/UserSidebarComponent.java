@@ -14,19 +14,6 @@ import cn.feng.aluminium.util.data.resource.ResourceUtil;
 public class UserSidebarComponent extends SidebarComponent {
     public UserSidebarComponent() {
         iconList.add(new IconButtonComponent(ResourceUtil.getResource("person.png", ResourceType.ICON), () -> Aluminium.INSTANCE.musicManager.getScreen().setCurrentPage(Pages.USER), true));
-
-        SwitchButtonComponent skinButton = new SwitchButtonComponent(
-                ResourceUtil.getResource("dark_mode.png", ResourceType.ICON),
-                ResourceUtil.getResource("dark_mode.png", ResourceType.ICON),
-                ResourceUtil.getResource("light_mode.png", ResourceType.ICON)
-        );
-
-        skinButton.setAction(() -> {
-            Aluminium.INSTANCE.musicManager.getScreen().setDark(skinButton.getIcons().indexOf(skinButton.getIconLocation()) == 0);
-        });
-
-        iconList.add(skinButton);
-
         iconList.add(new IconButtonComponent(ResourceUtil.getResource("logout.png", ResourceType.ICON), () -> ((UserPage) Pages.USER).logout()));
     }
 }

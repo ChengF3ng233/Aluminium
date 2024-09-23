@@ -10,7 +10,6 @@ import cn.feng.aluminium.ui.music.ui.page.AbstractPage;
 import cn.feng.aluminium.ui.music.ui.page.Pages;
 import cn.feng.aluminium.util.animation.advanced.Animation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
-import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import cn.feng.aluminium.util.data.resource.ResourceType;
@@ -32,51 +31,24 @@ public class MusicScreen extends GuiScreen {
     private final float height;
     private final float topHeight;
     private final float bottomHeight;
-
-    // Position
-    private float x, y;
-    private Animation windowScale;
     private final boolean shouldClose;
-
-    // Drag
-    private boolean dragging;
-    private float lastMouseX, lastMouseY;
-
-    // Color
-    private boolean dark;
-    private final ColorAnimation backgroundColor;
-    private final ColorAnimation playerColor;
 
     // UI
     private final SidebarComponent categorySidebar = new CategorySidebarComponent();
     private final SidebarComponent userSidebar = new UserSidebarComponent();
-    private AbstractPage currentPage = Pages.HOME;
     private final SliderComponent playerSlider = new PlayerSliderComponent();
     private final SliderComponent volumeSlider = new VolumeSliderComponent();
+    private final PlayerBarComponent playerBar = new PlayerBarComponent();
 
+    // Position
+    private float x, y;
+    private Animation windowScale;
 
-    public void setCurrentPage(AbstractPage currentPage) {
-        if (currentPage == this.currentPage) return;
-        currentPage.setParent(this.currentPage);
-        this.currentPage.onClose();
-        this.currentPage = currentPage;
-        this.currentPage.onOpen();
-    }
+    // Drag
+    private boolean dragging;
+    private float lastMouseX, lastMouseY;
+    private AbstractPage currentPage = Pages.HOME;
 
-    public boolean isDark() {
-        return dark;
-    }
-
-    public void setDark(boolean dark) {
-        this.dark = dark;
-        if (dark) {
-            backgroundColor.change(Theme.dark);
-            playerColor.change(Theme.darkAlt);
-        } else {
-            backgroundColor.change(Theme.light);
-            playerColor.change(Theme.alt);
-        }
-    }
 
     public MusicScreen() {
         // Constants
@@ -89,11 +61,14 @@ public class MusicScreen extends GuiScreen {
         x = 20f;
         y = 20f;
         shouldClose = true;
+    }
 
-        // Colors
-        dark = true;
-        backgroundColor = new ColorAnimation(Theme.dark, Theme.dark, 300);
-        playerColor = new ColorAnimation(Theme.darkAlt, Theme.darkAlt, 300);
+    public void setCurrentPage(AbstractPage currentPage) {
+        if (currentPage == this.currentPage) return;
+        currentPage.setParent(this.currentPage);
+        this.currentPage.onClose();
+        this.currentPage = currentPage;
+        this.currentPage.onOpen();
     }
 
     @Override
@@ -125,17 +100,16 @@ public class MusicScreen extends GuiScreen {
 
         // Update component position
         categorySidebar.update(x + 10f, y + 50f, 25f, 0f, mouseX, mouseY);
-        categorySidebar.setBackgroundColor(playerColor.getOutput());
         userSidebar.update(x + 10f, y + height - bottomHeight - 3f - userSidebar.getHeight(), 25f, 0f, mouseX, mouseY);
-        userSidebar.setBackgroundColor(playerColor.getOutput());
         currentPage.update(x + 45f, y + topHeight, width - 45f, height - topHeight - bottomHeight, mouseX, mouseY, x + width / 2f, y + height / 2f, windowScale.getOutput().floatValue());
         currentPage.handleScroll();
-        playerSlider.update(x + width / 2f - 150f, y + height - 15f, 300f, 6f, mouseX, mouseY);
+        playerSlider.update(x, y + height - bottomHeight - 2f, width, 2f, mouseX, mouseY);
         volumeSlider.update(x + width / 2f + 170f, y + height - bottomHeight / 2f, 50f, 5f, mouseX, mouseY);
+        playerBar.update(x + width / 2f, y + height - bottomHeight + 10f, 100f, 20f, mouseX, mouseY);
 
         // Render
         RenderUtil.scaleStart(x + width / 2f, y + height / 2f, windowScale.getOutput().floatValue());
-        ShaderUtil.drawRound(x, y, width, height, 3f, backgroundColor.getOutput());
+        ShaderUtil.drawRound(x, y, width, height, 3f, Theme.dark);
 
         // Sidebar
         RenderUtil.drawImage(ResourceUtil.getResource("music_note.png", ResourceType.ICON), x + 10f, y + 10f, 25f, 25f, Theme.primary);
@@ -146,17 +120,17 @@ public class MusicScreen extends GuiScreen {
         currentPage.render();
 
         // Player
-        ShaderUtil.drawVaryingRound(x, y + height - bottomHeight, width, bottomHeight, 0f, 0f, 3f, 3f, playerColor.getOutput());
-        RenderUtil.drawRect(x, y + height - bottomHeight - 0.5f, x + width, y + height - bottomHeight, Color.gray.getRGB());
+        ShaderUtil.drawVaryingRound(x, y + height - bottomHeight, width, bottomHeight, 0f, 0f, 3f, 3f, Theme.darkAlt);
         playerSlider.render();
         volumeSlider.render();
+        playerBar.render();
         ShaderUtil.drawRound(x + 20f, y + height - bottomHeight / 2f - 15f, 30f, 30f, 15f, Theme.grey);
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
         if (player.available()) {
             RenderUtil.bindTexture(player.getCurrentMusic().getAlbum().getCoverImage());
             ShaderUtil.drawRoundTextured(x + 21f, y + height - bottomHeight / 2f - 14f, 28f, 28f, 14f, 1f);
-            AWTFontLoader.noto(20f).drawString(player.getCurrentMusic().getTitle(), x + 53f, y + height - bottomHeight / 2f - 12f, Color.WHITE);
-            AWTFontLoader.noto(17f).drawString(player.getCurrentMusic().getArtist(), x + 53f, y + height - bottomHeight / 2f, Theme.grey);
+            AWTFontLoader.noto(16f).drawString(player.getCurrentMusic().getTitle(), x + 53f, y + height - bottomHeight / 2f - 12f, Color.WHITE);
+            AWTFontLoader.noto(14f).drawString(player.getCurrentMusic().getArtist(), x + 53f, y + height - bottomHeight / 2f, Theme.grey);
         }
         RenderUtil.scaleEnd();
     }
@@ -165,13 +139,13 @@ public class MusicScreen extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         categorySidebar.mouseClicked(mouseButton);
         userSidebar.mouseClicked(mouseButton);
-
         categorySidebar.updateButtons(categorySidebar.getSelectedButton());
         categorySidebar.updateButtons(userSidebar.getSelectedButton());
         userSidebar.updateButtons(categorySidebar.getSelectedButton());
         userSidebar.updateButtons(userSidebar.getSelectedButton());
         playerSlider.mouseClicked(mouseButton);
         volumeSlider.mouseClicked(mouseButton);
+        playerBar.mouseClicked(mouseButton);
 
         if (RenderUtil.hovering(mouseX, mouseY, x + 45f, y + topHeight, width - 45f, height - topHeight - bottomHeight)) {
             currentPage.mouseClicked(mouseButton);
@@ -179,7 +153,8 @@ public class MusicScreen extends GuiScreen {
     }
 
     @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
+    protected void mouseReleased(int mouseX, int mouseY, int button) {
+        currentPage.mouseReleased();
         playerSlider.mouseReleased();
         volumeSlider.mouseReleased();
     }

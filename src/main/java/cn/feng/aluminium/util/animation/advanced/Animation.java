@@ -50,7 +50,7 @@ public abstract class Animation {
     public Animation setDirection(Direction direction) {
         if (this.direction != direction) {
             this.direction = direction;
-            timerUtil.setTime(System.currentTimeMillis() - (duration - Math.min(duration, timerUtil.getTime())));
+            timerUtil.setTime(System.currentTimeMillis() - (duration - Math.min(timerUtil.getTime(), duration)));
         }
         return this;
     }

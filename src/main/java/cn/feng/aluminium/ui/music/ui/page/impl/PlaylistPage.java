@@ -1,7 +1,6 @@
 package cn.feng.aluminium.ui.music.ui.page.impl;
 
 import cn.feng.aluminium.ui.font.SkijaFontLoader;
-import cn.feng.aluminium.ui.font.SkijaFontRenderer;
 import cn.feng.aluminium.ui.font.awt.AWTFontLoader;
 import cn.feng.aluminium.ui.font.awt.AWTFontRenderer;
 import cn.feng.aluminium.ui.music.api.bean.Music;
@@ -51,21 +50,21 @@ public class PlaylistPage extends AbstractPage {
 
     @Override
     public void render() {
-        preDraw();
-        AWTFontRenderer noto = AWTFontLoader.noto(17f);
+        animate();
+        AWTFontRenderer noto = AWTFontLoader.noto(15f);
         RenderUtil.bindTexture(playlist.getCoverImage());
         ShaderUtil.drawRoundTextured(renderX + 5f, scrolledY + 5f, 50f, 50f, 5f, 1f);
         SkijaFontLoader.noto.bold().drawGlowString(playlist.getTitle(), renderX + 60f, scrolledY + 7f, 30f, Color.WHITE, false);
-        AWTFontLoader.noto(20f).bold().drawString(playlist.getAuthor(), renderX + 60f, scrolledY + 30f, Color.WHITE);
-        AWTFontLoader.noto(20f).bold().drawString(playlist.getDescription(), renderX + 60f, scrolledY + 40f, Theme.grey);
-        AWTFontLoader.poppins(17f).drawString("#", renderX + 30f + 5f, scrolledY + 60f, Theme.grey);
+        AWTFontLoader.noto(16f).bold().drawString(playlist.getAuthor(), renderX + 60f, scrolledY + 30f, Color.WHITE);
+        AWTFontLoader.noto(16f).bold().drawString(playlist.getDescription(), renderX + 60f, scrolledY + 40f, Theme.grey);
+        AWTFontLoader.poppins(15f).drawString("#", renderX + 30f + 5f, scrolledY + 60f, Theme.grey);
         noto.drawString("标题", renderX + 30f + 20f + 5f, scrolledY + 60f, Theme.grey);
         noto.drawString("音乐家", renderX + 130f + 5f, scrolledY + 60f, Theme.grey);
         noto.drawString("专辑", renderX + 230f + 5f, scrolledY + 60f, Theme.grey);
         noto.drawString("时长", renderX + 350f + 5f, scrolledY + 60f, Theme.grey);
         List<MusicButtonComponent> currentList = new ArrayList<>(musicButtonList);
         currentList.forEach(MusicButtonComponent::render);
-        postDraw();
+        animateEnd();
     }
 
     @Override

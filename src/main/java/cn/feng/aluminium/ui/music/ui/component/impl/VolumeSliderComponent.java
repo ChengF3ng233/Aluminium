@@ -24,7 +24,6 @@ public class VolumeSliderComponent extends SliderComponent {
 
         ShaderUtil.drawRound(renderX, renderY, width, 2f, 0.5f, ColorUtil.applyOpacity(Color.WHITE, 0.1f));
         ShaderUtil.drawRound(renderX, renderY, dragging? dragDelta : progressWidth, 2f, 0.5f, Theme.secondary);
-        ShaderUtil.drawCircle(renderX + (dragging? dragDelta : progressWidth), renderY + 1f, height / 2f, Theme.secondary);
 
         if (dragging) {
             dragDelta = mouseX - renderX;

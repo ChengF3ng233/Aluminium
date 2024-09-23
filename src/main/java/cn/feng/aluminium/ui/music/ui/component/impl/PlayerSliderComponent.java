@@ -22,10 +22,8 @@ public class PlayerSliderComponent extends SliderComponent {
             progressWidth = width * (player.getCurrentTime() / (float) player.getCurrentMusic().getDuration());
         }
 
-        ShaderUtil.drawRound(renderX, renderY, width, 2f, 1, ColorUtil.applyOpacity(Color.WHITE, 0.1f));
+        ShaderUtil.drawRound(renderX, renderY, width, height, 0f, ColorUtil.applyOpacity(Color.WHITE, 0.1f));
         ShaderUtil.drawRound(renderX, renderY, dragging? dragDelta : progressWidth, 2f, 1f, Theme.secondary);
-        ShaderUtil.drawCircle(renderX + (dragging? dragDelta : progressWidth), renderY + 1f, height / 2f + 0.5f, Color.WHITE);
-        ShaderUtil.drawCircle(renderX + (dragging? dragDelta : progressWidth), renderY + 1f, height / 2f, Theme.secondary);
 
         if (dragging) {
             dragDelta = mouseX - renderX;

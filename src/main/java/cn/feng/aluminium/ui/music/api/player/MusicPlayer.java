@@ -30,6 +30,10 @@ public class MusicPlayer {
         return currentMusic;
     }
 
+    public MediaPlayer.Status getStatus() {
+        return player.getStatus();
+    }
+
     public void setCurrentMusicList(List<Music> currentMusicList) {
         this.currentMusicList = currentMusicList;
     }
