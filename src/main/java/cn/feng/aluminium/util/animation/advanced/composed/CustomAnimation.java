@@ -36,6 +36,7 @@ public class CustomAnimation extends ComposedAnimation<Double> {
     }
 
     public void setStartPoint(double startPoint) {
+        this.animation.reset();
         this.startPoint = startPoint;
         this.animation.setEndPoint(this.endPoint - this.startPoint);
     }

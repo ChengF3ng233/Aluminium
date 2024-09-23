@@ -14,6 +14,7 @@ public abstract class CardComponent extends AbstractComponent {
 
     protected void animate() {
         GL11.glPushMatrix();
+
         if ((hovering && !holding) && translateAnimation.getDirection().backwards()) {
             translateAnimation.changeDirection();
         } else if ((!hovering && !holding) && translateAnimation.getDirection().forwards())

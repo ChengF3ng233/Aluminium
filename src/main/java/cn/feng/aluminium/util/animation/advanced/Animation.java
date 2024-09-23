@@ -71,12 +71,8 @@ public abstract class Animation {
                 return 0.0;
             }
 
-            if (correctOutput()) {
-                double revTime = Math.min(duration, Math.max(0, duration - timerUtil.getTime()));
-                return getEquation(revTime / (double) duration) * endPoint;
-            }
-
-            return (1 - getEquation(timerUtil.getTime() / (double) duration)) * endPoint;
+            double revTime = Math.min(duration, Math.max(0, duration - timerUtil.getTime()));
+            return getEquation(revTime / (double) duration) * endPoint;
         }
     }
 
