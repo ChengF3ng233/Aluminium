@@ -7,8 +7,6 @@ import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import cn.feng.aluminium.ui.font.NanoFontLoader;
-import cn.feng.aluminium.ui.nano.NanoLoader;
 import org.lwjgl.glfw.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCharCallback;
@@ -305,8 +303,6 @@ public class Display {
         glfwMakeContextCurrent(Window.handle);
         drawable = new DrawableGL();
         GL.createCapabilities();
-        NanoLoader.init();
-        NanoFontLoader.init();
 
         if (savedIcons != null) {
             setIcon(savedIcons);
@@ -388,7 +384,6 @@ public class Display {
 
     public static void destroy() {
         Window.releaseCallbacks();
-        NanoLoader.destroy();
         glfwDestroyWindow(Window.handle);
 
         /*

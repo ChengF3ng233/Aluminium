@@ -24,7 +24,7 @@ public class ModuleManager {
     }
 
     public void init() {
-        addModule(new MusicScreenMod());
+        moduleList.add(new MusicScreenMod());
     }
 
     @EventTarget

@@ -21,6 +21,7 @@ public class Playlist {
 
     // Content
     private final List<Music> musicList = new ArrayList<>();
+    private boolean completelyDownloaded;
 
     public Playlist(long id, String title, String description, String author, String coverUrl, BufferedImage coverImage) {
         this.id = id;
@@ -70,5 +71,13 @@ public class Playlist {
 
     public void setCoverImage(BufferedImage coverImage) {
         this.coverImage = coverImage;
+    }
+
+    public boolean isCompletelyDownloaded() {
+        return completelyDownloaded;
+    }
+
+    public void setCompletelyDownloaded(boolean completelyDownloaded) {
+        this.completelyDownloaded = completelyDownloaded;
     }
 }

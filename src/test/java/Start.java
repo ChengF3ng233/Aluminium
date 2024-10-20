@@ -1,3 +1,5 @@
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import net.minecraft.client.main.Main;

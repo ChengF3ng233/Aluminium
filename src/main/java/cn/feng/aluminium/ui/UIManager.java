@@ -3,10 +3,8 @@ package cn.feng.aluminium.ui;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventRender2D;
-import cn.feng.aluminium.ui.font.SkijaFontLoader;
-import cn.feng.aluminium.ui.music.ui.Theme;
+import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.util.Util;
-import cn.feng.aluminium.util.render.shader.ShaderUtil;
 
 import java.awt.*;
 
@@ -21,8 +19,6 @@ public class UIManager extends Util {
 
     @EventTarget
     private void onRender2D(EventRender2D event) {
-        SkijaFontLoader.playwrite.drawGlowString("aluminium", 10, 10, 45f, Color.WHITE, false);
-        ShaderUtil.drawVaryingRound(150, 50, 100, 100, 0, 0, 5, 5, Theme.light);
-        ShaderUtil.drawCircle(150, 30, 10, Color.PINK);
+        FontManager.noto(20).drawString("Aluminium", 10, 10, Color.WHITE.getRGB());
     }
 }

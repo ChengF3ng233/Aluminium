@@ -4,7 +4,6 @@ import cn.feng.aluminium.config.ConfigManager;
 import cn.feng.aluminium.event.EventManager;
 import cn.feng.aluminium.module.ModuleManager;
 import cn.feng.aluminium.ui.UIManager;
-import cn.feng.aluminium.ui.font.SkijaFontLoader;
 import cn.feng.aluminium.ui.music.MusicManager;
 
 /**
@@ -27,11 +26,9 @@ public class Aluminium {
         uiManager = new UIManager();
         musicManager = new MusicManager();
 
-        moduleManager.init();
         configManager.init();
-        SkijaFontLoader.init();
+        moduleManager.init();
         musicManager.init();
-
         configManager.loadConfigs();
     }
 

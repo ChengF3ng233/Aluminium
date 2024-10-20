@@ -21,26 +21,21 @@ dependencies {
 
     implementation "org.lwjgl:lwjgl"
     implementation "org.lwjgl:lwjgl-glfw"
-    implementation "org.lwjgl:lwjgl-nanovg"
     implementation "org.lwjgl:lwjgl-openal"
     implementation "org.lwjgl:lwjgl-opengl"
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
 
-    implementation "io.github.humbleui:skija-windows-x64:0.116.2"
-    implementation "io.github.humbleui:types:0.2.0"
-
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '5.0.0-alpha.14'
 
-    implementation group: 'org.bytedeco', name: 'ffmpeg', version: '6.1.1-1.5.10'
-    implementation group: 'org.bytedeco', name: 'ffmpeg-platform', version: '6.1.1-1.5.10'
-    implementation group: 'org.bytedeco', name: 'javacv', version: '1.5.10'
-    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.10'
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
 
-    implementation 'org.apache.xmlgraphics:batik-all:1.17'
+    // Music process
+    implementation 'org.jflac:jflac-codec:1.5.2'
+    implementation 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
+
 
     // Vanilla Minecraft Libraries
     implementation group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.3.3'

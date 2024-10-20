@@ -9,7 +9,7 @@ import static cn.feng.aluminium.util.data.MathUtil.interpolateFloat;
 import static cn.feng.aluminium.util.data.MathUtil.interpolateInt;
 
 public class ColorUtil {
-    public static final Color TRANSPARENT_COLOR = new Color(255, 255, 255, 0);
+    public static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
     public static void glColor(int hex) {
         float a = (float)(hex >> 24 & 255) / 255.0F;
         float r = (float)(hex >> 16 & 255) / 255.0F;
@@ -17,7 +17,20 @@ public class ColorUtil {
         float b = (float)(hex & 255) / 255.0F;
         GlStateManager.color(r, g, b, a);
     }
+    public static Color hexToColor(String hex) {
+        // 移除十六进制颜色的前缀 "#"
+        if (hex.startsWith("#")) {
+            hex = hex.substring(1);
+        }
 
+        // 将十六进制字符串解析为整数值并提取 RGB 组件
+        int r = Integer.parseInt(hex.substring(0, 2), 16); // 红色
+        int g = Integer.parseInt(hex.substring(2, 4), 16); // 绿色
+        int b = Integer.parseInt(hex.substring(4, 6), 16); // 蓝色
+
+        // 返回 Color 对象
+        return new Color(r, g, b);
+    }
     public static Color cAlpha(Color c, int alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
     }

@@ -5,7 +5,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
@@ -13,7 +12,6 @@ import org.lwjgl.opengl.GL13;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +23,6 @@ import static org.lwjgl.opengl.GL11.*;
  **/
 public class RenderUtil extends Util {
     private static final Map<BufferedImage, DynamicTexture> bufferedImageMap = new HashMap<>();
-    private static final Map<ResourceLocation, BufferedImage> svgMap = new HashMap<>();
 
     // 上一帧的帧时间
     public static double lastFrame = System.nanoTime();
@@ -60,6 +57,13 @@ public class RenderUtil extends Util {
     public static void bindTexture(BufferedImage image) {
         uploadTexture(image);
         GlStateManager.bindTexture(bufferedImageMap.get(image).getGlTextureId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+
+    public static void bindTexture(ResourceLocation resourceLocation) {
+        // 绑定纹理并设置过滤参数
+        mc.getTextureManager().bindTexture(resourceLocation);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
@@ -191,7 +195,7 @@ public class RenderUtil extends Util {
     /**
      * Bind a texture using the specified integer refrence to the texture.
      *
-     * @see org.lwjgl.opengl.GL13 for more information about texture bindings
+     * @see GL13 for more information about texture bindings
      */
     public static void bindTexture(int texture) {
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -210,19 +214,6 @@ public class RenderUtil extends Util {
 
 
         GLUtil.endBlend();
-    }
-
-    public static void drawSVG(ResourceLocation resourceLocation, float x, float y, float imgWidth, float imgHeight) {
-        try {
-            if (!svgMap.containsKey(resourceLocation)) {
-                IResource resource = mc.getResourceManager().getResource(resourceLocation);
-                BufferedImage image = ImageUtil.svgToBufferedImage(resource.getInputStream(), imgWidth, imgHeight);
-                svgMap.put(resourceLocation, image);
-            }
-            drawImage(svgMap.get(resourceLocation), x, y, imgWidth, imgHeight);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static void drawImage(DynamicTexture image, float x, float y, float imgWidth, float imgHeight) {

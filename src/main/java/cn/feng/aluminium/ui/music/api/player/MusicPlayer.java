@@ -1,12 +1,15 @@
 package cn.feng.aluminium.ui.music.api.player;
 
+import cn.feng.aluminium.config.ConfigManager;
 import cn.feng.aluminium.ui.music.api.bean.Music;
+import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.thread.FetchMusicURLThread;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -14,93 +17,107 @@ import java.util.List;
  * @since 2024/9/17
  **/
 public class MusicPlayer {
-    private Music currentMusic;
-    private List<Music> currentMusicList;
-    private MediaPlayer player;
+    private Music music;
+    private Playlist playlist;
+    private List<Music> musicList;
+
+    private MediaPlayer mediaPlayer;
 
     public MusicPlayer() {
         new JFXPanel();
     }
 
     public boolean available() {
-        return player != null && currentMusic != null;
+        return mediaPlayer != null && music != null;
     }
 
-    public Music getCurrentMusic() {
-        return currentMusic;
+    public Music getMusic() {
+        return music;
     }
 
-    public MediaPlayer.Status getStatus() {
-        return player.getStatus();
+    public void setMusic(Music music) {
+        this.music = music;
+        new FetchMusicURLThread(music.getId()).start();
     }
 
-    public void setCurrentMusicList(List<Music> currentMusicList) {
-        this.currentMusicList = currentMusicList;
+    public List<Music> getMusicList() {
+        return musicList;
     }
 
-    public List<Music> getCurrentMusicList() {
-        return currentMusicList;
+    public void setMusicList(List<Music> musicList) {
+        this.musicList = musicList;
     }
 
-    public void play(String url) {
-        double volume = -1d;
-        if (player != null) {
-            volume = player.getVolume();
-            player.stop();
+    public void play(String songURL) {
+        Media media;
+
+        if (songURL.endsWith("flac")) {
+            File converted = new File(ConfigManager.musicDir, music.getId() + ".wav");
+            if (!converted.exists()) {
+                MusicUtil.convert(songURL, converted);
+            }
+            media = new Media(converted.toURI().toString());
+        } else {
+            media = new Media(songURL);
         }
 
-        Media media = new Media(url);
-        player = new MediaPlayer(media);
-        if (volume != -1d) player.setVolume(volume);
-        player.play();
+        double volume = mediaPlayer == null ? 1d : mediaPlayer.getVolume();
+        if (mediaPlayer != null) mediaPlayer.stop();
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setOnEndOfMedia(this::next);
+        mediaPlayer.setVolume(volume);
+        mediaPlayer.play();
     }
 
     public void play() {
-        if (player == null) return;
-        player.play();
+        if (available()) {
+            mediaPlayer.play();
+        }
     }
 
     public void pause() {
-        if (player == null) return;
-        player.pause();
+        if (available()) {
+            mediaPlayer.pause();
+        }
     }
 
     public void stop() {
-        if (player == null) return;
-        player.stop();
-    }
-
-    public void setVolume(double volume) {
-        if (player == null) return;
-        player.setVolume(volume);
+        if (available()) {
+            mediaPlayer.stop();
+        }
     }
 
     public double getVolume() {
-        return player.getVolume();
+        return mediaPlayer.getVolume();
+    }
+
+    public void setVolume(double volume) {
+        if (available()) {
+            mediaPlayer.setVolume(volume);
+        }
     }
 
     public void previous() {
-        int newIndex = currentMusicList.indexOf(currentMusic) - 1;
-        if (newIndex < 0) newIndex = currentMusicList.size() - 1;
-        setCurrentMusic(currentMusicList.get(newIndex));
+        int newIndex = musicList.indexOf(music) - 1;
+        if (newIndex < 0) newIndex = musicList.size() - 1;
+        setMusic(musicList.get(newIndex));
     }
 
     public void next() {
-        int newIndex = currentMusicList.indexOf(currentMusic) + 1;
-        if (newIndex > currentMusicList.size() - 1) newIndex = 0;
-        setCurrentMusic(currentMusicList.get(newIndex));
+        int newIndex = musicList.indexOf(music) + 1;
+        if (newIndex > musicList.size() - 1) newIndex = 0;
+        setMusic(musicList.get(newIndex));
     }
 
-    public void setCurrentMusic(Music currentMusic) {
-        this.currentMusic = currentMusic;
-        new FetchMusicURLThread(currentMusic.getId()).start();
+    public double getCurrentTime() {
+        return mediaPlayer.getCurrentTime().toMillis();
     }
 
-    public float getCurrentTime() {
-        return Double.valueOf(player.getCurrentTime().toMillis()).floatValue();
+    public double getCurrentPercent() {
+        return mediaPlayer.getCurrentTime().toMillis() / mediaPlayer.getStopTime().toMillis();
     }
 
     public void seek(double newTime) {
-        player.seek(Duration.millis(newTime));
+        mediaPlayer.seek(Duration.millis(newTime));
     }
 }

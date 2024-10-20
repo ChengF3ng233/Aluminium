@@ -2,6 +2,7 @@ package cn.feng.aluminium.util.animation.advanced.composed;
 
 import cn.feng.aluminium.util.animation.advanced.ComposedAnimation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
+import cn.feng.aluminium.util.animation.advanced.impl.DecelerateAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseOutSine;
 
 import java.awt.*;
@@ -35,10 +36,10 @@ public class ColorAnimation extends ComposedAnimation<Color> {
     }
 
     private void createAnim(Color startColor, Color endColor, int duration) {
-        this.redAnim = new CustomAnimation(EaseOutSine.class, duration, startColor.getRed(), endColor.getRed());
-        this.greenAnim = new CustomAnimation(EaseOutSine.class, duration, startColor.getGreen(), endColor.getGreen());
-        this.blueAnim = new CustomAnimation(EaseOutSine.class, duration, startColor.getBlue(), endColor.getBlue());
-        this.alphaAnim = new CustomAnimation(EaseOutSine.class, duration, startColor.getAlpha(), endColor.getAlpha());
+        this.redAnim = new CustomAnimation(DecelerateAnimation.class, duration, startColor.getRed(), endColor.getRed());
+        this.greenAnim = new CustomAnimation(DecelerateAnimation.class, duration, startColor.getGreen(), endColor.getGreen());
+        this.blueAnim = new CustomAnimation(DecelerateAnimation.class, duration, startColor.getBlue(), endColor.getBlue());
+        this.alphaAnim = new CustomAnimation(DecelerateAnimation.class, duration, startColor.getAlpha(), endColor.getAlpha());
     }
 
     public void setStartColor(Color startColor) {

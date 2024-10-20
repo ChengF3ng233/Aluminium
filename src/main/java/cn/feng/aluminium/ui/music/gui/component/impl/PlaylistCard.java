@@ -1,0 +1,54 @@
+package cn.feng.aluminium.ui.music.gui.component.impl;
+
+import cn.feng.aluminium.Aluminium;
+import cn.feng.aluminium.ui.font.FontManager;
+import cn.feng.aluminium.ui.music.Theme;
+import cn.feng.aluminium.ui.music.api.bean.Playlist;
+import cn.feng.aluminium.ui.music.gui.component.Component;
+import cn.feng.aluminium.ui.music.gui.page.impl.PlaylistPage;
+import cn.feng.aluminium.util.animation.advanced.Animation;
+import cn.feng.aluminium.util.animation.advanced.Direction;
+import cn.feng.aluminium.util.animation.advanced.impl.DecelerateAnimation;
+import cn.feng.aluminium.util.data.ResourceType;
+import cn.feng.aluminium.util.data.ResourceUtil;
+import cn.feng.aluminium.util.render.ColorUtil;
+import cn.feng.aluminium.util.render.RenderUtil;
+import cn.feng.aluminium.util.render.shader.ShaderUtil;
+
+import java.awt.*;
+
+public class PlaylistCard extends Component {
+    private Playlist playlist;
+    private final Animation iconAlpha = new DecelerateAnimation(200, 1.0, Direction.BACKWARDS);
+
+    public PlaylistCard(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
+    @Override
+    public void render() {
+        if (playlist != null) {
+            RenderUtil.bindTexture(playlist.getCoverImage());
+            ShaderUtil.drawRoundTextured(x, y, width, height, 3f, 1f);
+            if (hovering) {
+                if (iconAlpha.getDirection().backwards()) iconAlpha.changeDirection();
+            } else if (iconAlpha.getDirection().forwards()) iconAlpha.changeDirection();
+            RenderUtil.drawImage(ResourceUtil.getResource("play_circle.png", ResourceType.ICON),x + width - 20f, y + height - 20f, 15f, 15f, new Color(1f, 1f, 1f, iconAlpha.getOutput().floatValue()));
+            FontManager.noto(15).drawString(FontManager.noto(15).trimString(playlist.getTitle(), width - 10f, false), x, y + height + 3f, (hovering? Color.WHITE : Color.WHITE.darker()).getRGB());
+        } else {
+            ShaderUtil.drawGradientCornerLR(x, y, width, height, 3f, ColorUtil.fade(5, 1, Theme.layerBackground, 0.7f), ColorUtil.fade(5, 3, Theme.layerBackground, 0.7f));
+        }
+    }
+
+    @Override
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (hovering) {
+            Aluminium.INSTANCE.musicManager.getScreen().changePage(new PlaylistPage(playlist));
+            hovering = false;
+        }
+    }
+}
