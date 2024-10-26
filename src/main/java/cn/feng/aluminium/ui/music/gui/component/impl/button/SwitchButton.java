@@ -1,4 +1,4 @@
-package cn.feng.aluminium.ui.music.gui.component.impl.player;
+package cn.feng.aluminium.ui.music.gui.component.impl.button;
 
 import net.minecraft.util.ResourceLocation;
 

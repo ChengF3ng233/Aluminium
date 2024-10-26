@@ -1,4 +1,4 @@
-package cn.feng.aluminium.ui.music.gui.component.impl.player;
+package cn.feng.aluminium.ui.music.gui.component.impl.button;
 
 import cn.feng.aluminium.ui.music.gui.component.Component;
 import cn.feng.aluminium.util.animation.advanced.Animation;
@@ -13,9 +13,9 @@ import org.lwjgl.system.MemoryUtil;
 import java.awt.*;
 
 public class IconButton extends Component {
+    private final Animation scaleAnim = new EaseOutCubic(200, 0.05, Direction.BACKWARDS);
     protected ResourceLocation currentIcon;
     private Runnable action;
-    private Animation scaleAnim = new EaseOutCubic(200, 0.05, Direction.BACKWARDS);
     private boolean available = true;
     private boolean cursorRestored;
 
@@ -63,7 +63,7 @@ public class IconButton extends Component {
     @Override
     public void render() {
         RenderUtil.scaleStart(x + width / 2f, y + height / 2f, 1f + scaleAnim.getOutput().floatValue());
-        RenderUtil.drawImage(currentIcon, x, y, width, height, available? Color.WHITE : new Color(200, 200, 200, 200));
+        RenderUtil.drawImage(currentIcon, x, y, width, height, available ? Color.WHITE : new Color(200, 200, 200, 200));
         RenderUtil.scaleEnd();
     }
 

@@ -1,4 +1,4 @@
-package cn.feng.aluminium.ui.music.gui.component.impl.category;
+package cn.feng.aluminium.ui.music.gui.component.impl.button;
 
 import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.ui.music.gui.component.Component;
@@ -31,30 +31,28 @@ public class CategoryButton extends Component {
     public void render() {
         if (selected || hovering) {
             backgroundColor.change(new Color(255, 255, 255, 20));
-            if (textAnim.getDirection().backwards())
-                textAnim.changeDirection();
         } else {
-            backgroundColor.change(ColorUtil.TRANSPARENT_COLOR);
-            if (textAnim.getDirection().forwards())
-                textAnim.changeDirection();
+            backgroundColor.change(new Color(255, 255, 255, 0));
         }
 
         ShaderUtil.drawRound(x, y, width, height, 2f, backgroundColor.getOutput());
         RenderUtil.drawImage(iconLocation, x + 5f, y + 5f, height - 10f, height - 10f);
 
-        if (expanded) {
-            RenderUtil.scissorStart(x, y, width, height);
-            FontManager.notoBold(15).drawCenteredStringV(text, x + (height - 10f) + 15f, y + height / 2f, Color.WHITE.getRGB());
-            RenderUtil.scissorEnd();
-        }
+        RenderUtil.scissorStart(x, y, width, height);
+        FontManager.notoBold(15).drawCenteredStringV(text, x + (height - 10f) + 15f + textAnim.getOutput().floatValue() * 3f, y + height / 2f, Color.WHITE.getRGB());
+        RenderUtil.scissorEnd();
     }
 
-    protected void expand() {
+    public void expand() {
         expanded = true;
+        if (textAnim.getDirection().forwards())
+            textAnim.changeDirection();
     }
 
-    protected void fold() {
+    public void fold() {
         expanded = false;
+        if (textAnim.getDirection().backwards())
+            textAnim.changeDirection();
     }
 
     @Override

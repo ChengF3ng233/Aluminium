@@ -1,9 +1,9 @@
-package cn.feng.aluminium.ui.music.gui.component.impl.category;
+package cn.feng.aluminium.ui.music.gui.component.impl.composed;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.ui.music.Theme;
-import cn.feng.aluminium.ui.music.gui.MusicScreen;
 import cn.feng.aluminium.ui.music.gui.component.Component;
+import cn.feng.aluminium.ui.music.gui.component.impl.button.CategoryButton;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.util.animation.advanced.Animation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
@@ -54,18 +54,16 @@ public class CategorySidebar extends Component {
             buttons.forEach(CategoryButton::expand);
             if (expandAnimation.getDirection().backwards()) {
                 expandAnimation.changeDirection();
-                backgroundColor.change(ColorUtil.applyOpacity(Theme.layerBackground, 0.8f));
+                backgroundColor.change(ColorUtil.applyOpacity(new Color(20, 20, 20), 0.5f));
             }
             BlurUtil.processStart();
-            ShaderUtil.drawVaryingRound(x, y, width, height, 0f, 5f, 5f, 0f, Color.BLACK);
+            ShaderUtil.drawVaryingRound(x + 10f, y, width - 10f, height - 5f, 0f, 5f, 5f, 0f, Color.BLACK);
             BlurUtil.blurEnd(2, 2);
         } else {
             if (expandAnimation.getDirection().forwards()) {
                 expandAnimation.changeDirection();
-                backgroundColor.change(ColorUtil.TRANSPARENT_COLOR);
-            }
-            if (expandAnimation.finished(Direction.BACKWARDS)) {
                 buttons.forEach(CategoryButton::fold);
+                backgroundColor.change(ColorUtil.TRANSPARENT_COLOR);
             }
         }
         ShaderUtil.drawVaryingRound(x, y, width, height, 0f, 5f, 5f, 0f, backgroundColor.getOutput());

@@ -20,7 +20,6 @@ public class MusicPlayer {
     private Music music;
     private Playlist playlist;
     private List<Music> musicList;
-
     private MediaPlayer mediaPlayer;
 
     public MusicPlayer() {

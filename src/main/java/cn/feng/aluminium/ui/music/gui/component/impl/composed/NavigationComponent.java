@@ -1,9 +1,9 @@
-package cn.feng.aluminium.ui.music.gui.component.impl;
+package cn.feng.aluminium.ui.music.gui.component.impl.composed;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.ui.music.gui.MusicScreen;
 import cn.feng.aluminium.ui.music.gui.component.Component;
-import cn.feng.aluminium.ui.music.gui.component.impl.player.IconButton;
+import cn.feng.aluminium.ui.music.gui.component.impl.button.IconButton;
 import cn.feng.aluminium.util.data.ResourceType;
 import cn.feng.aluminium.util.data.ResourceUtil;
 
@@ -19,7 +19,6 @@ public class NavigationComponent extends Component {
             MusicScreen screen = Aluminium.INSTANCE.musicManager.getScreen();
             if (screen.getCurrentPage().getParent() != null) {
                 screen.changePage(screen.getCurrentPage().getParent());
-
                 back.setAvailable(screen.getCurrentPage().getParent() != null);
                 forward.setAvailable(screen.getCurrentPage().getChild() != null);
             }
@@ -34,6 +33,12 @@ public class NavigationComponent extends Component {
                 forward.setAvailable(screen.getCurrentPage().getChild() != null);
             }
         });
+    }
+
+    public void onChangePage() {
+        MusicScreen screen = Aluminium.INSTANCE.musicManager.getScreen();
+        back.setAvailable(screen.getCurrentPage().getParent() != null);
+        forward.setAvailable(screen.getCurrentPage().getChild() != null);
     }
 
     @Override

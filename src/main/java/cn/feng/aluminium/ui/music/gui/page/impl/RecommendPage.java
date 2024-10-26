@@ -1,10 +1,13 @@
 package cn.feng.aluminium.ui.music.gui.page.impl;
 
+import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
-import cn.feng.aluminium.ui.music.gui.component.impl.PlaylistCard;
+import cn.feng.aluminium.ui.music.gui.component.impl.button.PlaylistCard;
 import cn.feng.aluminium.ui.music.gui.page.Page;
+import cn.feng.aluminium.util.misc.StringUtil;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,20 +25,21 @@ public class RecommendPage extends Page {
         int size = cards.size();
         final float cardSize = 100f;
         final float gap = 8f;
-        float cardY = scrolledY;
+        float cardY = scrolledY + 25f;
         for (int i = 0; i < size; i++) {
             float cardX = i % 4 == 0 ? x : i % 4 == 1 ? x + cardSize + gap : i % 4 == 2 ? x + cardSize * 2 + gap * 2 : x + cardSize * 3 + gap * 3;
             if (i % 4 == 0 && i != 0) {
-                cardY += cardSize + gap + 5f + FontManager.noto(16).getHeight();
+                cardY += cardSize + gap + 7f + FontManager.noto(16).getHeight();
             }
             cards.get(i).update(cardX, cardY, cardSize, cardSize, mouseX, mouseY);
         }
 
-        pageHeight = cardY + cardSize + gap - scrolledY;
+        maxScroll = Math.max(cardY + cardSize + gap - scrolledY - height, 0);
     }
 
     @Override
     public void render() {
+        FontManager.notoBold(20).drawString(StringUtil.getGreeting() + "，" + Aluminium.INSTANCE.musicManager.getUser().getNickname(), x + 3f, y + 3f, Color.WHITE.getRGB());
         ArrayList<PlaylistCard> cardList = new ArrayList<>(cards);
         cardList.forEach(PlaylistCard::render);
     }

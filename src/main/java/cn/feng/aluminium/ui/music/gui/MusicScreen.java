@@ -1,10 +1,10 @@
 package cn.feng.aluminium.ui.music.gui;
 
 import cn.feng.aluminium.ui.music.Theme;
-import cn.feng.aluminium.ui.music.gui.component.impl.NavigationComponent;
-import cn.feng.aluminium.ui.music.gui.component.impl.SearchComponent;
-import cn.feng.aluminium.ui.music.gui.component.impl.category.CategorySidebar;
-import cn.feng.aluminium.ui.music.gui.component.impl.player.PlayerComponent;
+import cn.feng.aluminium.ui.music.gui.component.impl.composed.NavigationComponent;
+import cn.feng.aluminium.ui.music.gui.component.impl.text.SearchComponent;
+import cn.feng.aluminium.ui.music.gui.component.impl.composed.CategorySidebar;
+import cn.feng.aluminium.ui.music.gui.component.impl.composed.PlayerComponent;
 import cn.feng.aluminium.ui.music.gui.page.Page;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.util.render.RenderUtil;
@@ -31,13 +31,14 @@ public class MusicScreen extends GuiScreen {
     private Page currentPage = Pages.recommendPage;
 
     public void changePage(Page newPage) {
-        if (currentPage.getChild() != newPage) {
+        if (currentPage.getParent() != newPage) {
             newPage.setParent(currentPage);
         }
         if (newPage.getChild() != currentPage) {
             currentPage.setChild(newPage);
         }
         currentPage = newPage;
+        navigationComponent.onChangePage();
     }
 
     public Page getCurrentPage() {

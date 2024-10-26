@@ -40,7 +40,7 @@ public class MusicApi extends Util {
 
     public static String fetch(String api, String cookie) {
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7897));
-        OkHttpClient client = new OkHttpClient.Builder().proxy(proxy).build();
+        OkHttpClient client = new OkHttpClient.Builder()/*.proxy(proxy)*/.build();
         RequestBody body = new FormBody.Builder()
                 .add("cookie", cookie)
                 .build();

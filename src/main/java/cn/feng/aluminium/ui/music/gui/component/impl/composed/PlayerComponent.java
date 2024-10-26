@@ -1,10 +1,12 @@
-package cn.feng.aluminium.ui.music.gui.component.impl.player;
+package cn.feng.aluminium.ui.music.gui.component.impl.composed;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.ui.music.Theme;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
 import cn.feng.aluminium.ui.music.gui.component.Component;
+import cn.feng.aluminium.ui.music.gui.component.impl.button.IconButton;
+import cn.feng.aluminium.ui.music.gui.component.impl.button.SwitchButton;
 import cn.feng.aluminium.ui.music.gui.component.impl.slider.impl.ProgressSlider;
 import cn.feng.aluminium.util.data.ResourceType;
 import cn.feng.aluminium.util.data.ResourceUtil;

@@ -1,4 +1,4 @@
-package cn.feng.aluminium.ui.music.gui.component.impl;
+package cn.feng.aluminium.ui.music.gui.component.impl.text;
 
 import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.ui.music.gui.component.Component;

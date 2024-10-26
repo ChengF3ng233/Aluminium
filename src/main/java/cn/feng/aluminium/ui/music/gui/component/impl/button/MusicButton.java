@@ -1,4 +1,4 @@
-package cn.feng.aluminium.ui.music.gui.component.impl;
+package cn.feng.aluminium.ui.music.gui.component.impl.button;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.ui.font.FontManager;
@@ -6,6 +6,7 @@ import cn.feng.aluminium.ui.font.impl.UFontRenderer;
 import cn.feng.aluminium.ui.music.api.bean.Music;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.gui.component.Component;
+import cn.feng.aluminium.ui.music.gui.component.impl.Ripple;
 import cn.feng.aluminium.util.data.ResourceType;
 import cn.feng.aluminium.util.data.ResourceUtil;
 import cn.feng.aluminium.util.misc.TimeUtil;
