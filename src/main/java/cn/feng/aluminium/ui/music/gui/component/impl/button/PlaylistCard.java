@@ -32,13 +32,13 @@ public class PlaylistCard extends Component {
     @Override
     public void render() {
         if (playlist != null) {
-            RenderUtil.bindTexture(playlist.getCoverImage());
+            RenderUtil.bindTexture(playlist.getCover().getCoverImage());
             ShaderUtil.drawRoundTextured(x, y, width, height, 3f, 1f);
             if (hovering) {
                 if (iconAlpha.getDirection().backwards()) iconAlpha.changeDirection();
             } else if (iconAlpha.getDirection().forwards()) iconAlpha.changeDirection();
             RenderUtil.drawImage(ResourceUtil.getResource("play_circle.png", ResourceType.ICON),x + width - 20f, y + height - 20f, 15f, 15f, new Color(1f, 1f, 1f, iconAlpha.getOutput().floatValue()));
-            FontManager.noto(15).drawString(FontManager.noto(15).trimString(playlist.getTitle(), width - 10f, false), x, y + height + 3f, (hovering? Color.WHITE : Color.WHITE.darker()).getRGB());
+            height = FontManager.noto(15).drawFitString(playlist.getTitle(), x, y + height + 3f, width, 2, 1f, (hovering? Color.WHITE : Color.WHITE.darker()).getRGB()) - y;
         } else {
             ShaderUtil.drawGradientCornerLR(x, y, width, height, 3f, ColorUtil.fade(5, 1, Theme.layerBackground, 0.7f), ColorUtil.fade(5, 3, Theme.layerBackground, 0.7f));
         }
@@ -47,7 +47,7 @@ public class PlaylistCard extends Component {
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (hovering) {
-            Aluminium.INSTANCE.musicManager.getScreen().changePage(new PlaylistPage(playlist));
+            Aluminium.INSTANCE.musicManager.getScreen().changePage(new PlaylistPage(playlist), false);
             hovering = false;
         }
     }

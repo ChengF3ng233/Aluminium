@@ -507,7 +507,7 @@ public class Shader extends Util {
             "\n" +
             "uniform vec2 location, rectSize;\n" +
             "uniform vec4 color;\n" +
-            "uniform float radiusTL, radiusTR, radiusBL, radiusBR;\n" +  // 四个角的半径
+            "uniform float radiusTL, radiusTR, radiusBL, radiusBR;\n" +
             "\n" +
             "float roundSDF(vec2 p, vec2 b, float r) {\n" +
             "    return length(max(abs(p) - b, 0.0)) - r;\n" +
@@ -519,24 +519,30 @@ public class Shader extends Util {
             "    float radius = 0.0;\n" +
             "\n" +
             "    // 根据像素位置确定使用哪个角的半径\n" +
-            "    if (pos.x < rectHalf.x && pos.y > rectHalf.y) {\n" +
-            "        // 左下角 (Bottom-Left)\n" +
-            "        radius = radiusBL;\n" +
-            "    } else if (pos.x >= rectHalf.x && pos.y > rectHalf.y) {\n" +
-            "        // 右下角 (Bottom-Right)\n" +
-            "        radius = radiusBR;\n" +
-            "    } else if (pos.x < rectHalf.x && pos.y <= rectHalf.y) {\n" +
-            "        // 左上角 (Top-Left)\n" +
-            "        radius = radiusTL;\n" +
-            "    } else if (pos.x >= rectHalf.x && pos.y <= rectHalf.y) {\n" +
-            "        // 右上角 (Top-Right)\n" +
-            "        radius = radiusTR;\n" +
+            "    if (pos.x < rectHalf.x) {\n" +
+            "        // 左侧\n" +
+            "        if (pos.y <= rectHalf.y) {\n" +
+            "            // 左上角 (Top-Left)\n" +
+            "            radius = radiusTL;\n" +
+            "        } else {\n" +
+            "            // 左下角 (Bottom-Left)\n" +
+            "            radius = radiusBL;\n" +
+            "        }\n" +
+            "    } else {\n" +
+            "        // 右侧\n" +
+            "        if (pos.y <= rectHalf.y) {\n" +
+            "            // 右上角 (Top-Right)\n" +
+            "            radius = radiusTR;\n" +
+            "        } else {\n" +
+            "            // 右下角 (Bottom-Right)\n" +
+            "            radius = radiusBR;\n" +
+            "        }\n" +
             "    }\n" +
             "\n" +
             "    // 平滑的 alpha 计算 (抗锯齿)\n" +
             "    float smoothedAlpha = (1.0 - smoothstep(0.0, 1.0, roundSDF(rectHalf - pos, rectHalf - radius - 1.0, radius))) * color.a;\n" +
             "    gl_FragColor = vec4(color.rgb, smoothedAlpha);\n" +
-            "}";
+            "}\n";
 
     private final String circle = "#version 120\n" +
             "\n" +

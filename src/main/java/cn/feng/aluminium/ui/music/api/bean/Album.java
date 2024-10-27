@@ -12,17 +12,28 @@ public class Album {
 
     // Display information
     private final String title;
-    private final String coverUrl;
-    private final BufferedImage coverImage;
+    private Cover cover;
 
     // Content
     private Playlist playlist;
 
-    public Album(long id, String title, String coverUrl, BufferedImage coverImage) {
+    public Album(long id, String title, Cover cover) {
         this.id = id;
         this.title = title;
-        this.coverUrl = coverUrl;
-        this.coverImage = coverImage;
+        this.cover = cover;
+    }
+
+    public Album(long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
+    public Cover getCover() {
+        return cover;
+    }
+
+    public void setCover(Cover cover) {
+        this.cover = cover;
     }
 
     public long getId() {
@@ -31,14 +42,6 @@ public class Album {
 
     public String getTitle() {
         return title;
-    }
-
-    public String getCoverUrl() {
-        return coverUrl;
-    }
-
-    public BufferedImage getCoverImage() {
-        return coverImage;
     }
 
     public Playlist getPlaylist() {

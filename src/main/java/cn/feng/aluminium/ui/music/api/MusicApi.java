@@ -2,13 +2,11 @@ package cn.feng.aluminium.ui.music.api;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.config.ConfigManager;
-import cn.feng.aluminium.ui.music.api.bean.Album;
-import cn.feng.aluminium.ui.music.api.bean.Music;
-import cn.feng.aluminium.ui.music.api.bean.Playlist;
-import cn.feng.aluminium.ui.music.api.bean.User;
+import cn.feng.aluminium.ui.music.api.bean.*;
 import cn.feng.aluminium.ui.music.api.bean.login.LoginResult;
 import cn.feng.aluminium.ui.music.api.bean.login.LoginState;
 import cn.feng.aluminium.ui.music.api.bean.login.QRCode;
+import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.data.DataUtil;
 import com.google.gson.JsonArray;
@@ -24,10 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static cn.feng.aluminium.util.data.HttpUtil.downloadImage;
 
@@ -72,21 +67,21 @@ public class MusicApi extends Util {
         return result;
     }
 
-    private static Music parseMusic(JsonObject musicObj) {
+    private static Music parseMusic(JsonObject musicObj, boolean formatted) {
         String name = musicObj.get("name").getAsString();
         long id = musicObj.get("id").getAsLong();
         if (Aluminium.INSTANCE.musicManager.getMusicMap().containsKey(id))
             return Aluminium.INSTANCE.musicManager.getMusicMap().get(id);
         StringBuilder artist = new StringBuilder();
-        for (JsonElement e : musicObj.get("ar").getAsJsonArray()) {
+        for (JsonElement e : musicObj.get(formatted ? "artists" : "ar").getAsJsonArray()) {
             JsonObject artistObj = e.getAsJsonObject();
             artist.append(artistObj.get("name").getAsString()).append(",");
         }
         if (artist.length() == 0) {
             artist.append("未知音乐家");
         } else artist.deleteCharAt(artist.length() - 1);
-        int duration = musicObj.get("dt").getAsInt();
-        Album album = parseAlbum(musicObj.get("al").getAsJsonObject());
+        int duration = musicObj.get(formatted ? "duration" : "dt").getAsInt();
+        Album album = parseAlbum(musicObj.get(formatted ? "album" : "al").getAsJsonObject(), !formatted);
         Music music = new Music(
                 id,
                 name,
@@ -110,7 +105,7 @@ public class MusicApi extends Util {
         List<Music> musics = new ArrayList<>();
         for (JsonElement song : songs) {
             JsonObject obj = song.getAsJsonObject();
-            musics.add(parseMusic(obj));
+            musics.add(parseMusic(obj, false));
         }
 
         playList.getMusicList().addAll(musics);
@@ -122,9 +117,9 @@ public class MusicApi extends Util {
         List<Music> musics = new ArrayList<>();
         for (JsonElement e : data) {
             JsonObject songObj = e.getAsJsonObject().get("simpleSong").getAsJsonObject();
-            musics.add(parseMusic(songObj));
+            musics.add(parseMusic(songObj, false));
         }
-        return new Playlist(-1, "我的音乐云盘", "你的网易云云盘", Aluminium.INSTANCE.musicManager.getUser().getNickname(), musics.get(0).getAlbum().getCoverUrl(), musics.get(0).getAlbum().getCoverImage(), musics);
+        return new Playlist(-1, "我的音乐云盘", "你的网易云云盘", Aluminium.INSTANCE.musicManager.getUser().getNickname(), musics.get(0).getAlbum().getCover(), musics);
     }
 
     public static List<Music> fetchCloudMusics(Playlist playlist) {
@@ -136,19 +131,22 @@ public class MusicApi extends Util {
         List<Music> musics = new ArrayList<>();
         for (JsonElement song : songs) {
             JsonObject obj = song.getAsJsonObject().get("simpleSong").getAsJsonObject();
-            musics.add(parseMusic(obj));
+            musics.add(parseMusic(obj, false));
         }
         playlist.getMusicList().addAll(musics);
         return musics;
     }
 
-    private static Album parseAlbum(JsonObject albumObj) {
+    private static Album parseAlbum(JsonObject albumObj, boolean hasCover) {
         long id = albumObj.get("id").getAsLong();
         if (Aluminium.INSTANCE.musicManager.getAlbumMap().containsKey(id))
             return Aluminium.INSTANCE.musicManager.getAlbumMap().get(id);
         String name = albumObj.get("name").getAsString();
-        String coverUrl = albumObj.get("picUrl").getAsString();
-        Album album = new Album(id, name, coverUrl, downloadImage(wrapImage(coverUrl)));
+        String coverUrl = null;
+        if (hasCover) {
+            coverUrl = albumObj.get("picUrl").getAsString();
+        }
+        Album album = hasCover ? new Album(id, name, new Cover(coverUrl, downloadImage(wrapImage(coverUrl)))) : new Album(id, name);
         Aluminium.INSTANCE.musicManager.getAlbumMap().put(id, album);
         return album;
     }
@@ -158,17 +156,132 @@ public class MusicApi extends Util {
         List<Music> musicList = new ArrayList<>();
         for (JsonElement e : songs) {
             JsonObject musicObj = e.getAsJsonObject();
-            Music music = parseMusic(musicObj);
+            Music music = parseMusic(musicObj, false);
             musicList.add(music);
         }
         Music first = musicList.get(0);
-        Playlist playlist = new Playlist(-1, "每日歌曲推荐", "根据你的音乐口味生成，每天6:00更新", "云音乐官方", first.getAlbum().getCoverUrl(), downloadImage(wrapImage(first.getAlbum().getCoverUrl())), musicList);
+        Playlist playlist = new Playlist(-1, "每日歌曲推荐", "根据你的音乐口味生成，每天6:00更新", "云音乐官方", first.getAlbum().getCover(), musicList);
         playlist.setCompletelyDownloaded(true);
         Aluminium.INSTANCE.musicManager.getPlaylistMap().put(playlist.getId(), playlist);
         return playlist;
     }
 
-    public static List<Playlist> getRecommendedPlayLists() throws IOException {
+    public static List<Playlist> getRadarPlaylists() {
+        JsonArray array = fetchObjectArray("/homepage/block/page", "data", "blocks");
+        List<Playlist> result = new ArrayList<>();
+        for (JsonElement e : array) {
+            if (!(e instanceof JsonObject)) continue;
+            JsonObject obj = e.getAsJsonObject();
+            if (!obj.has("blockCode") || !obj.get("blockCode").getAsString().equals("HOMEPAGE_BLOCK_MGC_PLAYLIST"))
+                continue;
+
+            for (JsonElement ee : obj.get("creatives").getAsJsonArray()) {
+                JsonObject creativeObj = ee.getAsJsonObject();
+
+                for (JsonElement eee : creativeObj.get("resources").getAsJsonArray()) {
+                    JsonObject resourceObj = eee.getAsJsonObject();
+                    if (!resourceObj.has("resourceType") || !resourceObj.get("resourceType").getAsString().equals("list"))
+                        continue;
+
+                    JsonObject uiElement = resourceObj.get("uiElement").getAsJsonObject();
+                    long id = Long.parseLong(resourceObj.get("resourceId").getAsString());
+                    String title = uiElement.get("mainTitle").getAsJsonObject().get("title").getAsString();
+                    String imageUrl = uiElement.get("image").getAsJsonObject().get("imageUrl").getAsString();
+
+                    result.add(new Playlist(id, title, new Cover(imageUrl, downloadImage(wrapImage(imageUrl)))));
+                }
+
+
+            }
+            break;
+        }
+        for (Playlist playlist : result) {
+            Aluminium.INSTANCE.musicManager.getPlaylistMap().put(playlist.getId(), playlist);
+        }
+        return result;
+    }
+
+    public static Playlist search(String keywords) {
+        JsonArray songs = fetchObjectArray("/cloudsearch?keywords=" + keywords, "result", "songs");
+        List<Music> musicList = new ArrayList<>();
+        StringBuilder ids = new StringBuilder();
+
+        for (JsonElement song : songs) {
+            JsonObject obj = song.getAsJsonObject();
+            Music music = parseMusic(obj, false);
+            musicList.add(music);
+            System.out.println(music.getArtist());
+            ids.append(ids.length() == 0 ? music.getId() : "," + music.getId());
+        }
+
+        Map<Long, Cover> map = getSongCovers(ids.toString());
+        for (Music music : musicList) {
+            if (map.containsKey(music.getId())) {
+                if (music.getAlbum().getCover() == null) {
+                    music.getAlbum().setCover(map.get(music.getId()));
+                }
+            }
+        }
+
+        Playlist playlist = new Playlist(-1, "搜索结果：" + keywords, musicList.get(0).getAlbum().getCover());
+        playlist.getMusicList().addAll(musicList);
+        playlist.setCompletelyDownloaded(true);
+        Aluminium.INSTANCE.musicManager.getPlaylistMap().put(playlist.getId(), playlist);
+        return playlist;
+    }
+
+    public static Map<Long, Cover> getSongCovers(String ids) {
+        JsonArray songs = fetchObject("/song/detail?ids=" + ids).get("songs").getAsJsonArray();
+        Map<Long, Cover> result = new HashMap<>();
+        for (JsonElement song : songs) {
+            JsonObject obj = song.getAsJsonObject();
+            String url = obj.get("al").getAsJsonObject().get("picUrl").getAsString();
+            result.put(obj.get("id").getAsLong(), new Cover(url, downloadImage(url)));
+        }
+        return result;
+    }
+
+    public static List<Playlist> getPersonalizedPlaylists() {
+        List<Playlist> result = new ArrayList<>();
+        for (JsonElement e : fetchArray("/personalized", "result")) {
+            JsonObject obj = e.getAsJsonObject();
+            result.add(new Playlist(
+                    obj.get("id").getAsLong(),
+                    obj.get("name").getAsString(),
+                    new Cover(
+                            obj.get("picUrl").getAsString(),
+                            downloadImage(wrapImage(obj.get("picUrl").getAsString()))
+                    )
+            ));
+        }
+        for (Playlist playlist : result) {
+            Aluminium.INSTANCE.musicManager.getPlaylistMap().put(playlist.getId(), playlist);
+        }
+        return result;
+    }
+
+    public static List<Playlist> getUserPlaylists() {
+        JsonObject obj = fetchObject("/user/playlist?uid=" + Aluminium.INSTANCE.musicManager.getUser().getId());
+        List<Playlist> result = new ArrayList<>();
+        for (JsonElement e : obj.get("playlist").getAsJsonArray()) {
+            JsonObject list = e.getAsJsonObject();
+            String coverImgUrl = list.get("coverImgUrl").getAsString();
+            String name = list.get("name").getAsString();
+            long id = list.get("id").getAsLong();
+            String author = list.get("creator").getAsJsonObject().get("nickname").getAsString();
+            result.add(new Playlist(id, name, null, author, new Cover(coverImgUrl, downloadImage(wrapImage(coverImgUrl)))));
+            if (name.contains("喜欢的音乐")) {
+                Aluminium.INSTANCE.musicManager.likeId = id;
+            }
+        }
+        for (Playlist playlist : result) {
+            Aluminium.INSTANCE.musicManager.getPlaylistMap().put(playlist.getId(), playlist);
+        }
+        Pages.likePage.load();
+        return result;
+    }
+
+    public static List<Playlist> getRecommendedPlaylists() throws IOException {
         JsonArray playlistArray = fetchArray("/recommend/resource", "recommend");
 
         List<Playlist> result = new ArrayList<>();
@@ -178,15 +291,15 @@ public class MusicApi extends Util {
             String description = (obj.get("description") instanceof JsonNull || obj.get("description") == null) ? "没有描述，你自己进去看看" : obj.get("description").getAsString();
             File file = new File(ConfigManager.coverDir, "playlist_" + obj.get("id").getAsLong() + ".jpg");
 
-            downloadImage(obj.get("picUrl").getAsString(), file, true);
+            downloadImage(wrapImage(obj.get("picUrl").getAsString()), file, true);
 
             result.add(new Playlist(
                     obj.get("id").getAsLong(),
                     obj.get("name").getAsString(),
                     description,
-                    "Unknown artist",
-                    obj.get("picUrl").getAsString(),
-                    ImageIO.read(file)
+                    "我懒得找谁整的这个歌单了",
+                    new Cover(obj.get("picUrl").getAsString(),
+                            ImageIO.read(file))
             ));
         }
 

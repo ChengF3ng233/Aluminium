@@ -81,24 +81,27 @@ public class UFontRenderer extends FontRenderer {
 
 
     public String trimStringToWidth(String text, float width) {
-        return trimString(text, width, false);
+        return trimString(text, width, false, false);
     }
 
-    public String trimString(String text, float width, boolean reverse) {
+    public String trimString(String text, float width, boolean more, boolean reverse) {
+        String realText = reverse? new StringBuilder(text).reverse().toString() : text;
         StringBuilder stringbuilder = new StringBuilder();
-        for (char c : text.toCharArray()) {
-            if (getStringWidth(stringbuilder.toString()) < width)
-                stringbuilder.append(c);
+        for (char c : realText.toCharArray()) {
+            if (getStringWidth(stringbuilder.toString() + c) < width)
+                stringbuilder.insert(reverse? 0 : stringbuilder.length(), c);
             else
                 break;
         }
-        if (!stringbuilder.toString().equals(text)) {
-            int extraWidth = getStringWidth("...");
-            do {
-                stringbuilder.deleteCharAt(stringbuilder.length() - 1);
-            } while (getStringWidth(stringbuilder.toString()) > width - extraWidth);
+        if (more) {
+            if (!stringbuilder.toString().equals(text)) {
+                int extraWidth = getStringWidth("...");
+                do {
+                    stringbuilder.deleteCharAt(reverse? 0 : stringbuilder.length() - 1);
+                } while (getStringWidth(stringbuilder.toString()) > width - extraWidth);
+            }
         }
-        return stringbuilder + (stringbuilder.toString().equals(text)? "" : "...");
+        return (more && reverse && !stringbuilder.toString().equals(text)? "..." : "") + stringbuilder + (more && !reverse && !stringbuilder.toString().equals(text)? "..." : "");
     }
 
     /**
@@ -112,6 +115,23 @@ public class UFontRenderer extends FontRenderer {
     public int drawString(String text, float x, float y, int color) {
         this.drawString(text, x, y, color, false);
         return getStringWidth(text);
+    }
+
+    /**
+     * Automatically 换行
+     * @return Actual rows that are rendered.
+     */
+    public float drawFitString(String text, float x, float y, float maxWidth, int maxRows, float gap, int color) {
+        float currentY = y;
+        int row = 1;
+        while (row <= maxRows) {
+            String toRender = trimString(text, maxWidth, row == maxRows, false);
+            text = text.replace(toRender.replace("...", ""), "");
+            drawString(toRender, x, currentY, color);
+            currentY += toRender.isEmpty()? 0 : getHeight() + gap;
+            row++;
+        }
+        return currentY;
     }
 
     public int drawStringCapableWithEmoji(String text, float x, float y, int color) {

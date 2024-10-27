@@ -121,7 +121,6 @@ public class ShaderUtil {
         GLUtil.endBlend();
     }
 
-
     public static void drawRoundTextured(float x, float y, float width, float height, float radius, float alpha) {
         RenderUtil.resetColor();
         RenderUtil.setAlphaLimit(0);

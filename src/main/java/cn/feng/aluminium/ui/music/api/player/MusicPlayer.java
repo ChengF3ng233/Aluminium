@@ -68,6 +68,14 @@ public class MusicPlayer {
         mediaPlayer.play();
     }
 
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
     public void play() {
         if (available()) {
             mediaPlayer.play();

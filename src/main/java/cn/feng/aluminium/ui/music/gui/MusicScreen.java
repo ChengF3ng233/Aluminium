@@ -1,10 +1,10 @@
 package cn.feng.aluminium.ui.music.gui;
 
 import cn.feng.aluminium.ui.music.Theme;
-import cn.feng.aluminium.ui.music.gui.component.impl.composed.NavigationComponent;
-import cn.feng.aluminium.ui.music.gui.component.impl.text.SearchComponent;
 import cn.feng.aluminium.ui.music.gui.component.impl.composed.CategorySidebar;
+import cn.feng.aluminium.ui.music.gui.component.impl.composed.NavigationComponent;
 import cn.feng.aluminium.ui.music.gui.component.impl.composed.PlayerComponent;
+import cn.feng.aluminium.ui.music.gui.component.impl.text.SearchComponent;
 import cn.feng.aluminium.ui.music.gui.page.Page;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.util.render.RenderUtil;
@@ -30,13 +30,16 @@ public class MusicScreen extends GuiScreen {
     // 页面
     private Page currentPage = Pages.recommendPage;
 
-    public void changePage(Page newPage) {
+    public void changePage(Page newPage, boolean reverse) {
+        if (newPage == currentPage) return;
         if (currentPage.getParent() != newPage) {
             newPage.setParent(currentPage);
         }
         if (newPage.getChild() != currentPage) {
             currentPage.setChild(newPage);
         }
+        newPage.onOpen(reverse);
+        currentPage.onClose(reverse);
         currentPage = newPage;
         navigationComponent.onChangePage();
     }
@@ -62,7 +65,7 @@ public class MusicScreen extends GuiScreen {
         categorySidebar.update(x, y + topHeight, 40, height - topHeight, mouseX, mouseY);
         currentPage.update(x + 45f, y + topHeight + 5f, width - 50f, height - topHeight - 10f, mouseX, mouseY);
         playerComponent.update(x + width / 2f - 175f, y + height - 50f, 350f, 35f, mouseX, mouseY);
-        navigationComponent.update(x + 10f, y + 10f, 45f, 18f, mouseX, mouseY);
+        navigationComponent.update(x + 10f, y + 10f, 35f, 18f, mouseX, mouseY);
         searchComponent.update(x + 50f, y + 10f, 85f, 13f, mouseX, mouseY);
 
         // 避免叠加交互
@@ -110,8 +113,15 @@ public class MusicScreen extends GuiScreen {
         categorySidebar.mouseClicked(mouseX, mouseY, mouseButton);
         playerComponent.mouseClicked(mouseX, mouseY, mouseButton);
         navigationComponent.mouseClicked(mouseX, mouseY, mouseButton);
+        searchComponent.mouseClicked(mouseX, mouseY, mouseButton);
 
         // 当前页面
         currentPage.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+        searchComponent.keyTyped(typedChar, keyCode);
     }
 }

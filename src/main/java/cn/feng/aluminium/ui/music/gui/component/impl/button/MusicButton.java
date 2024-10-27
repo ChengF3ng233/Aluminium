@@ -52,7 +52,7 @@ public class MusicButton extends Component {
         rippleList.removeIf(Ripple::isFinished);
 
         // Info
-        if (Aluminium.INSTANCE.musicManager.getPlayer().getMusic() == music) {
+        if (Aluminium.INSTANCE.musicManager.getPlayer().getMusic() == music && Aluminium.INSTANCE.musicManager.getPlayer().getPlaylist() == parent) {
             RenderUtil.drawImage(ResourceUtil.getResource("equalizer.png", ResourceType.ICON), x + 5f, textY - 4f, 8f, 8f);
         } else {
             poppins.drawCenteredStringV((parent.getMusicList().indexOf(music) + 1) + "", x + 5f, textY + 1f, new Color(170, 170, 170, 170).getRGB());
@@ -69,6 +69,7 @@ public class MusicButton extends Component {
             if (!timer.hasTimeElapsed(1000)) {
                 Aluminium.INSTANCE.musicManager.getPlayer().setMusic(music);
                 Aluminium.INSTANCE.musicManager.getPlayer().setMusicList(parent.getMusicList());
+                Aluminium.INSTANCE.musicManager.getPlayer().setPlaylist(parent);
             }
             timer.reset();
             rippleList.add(new Ripple(System.currentTimeMillis(), mouseX, mouseY, width));

@@ -1410,7 +1410,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
     private void updateFramebufferSize() {
         this.framebufferMc.createBindFramebuffer(this.displayWidth, this.displayHeight);
-
         if (this.entityRenderer != null) {
             this.entityRenderer.updateShaderGroupSize(this.displayWidth, this.displayHeight);
         }

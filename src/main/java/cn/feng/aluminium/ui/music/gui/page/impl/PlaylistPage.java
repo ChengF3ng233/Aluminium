@@ -46,17 +46,24 @@ public class PlaylistPage extends Page {
 
     @Override
     public void render() {
-        UFontRenderer noto = FontManager.noto(15);
+        preRender();
+        RenderUtil.scissorStart(x, y, width, height);
         if (playlist != null) {
-            RenderUtil.bindTexture(playlist.getCoverImage());
+            RenderUtil.bindTexture(playlist.getCover().getCoverImage());
             ShaderUtil.drawRoundTextured(x + 5f, y + 5f, 100f, 100f, 3f, 1f);
-            FontManager.notoBold(50).drawString(playlist.getTitle(), x + 110f, y + 7f, Color.WHITE.darker().getRGB());
-            FontManager.notoBold(16).drawString(playlist.getAuthor(), x + 110f, y + 50f, Color.WHITE.getRGB());
-            FontManager.notoBold(16).drawString(playlist.getDescription(), x + 110f, y + 65f, Color.WHITE.darker().darker().getRGB());
+            float titleY = FontManager.notoBold(45).drawFitString(playlist.getTitle(), x + 110f, y + 7f, width - 115f, 2, 3f, Color.WHITE.darker().getRGB());
+            if (playlist.getAuthor() != null) {
+                FontManager.notoBold(16).drawString(playlist.getAuthor(), x + 110f, titleY + 10f, Color.WHITE.getRGB());
+            }
+            if (playlist.getDescription() != null) {
+                FontManager.notoBold(16).drawString(playlist.getDescription(), x + 110f, titleY + 25f, Color.WHITE.darker().darker().getRGB());
+            }
         } else {
             ShaderUtil.drawGradientCornerLR(x + 5f, y + 5f, 100f, 100f, 3f, ColorUtil.fade(5, 1, Theme.layerBackground, 0.7f), ColorUtil.fade(5, 3, Theme.layerBackground, 0.7f));
         }
         component.render();
+        RenderUtil.scissorEnd();
+        postRender();
     }
 
     @Override

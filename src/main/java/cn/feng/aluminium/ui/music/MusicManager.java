@@ -16,6 +16,7 @@ import java.util.Map;
  * @since 2024/9/16
  **/
 public class MusicManager {
+    public long likeId;
     private final Map<Long, Music> musicMap = new HashMap<>();
     private final Map<Long, Album> albumMap = new HashMap<>();
     private final Map<Long, Playlist> playlistMap = new HashMap<>();

@@ -1,6 +1,5 @@
 package cn.feng.aluminium.ui.music.api.bean;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,31 +13,34 @@ public class Playlist {
 
     // Display information
     private final String title;
-    private final String description;
-    private final String author;
-    private final String coverUrl;
-    private BufferedImage coverImage;
-
     // Content
     private final List<Music> musicList = new ArrayList<>();
+    private String description;
+    private String author;
+    private Cover cover;
     private boolean completelyDownloaded;
 
-    public Playlist(long id, String title, String description, String author, String coverUrl, BufferedImage coverImage) {
+    public Playlist(long id, String title, String description, String author, Cover cover) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.author = author;
-        this.coverUrl = coverUrl;
-        this.coverImage = coverImage;
+        this.cover = cover;
     }
-    public Playlist(long id, String title, String description, String author, String coverUrl, BufferedImage coverImage, List<Music> musicList) {
+
+    public Playlist(long id, String title, String description, String author, Cover cover, List<Music> musicList) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.author = author;
-        this.coverUrl = coverUrl;
-        this.coverImage = coverImage;
+        this.cover = cover;
         this.musicList.addAll(musicList);
+    }
+
+    public Playlist(long id, String title, Cover cover) {
+        this.id = id;
+        this.title = title;
+        this.cover = cover;
     }
 
     public long getId() {
@@ -53,24 +55,28 @@ public class Playlist {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getAuthor() {
         return author;
     }
 
-    public String getCoverUrl() {
-        return coverUrl;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public BufferedImage getCoverImage() {
-        return coverImage;
+    public Cover getCover() {
+        return cover;
+    }
+
+    public void setCover(Cover cover) {
+        this.cover = cover;
     }
 
     public List<Music> getMusicList() {
         return musicList;
-    }
-
-    public void setCoverImage(BufferedImage coverImage) {
-        this.coverImage = coverImage;
     }
 
     public boolean isCompletelyDownloaded() {

@@ -25,6 +25,10 @@ public class Movable {
 
     }
 
+    public void keyTyped(char c, int keyCode) {
+
+    }
+
     public int getMouseX() {
         return mouseX;
     }

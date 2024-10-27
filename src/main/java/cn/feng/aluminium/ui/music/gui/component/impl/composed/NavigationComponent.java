@@ -18,7 +18,7 @@ public class NavigationComponent extends Component {
         back.setAction(() -> {
             MusicScreen screen = Aluminium.INSTANCE.musicManager.getScreen();
             if (screen.getCurrentPage().getParent() != null) {
-                screen.changePage(screen.getCurrentPage().getParent());
+                screen.changePage(screen.getCurrentPage().getParent(), true);
                 back.setAvailable(screen.getCurrentPage().getParent() != null);
                 forward.setAvailable(screen.getCurrentPage().getChild() != null);
             }
@@ -27,7 +27,7 @@ public class NavigationComponent extends Component {
         forward.setAction(() -> {
             MusicScreen screen = Aluminium.INSTANCE.musicManager.getScreen();
             if (screen.getCurrentPage().getChild() != null) {
-                screen.changePage(screen.getCurrentPage().getChild());
+                screen.changePage(screen.getCurrentPage().getChild(), false);
 
                 back.setAvailable(screen.getCurrentPage().getParent() != null);
                 forward.setAvailable(screen.getCurrentPage().getChild() != null);
@@ -45,7 +45,7 @@ public class NavigationComponent extends Component {
     public void update(float x, float y, float width, float height, int mouseX, int mouseY) {
         super.update(x, y, width, height, mouseX, mouseY);
         back.update(x, y, height, height, mouseX, mouseY);
-        forward.update(x + (width - height * 2f), y, height, height, mouseX, mouseY);
+        forward.update(x + width - height, y, height, height, mouseX, mouseY);
     }
 
     @Override

@@ -69,7 +69,7 @@ public class PlaylistComponent extends Component {
             buttonY += 25f;
         }
 
-        maxScroll = Math.max(buttonY - (y + scrollAnimation.getOutput().floatValue()) + 50f - height, 0);
+        maxScroll = Math.max(buttonY - (y + scrollAnimation.getOutput().floatValue()) + 60f - height, 0);
         handleScroll();
 
         if (thread != null && !thread.isAlive()) {
@@ -95,24 +95,28 @@ public class PlaylistComponent extends Component {
     @Override
     public void render() {
         UFontRenderer noto = FontManager.noto(15);
+        RenderUtil.scissorStart(x, y, width, height);
         FontManager.poppins(15).drawString("#", x + 10f, y + 2.5f, new Color(150, 150,150, 200).getRGB());
         noto.drawString("标题", x + 20f + 5f, y, new Color(150, 150,150, 200).getRGB());
         noto.drawString("音乐家", x + 100f + 5f, y, new Color(150, 150,150, 200).getRGB());
         noto.drawString("专辑", x + 230f + 5f, y, new Color(150, 150,150, 200).getRGB());
         noto.drawString("时长", x + 350f + 5f, y, new Color(150, 150,150, 200).getRGB());
         if (musicButtonList.isEmpty()) {
-            FontManager.notoBold(20).drawCenteredString("加载中...", x + width / 2f, y + 15f, Color.WHITE.getRGB());
-            return;
-        }
-        List<MusicButton> currentList = new ArrayList<>(musicButtonList);
-        RenderUtil.scissorStart(x, y + 15f, width, height - 15f);
-        for (MusicButton musicButton : currentList) {
-            if (musicButton.getY() + musicButton.getHeight() < y + 15f) continue;
-            if (musicButton.getY() > y + height) break;
-            musicButton.render();
+            FontManager.notoBold(20).drawCenteredString("加载中...", x + width / 2f, y + 20f, Color.WHITE.getRGB());
+        } else {
+            RenderUtil.scissorStart(x, y + 15f, width, height - 15f);
+            ShaderUtil.drawGradientVertical(x, y + 15f, width, 10f, 0f, new Color(0, 0, 0, 50), new Color(0, 0, 0, 0));
+            List<MusicButton> currentList = new ArrayList<>(musicButtonList);
+            for (MusicButton musicButton : currentList) {
+                if (musicButton.getY() + musicButton.getHeight() < y + 15f) continue;
+                if (musicButton.getY() > y + height) break;
+                musicButton.render();
+            }
+            MusicButton last = currentList.get(currentList.size() - 1);
+            FontManager.notoBold(15).drawCenteredString(playlist.isCompletelyDownloaded()? "已经到底了" : "正在加载更多...", x + width / 2f, last.getY() + last.getHeight() + 2f, new Color(200, 200, 200, 200).getRGB());
+            RenderUtil.scissorEnd();
         }
         RenderUtil.scissorEnd();
-        ShaderUtil.drawGradientVertical(x, y + 15f, width, 10f, 0f, new Color(0, 0, 0, 50), new Color(0, 0, 0, 0));
     }
 
     @Override

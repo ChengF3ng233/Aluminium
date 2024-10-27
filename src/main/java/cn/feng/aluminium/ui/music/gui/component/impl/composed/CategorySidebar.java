@@ -1,7 +1,6 @@
 package cn.feng.aluminium.ui.music.gui.component.impl.composed;
 
 import cn.feng.aluminium.Aluminium;
-import cn.feng.aluminium.ui.music.Theme;
 import cn.feng.aluminium.ui.music.gui.component.Component;
 import cn.feng.aluminium.ui.music.gui.component.impl.button.CategoryButton;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
@@ -14,6 +13,7 @@ import cn.feng.aluminium.util.data.ResourceUtil;
 import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.blur.BlurUtil;
+import cn.feng.aluminium.util.render.blur.GaussianBlur;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
 
 import java.awt.*;
@@ -26,12 +26,11 @@ public class CategorySidebar extends Component {
     private final ColorAnimation backgroundColor;
 
     public CategorySidebar() {
-        buttons.add(new CategoryButton(ResourceUtil.getResource("home.png", ResourceType.ICON), "个性推荐", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.recommendPage)));
-        buttons.add(new CategoryButton(ResourceUtil.getResource("person.png", ResourceType.ICON), "专属定制", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.recommendPage)));
-        buttons.add(new CategoryButton(ResourceUtil.getResource("library_music.png", ResourceType.ICON), "歌单", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.recommendPage)));
-        buttons.add(new CategoryButton(ResourceUtil.getResource("favorite_fill.png", ResourceType.ICON), "我喜欢的音乐", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.recommendPage)));
-        buttons.add(new CategoryButton(ResourceUtil.getResource("cloud.png", ResourceType.ICON), "我的音乐云盘", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.cloudPage)));
-        buttons.add(new CategoryButton(ResourceUtil.getResource("person.png", ResourceType.ICON), "个人主页", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.userPage)));
+        buttons.add(new CategoryButton(ResourceUtil.getResource("home.png", ResourceType.ICON), "个性推荐", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.recommendPage, false)));
+        buttons.add(new CategoryButton(ResourceUtil.getResource("person.png", ResourceType.ICON), "专属定制", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.customPage, false)));
+        buttons.add(new CategoryButton(ResourceUtil.getResource("favorite_fill.png", ResourceType.ICON), "我喜欢的音乐", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.likePage, false)));
+        buttons.add(new CategoryButton(ResourceUtil.getResource("cloud.png", ResourceType.ICON), "我的音乐云盘", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.cloudPage, false)));
+        buttons.add(new CategoryButton(ResourceUtil.getResource("person.png", ResourceType.ICON), "个人主页", () -> Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.userPage, false)));
         expandAnimation = new DecelerateAnimation(200, 1.0d, Direction.BACKWARDS);
         backgroundColor = new ColorAnimation(ColorUtil.TRANSPARENT_COLOR, ColorUtil.TRANSPARENT_COLOR, 200);
     }
@@ -56,9 +55,9 @@ public class CategorySidebar extends Component {
                 expandAnimation.changeDirection();
                 backgroundColor.change(ColorUtil.applyOpacity(new Color(20, 20, 20), 0.5f));
             }
-            BlurUtil.processStart();
-            ShaderUtil.drawVaryingRound(x + 10f, y, width - 10f, height - 5f, 0f, 5f, 5f, 0f, Color.BLACK);
-            BlurUtil.blurEnd(2, 2);
+            GaussianBlur.startBlur();
+            ShaderUtil.drawVaryingRound(x,  y, width, height, 0f, 5f, 5f, 0f, Color.BLACK);
+            GaussianBlur.endBlur(20, 2);
         } else {
             if (expandAnimation.getDirection().forwards()) {
                 expandAnimation.changeDirection();

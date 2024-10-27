@@ -29,8 +29,10 @@ public class CloudPage extends Page {
 
     @Override
     public void render() {
+        preRender();
         FontManager.notoBold(35).drawString("我的音乐云盘", x + 5f, y + 5f, Color.WHITE.getRGB());
         component.render();
+        postRender();
     }
 
     @Override

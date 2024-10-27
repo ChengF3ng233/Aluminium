@@ -57,7 +57,7 @@ public class PlayerComponent extends Component {
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
 
         if (player.available()) {
-            RenderUtil.bindTexture(player.getMusic().getAlbum().getCoverImage());
+            RenderUtil.bindTexture(player.getMusic().getAlbum().getCover().getCoverImage());
             ShaderUtil.drawRoundTextured(x + 5f, y + 5f, height - 10f, height - 10f, 3f, 1f);
             FontManager.notoBold(15).drawString(player.getMusic().getTitle(), x + (height - 10f) + 8f, y + 8f, Color.WHITE.getRGB());
             FontManager.noto(15).drawString(player.getMusic().getArtist(), x + (height - 10f) + 8f, y + 17f, Color.WHITE.getRGB());

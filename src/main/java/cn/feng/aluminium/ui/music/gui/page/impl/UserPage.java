@@ -27,6 +27,7 @@ public class UserPage extends Page {
 
     @Override
     public void render() {
+        preRender();
         // Launch thread
         User user = Aluminium.INSTANCE.musicManager.getUser();
 
@@ -75,6 +76,7 @@ public class UserPage extends Page {
             String age = timeBetween.getYears() + "年" + timeBetween.getMonths() + "月" + timeBetween.getDays() + "天";
             FontManager.noto(15).drawCenteredStringH("lv." + user.getLevel() + "  |  听过 " + user.getListenedSongs() + " 首歌  |  村龄 " + age, centerX, y + 95f, Theme.layerBackground.getRGB());
         }
+        postRender();
     }
 
     public void logout() {
@@ -83,7 +85,7 @@ public class UserPage extends Page {
             qrCode = null;
             Aluminium.INSTANCE.musicManager.getUser().logout();
             MusicApi.logout();
-            Aluminium.INSTANCE.musicManager.getScreen().changePage(this);
+            Aluminium.INSTANCE.musicManager.getScreen().changePage(this, false);
         }).start();
     }
 }
