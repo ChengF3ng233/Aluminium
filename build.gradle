@@ -34,7 +34,6 @@ dependencies {
 
     // Music process
     implementation 'org.jflac:jflac-codec:1.5.2'
-    implementation 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
 
 
     // Vanilla Minecraft Libraries
