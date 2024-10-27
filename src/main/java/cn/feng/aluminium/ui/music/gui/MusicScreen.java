@@ -7,10 +7,13 @@ import cn.feng.aluminium.ui.music.gui.component.impl.composed.PlayerComponent;
 import cn.feng.aluminium.ui.music.gui.component.impl.text.SearchComponent;
 import cn.feng.aluminium.ui.music.gui.page.Page;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
+import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
+import cn.feng.aluminium.util.render.blur.GaussianBlur;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
 import net.minecraft.client.gui.GuiScreen;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class MusicScreen extends GuiScreen {
@@ -59,7 +62,10 @@ public class MusicScreen extends GuiScreen {
         }
 
         // 窗口背景
-        ShaderUtil.drawGradientVertical(x, y, width, height, 5f, Theme.windowTop, Theme.windowBottom);
+        GaussianBlur.startBlur();
+        ShaderUtil.drawRound(x, y, width, height, 3f, Color.BLACK);
+        GaussianBlur.endBlur(15, 2);
+        ShaderUtil.drawGradientVertical(x, y, width, height, 3f, ColorUtil.applyOpacity(Theme.windowTop, 0.8f), ColorUtil.applyOpacity(Theme.windowBottom, 0.5f));
 
         // 更新组件坐标
         categorySidebar.update(x, y + topHeight, 40, height - topHeight, mouseX, mouseY);
@@ -103,6 +109,8 @@ public class MusicScreen extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if (!RenderUtil.hovering(mouseX, mouseY, x, y, width, height)) return;
+
         if (RenderUtil.hovering(mouseX, mouseY, x, y, width, topHeight) && mouseButton == 0) {
             isDragging = true;
             lastMouseX = mouseX;
@@ -116,7 +124,9 @@ public class MusicScreen extends GuiScreen {
         searchComponent.mouseClicked(mouseX, mouseY, mouseButton);
 
         // 当前页面
-        currentPage.mouseClicked(mouseX, mouseY, mouseButton);
+        if (RenderUtil.hovering(mouseX, mouseY, currentPage.getX(), currentPage.getY(), currentPage.getWidth(), currentPage.getHeight())) {
+            currentPage.mouseClicked(mouseX, mouseY, mouseButton);
+        }
     }
 
     @Override

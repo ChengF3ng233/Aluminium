@@ -13,6 +13,7 @@ import cn.feng.aluminium.util.data.ResourceType;
 import cn.feng.aluminium.util.data.ResourceUtil;
 import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
+import cn.feng.aluminium.util.render.blur.BlurUtil;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
 
 import java.awt.*;

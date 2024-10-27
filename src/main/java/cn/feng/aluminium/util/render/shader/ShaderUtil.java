@@ -16,7 +16,6 @@ public class ShaderUtil {
     private static final Shader roundedOutlineShader = new Shader("roundRectOutline");
     private static final Shader roundedTexturedShader = new Shader("roundRectTexture");
     private static final Shader roundedGradientShader = new Shader("roundedRectGradient");
-    private static final Shader circleShader = new Shader("circle");
 
     public static void drawGradientHorizontal(float x, float y, float width, float height, float radius, Color left, Color right) {
         drawGradientRound(x, y, width, height, radius, left, left, right, right);
@@ -68,6 +67,10 @@ public class ShaderUtil {
         Shader.drawQuads(x, y, width, height);
         roundedShader.unload();
         GLUtil.endBlend();
+    }
+
+    public static void init() {
+
     }
 
     public static void drawCircle(float centerX, float centerY, float radius, Color color) {

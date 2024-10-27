@@ -57,7 +57,7 @@ public class CategorySidebar extends Component {
             }
             GaussianBlur.startBlur();
             ShaderUtil.drawVaryingRound(x,  y, width, height, 0f, 5f, 5f, 0f, Color.BLACK);
-            GaussianBlur.endBlur(20, 2);
+            GaussianBlur.endBlur(15, 2);
         } else {
             if (expandAnimation.getDirection().forwards()) {
                 expandAnimation.changeDirection();

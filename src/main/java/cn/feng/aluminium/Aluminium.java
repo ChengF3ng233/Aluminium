@@ -5,6 +5,7 @@ import cn.feng.aluminium.event.EventManager;
 import cn.feng.aluminium.module.ModuleManager;
 import cn.feng.aluminium.ui.UIManager;
 import cn.feng.aluminium.ui.music.MusicManager;
+import cn.feng.aluminium.util.render.shader.ShaderUtil;
 
 /**
  * @author ChengFeng
@@ -30,6 +31,8 @@ public class Aluminium {
         moduleManager.init();
         musicManager.init();
         configManager.loadConfigs();
+
+        ShaderUtil.init();
     }
 
     public void stop() {

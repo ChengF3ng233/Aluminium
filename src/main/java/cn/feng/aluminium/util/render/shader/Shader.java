@@ -68,9 +68,6 @@ public class Shader extends Util {
                 case "arc":
                     fragmentShaderID = createShader(new ByteArrayInputStream(arc.getBytes()), GL_FRAGMENT_SHADER);
                     break;
-                case "circle":
-                    fragmentShaderID = createShader(new ByteArrayInputStream(circle.getBytes()), GL_FRAGMENT_SHADER);
-                    break;
                 default:
                     fragmentShaderID = createShader(mc.getResourceManager().getResource(new ResourceLocation(fragmentShaderLoc)).getInputStream(), GL_FRAGMENT_SHADER);
                     break;
@@ -541,31 +538,6 @@ public class Shader extends Util {
             "\n" +
             "    // 平滑的 alpha 计算 (抗锯齿)\n" +
             "    float smoothedAlpha = (1.0 - smoothstep(0.0, 1.0, roundSDF(rectHalf - pos, rectHalf - radius - 1.0, radius))) * color.a;\n" +
-            "    gl_FragColor = vec4(color.rgb, smoothedAlpha);\n" +
-            "}\n";
-
-    private final String circle = "#version 120\n" +
-            "\n" +
-            "uniform vec2 center;  // 圆心坐标 (x, y)\n" +
-            "uniform float radius; // 圆的半径\n" +
-            "uniform vec4 color;   // 颜色 (包括透明度)\n" +
-            "\n" +
-            "float circleSDF(vec2 p, vec2 center, float radius) {\n" +
-            "    // 计算当前位置和圆心的距离，返回 SDF 值\n" +
-            "    return length(p - center) - radius;\n" +
-            "}\n" +
-            "\n" +
-            "void main() {\n" +
-            "    // 获取当前片段的位置\n" +
-            "    vec2 p = gl_TexCoord[0].st;\n" +
-            "\n" +
-            "    // 计算 signed distance function (SDF)\n" +
-            "    float dist = circleSDF(p, center, radius);\n" +
-            "\n" +
-            "    // 平滑的 alpha 值，用于抗锯齿\n" +
-            "    float smoothedAlpha = smoothstep(0.0, 1.0, -dist);\n" +
-            "\n" +
-            "    // 设置片段颜色，包括平滑的 alpha 值\n" +
             "    gl_FragColor = vec4(color.rgb, smoothedAlpha);\n" +
             "}\n";
 }
