@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import cn.feng.aluminium.Aluminium;
+import cn.feng.aluminium.event.events.EventChatGUI;
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.play.client.C14PacketTabComplete;
@@ -255,6 +257,7 @@ public class GuiChat extends GuiScreen {
 
         super.drawScreen(mouseX, mouseY, partialTicks);
         GlStateManager.popMatrix();
+        Aluminium.INSTANCE.eventManager.call(new EventChatGUI(mouseX, mouseY));
     }
 
     public void onAutocompleteResponse(String[] p_146406_1_) {

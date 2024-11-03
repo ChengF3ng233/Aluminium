@@ -18,25 +18,25 @@ project.ext.lwjglNatives = "natives-windows"
 dependencies {
     // LWJGL
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
-
     implementation "org.lwjgl:lwjgl"
     implementation "org.lwjgl:lwjgl-glfw"
+    implementation "org.lwjgl:lwjgl-nanovg"
     implementation "org.lwjgl:lwjgl-openal"
     implementation "org.lwjgl:lwjgl-opengl"
+    implementation "org.lwjgl:lwjgl-stb"
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 
+    // Music player
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '5.0.0-alpha.14'
-
+    implementation 'org.jflac:jflac-codec:1.5.2'
     implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
 
-    // Music process
-    implementation 'org.jflac:jflac-codec:1.5.2'
-
-
-    // Vanilla Minecraft Libraries
+    // Vanilla Minecraft libraries
     implementation group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.3.3'
     implementation group: 'com.paulscode', name: 'codecjorbis', version: '20101023'
     implementation group: 'com.paulscode', name: 'codecwav', version: '20101023'

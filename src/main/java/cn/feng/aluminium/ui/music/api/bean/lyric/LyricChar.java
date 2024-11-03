@@ -15,6 +15,18 @@ public class LyricChar {
         this.duration = duration;
     }
 
+    public boolean match(float time) {
+        return startTime <= time && startTime + duration >= time;
+    }
+
+    public boolean before(float time) {
+        return startTime + duration < time;
+    }
+
+    public boolean after(float time) {
+        return startTime > time;
+    }
+
     public String getCharacter() {
         return character;
     }

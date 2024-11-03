@@ -1,5 +1,6 @@
 package cn.feng.aluminium.ui.music.api.bean;
 
+import cn.feng.aluminium.ui.music.api.bean.lyric.Lyric;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import java.util.Map;
 public class Music {
     // Metadata
     private final long id;
-    private boolean hasTranslate;
 
     // Display information
     private final String title;
@@ -22,10 +22,8 @@ public class Music {
     private final Album album;
     private final int duration;
 
-    // Lyric information
-    private final List<LyricLine> lyricLines = new ArrayList<>();
-    private final List<LyricLine> translateLines = new ArrayList<>();
-    private final Map<LyricLine, LyricLine> translateMap = new HashMap<>();
+    // Lyric
+    private Lyric lyric;
 
     public Music(long id, String title, String artist, Album album, int duration) {
         this.id = id;
@@ -37,10 +35,6 @@ public class Music {
 
     public long getId() {
         return id;
-    }
-
-    public boolean isHasTranslate() {
-        return hasTranslate;
     }
 
     public String getTitle() {
@@ -59,19 +53,11 @@ public class Music {
         return duration;
     }
 
-    public List<LyricLine> getLyricLines() {
-        return lyricLines;
+    public void setLyric(Lyric lyric) {
+        this.lyric = lyric;
     }
 
-    public List<LyricLine> getTranslateLines() {
-        return translateLines;
-    }
-
-    public Map<LyricLine, LyricLine> getTranslateMap() {
-        return translateMap;
-    }
-
-    public void setHasTranslate(boolean hasTranslate) {
-        this.hasTranslate = hasTranslate;
+    public Lyric getLyric() {
+        return lyric;
     }
 }

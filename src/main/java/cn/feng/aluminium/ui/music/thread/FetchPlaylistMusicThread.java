@@ -29,14 +29,14 @@ public class FetchPlaylistMusicThread extends Thread {
         try {
             switch (type) {
                 case CLOUD: {
-                    result = MusicApi.fetchCloudMusics(playlist);
+                    result = MusicApi.loadCloudMusic(playlist);
                     break;
                 }
 
                 case LIKED:
                 case SEARCH:
                 case NORMAL: {
-                    result = MusicApi.fetchMusicList(playlist);
+                    result = MusicApi.loadPlaylist(playlist);
                 }
             }
             result.removeIf(it -> playlist.getMusicList().contains(it));

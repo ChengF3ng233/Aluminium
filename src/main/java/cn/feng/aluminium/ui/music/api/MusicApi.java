@@ -6,6 +6,8 @@ import cn.feng.aluminium.ui.music.api.bean.*;
 import cn.feng.aluminium.ui.music.api.bean.login.LoginResult;
 import cn.feng.aluminium.ui.music.api.bean.login.LoginState;
 import cn.feng.aluminium.ui.music.api.bean.login.QRCode;
+import cn.feng.aluminium.ui.music.api.bean.lyric.Lyric;
+import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.data.DataUtil;
@@ -20,8 +22,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.*;
 
 import static cn.feng.aluminium.util.data.HttpUtil.downloadImage;
@@ -34,8 +34,7 @@ public class MusicApi extends Util {
     private static final String host = "https://music.skidder.top";
 
     public static String fetch(String api, String cookie) {
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7897));
-        OkHttpClient client = new OkHttpClient.Builder()/*.proxy(proxy)*/.build();
+        OkHttpClient client = new OkHttpClient.Builder().build();
         RequestBody body = new FormBody.Builder()
                 .add("cookie", cookie)
                 .build();
@@ -72,6 +71,7 @@ public class MusicApi extends Util {
         long id = musicObj.get("id").getAsLong();
         if (Aluminium.INSTANCE.musicManager.getMusicMap().containsKey(id))
             return Aluminium.INSTANCE.musicManager.getMusicMap().get(id);
+
         StringBuilder artist = new StringBuilder();
         for (JsonElement e : musicObj.get(formatted ? "artists" : "ar").getAsJsonArray()) {
             JsonObject artistObj = e.getAsJsonObject();
@@ -80,6 +80,7 @@ public class MusicApi extends Util {
         if (artist.length() == 0) {
             artist.append("未知音乐家");
         } else artist.deleteCharAt(artist.length() - 1);
+
         int duration = musicObj.get(formatted ? "duration" : "dt").getAsInt();
         Album album = parseAlbum(musicObj.get(formatted ? "album" : "al").getAsJsonObject(), !formatted);
         Music music = new Music(
@@ -90,10 +91,11 @@ public class MusicApi extends Util {
                 duration
         );
         Aluminium.INSTANCE.musicManager.getMusicMap().put(id, music);
+
         return music;
     }
 
-    public static List<Music> fetchMusicList(Playlist playList) throws IOException {
+    public static List<Music> loadPlaylist(Playlist playList) throws IOException {
         JsonObject object = fetchObject("/playlist/track/all?id=" + playList.getId() + "&offset=" + playList.getMusicList().size());
         JsonArray songs = object.get("songs").getAsJsonArray();
 
@@ -112,7 +114,7 @@ public class MusicApi extends Util {
         return musics;
     }
 
-    public static Playlist getCloudMusics() {
+    public static Playlist getCloudMusic() {
         JsonArray data = fetchArray("/user/cloud", "data");
         List<Music> musics = new ArrayList<>();
         for (JsonElement e : data) {
@@ -122,7 +124,7 @@ public class MusicApi extends Util {
         return new Playlist(-1, "我的音乐云盘", "你的网易云云盘", Aluminium.INSTANCE.musicManager.getUser().getNickname(), musics.get(0).getAlbum().getCover(), musics);
     }
 
-    public static List<Music> fetchCloudMusics(Playlist playlist) {
+    public static List<Music> loadCloudMusic(Playlist playlist) {
         JsonArray songs = fetchArray("/user/cloud?offset=" + playlist.getMusicList().size(), "data");
         if (songs.size() == 0) {
             playlist.setCompletelyDownloaded(true);
@@ -166,7 +168,7 @@ public class MusicApi extends Util {
         return playlist;
     }
 
-    public static List<Playlist> getRadarPlaylists() {
+    public static List<Playlist> getRadars() {
         JsonArray array = fetchObjectArray("/homepage/block/page", "data", "blocks");
         List<Playlist> result = new ArrayList<>();
         for (JsonElement e : array) {
@@ -241,7 +243,7 @@ public class MusicApi extends Util {
         return result;
     }
 
-    public static List<Playlist> getPersonalizedPlaylists() {
+    public static List<Playlist> getPersonalized() {
         List<Playlist> result = new ArrayList<>();
         for (JsonElement e : fetchArray("/personalized", "result")) {
             JsonObject obj = e.getAsJsonObject();
@@ -281,7 +283,46 @@ public class MusicApi extends Util {
         return result;
     }
 
-    public static List<Playlist> getRecommendedPlaylists() throws IOException {
+    public static Lyric getLyric(Music music) {
+        JsonObject obj = fetchObject("/lyric/new?id=" + music.getId());
+        boolean verbatim = obj.has("yrc") && !obj.get("yrc").getAsJsonObject().get("lyric").getAsString().isEmpty();
+
+        Lyric lyric = new Lyric(music, verbatim);
+        String lyricString = obj.get(verbatim? "yrc" : "lrc").getAsJsonObject().get("lyric").getAsString();
+        String translateString = "";
+
+        if (obj.has("ytlrc") && verbatim) {
+            translateString = obj.get("ytlrc").getAsJsonObject().get("lyric").getAsString();
+        } else if (obj.has("tlyric") && !verbatim) {
+            translateString = obj.get("tlyric").getAsJsonObject().get("lyric").getAsString();
+        }
+
+        for (String line : lyricString.split("\n")) {
+            if (line.isEmpty()) continue;
+
+            // 创作者数据
+            if (line.startsWith("{")) {
+                lyric.getLyricLines().add(LyricLine.parseMetadata(line));
+            } else {
+                if (verbatim) {
+                    // 逐字歌词
+                    lyric.getLyricLines().add(LyricLine.parseYrc(line));
+                } else {
+                    // 普通歌词
+                    lyric.getLyricLines().add(LyricLine.parseLrc(line));
+                }
+            }
+        }
+
+        if (!translateString.isEmpty()) {
+            lyric.setTranslated(true);
+        } else lyric.setTranslated(false);
+
+        lyric.init();
+        return lyric;
+    }
+
+    public static List<Playlist> getRecommended() throws IOException {
         JsonArray playlistArray = fetchArray("/recommend/resource", "recommend");
 
         List<Playlist> result = new ArrayList<>();
@@ -394,7 +435,6 @@ public class MusicApi extends Util {
             throw new RuntimeException(e);
         }
     }
-
 
     public static LoginResult getLoginResult(String key) {
         JsonObject object = fetchObject("/login/qr/check?key=" + key);

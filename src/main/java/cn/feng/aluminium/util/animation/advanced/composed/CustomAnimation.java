@@ -3,6 +3,7 @@ package cn.feng.aluminium.util.animation.advanced.composed;
 import cn.feng.aluminium.util.animation.advanced.Animation;
 import cn.feng.aluminium.util.animation.advanced.ComposedAnimation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -42,11 +43,13 @@ public class CustomAnimation extends ComposedAnimation<Double> {
     }
 
     public void setEndPoint(double endPoint) {
+        if (this.endPoint == endPoint) return;
         this.endPoint = endPoint;
         this.animation.setEndPoint(this.endPoint - this.startPoint);
     }
 
     public void setEndPoint(double endPoint, boolean reset) {
+        if (this.endPoint == endPoint) return;
         if (reset) {
             startPoint = getOutput();
         }
@@ -77,7 +80,11 @@ public class CustomAnimation extends ComposedAnimation<Double> {
 
     private void createAnimation(Class<? extends Animation> animationClass, int ms, double startPoint, double endPoint, Direction direction) {
         try {
-            this.animation = animationClass.getConstructor(int.class, double.class, Direction.class).newInstance(ms, endPoint - startPoint, direction);
+            if (animationClass == EaseBackIn.class) {
+                this.animation = animationClass.getConstructor(int.class, double.class, float.class, Direction.class).newInstance(ms, endPoint - startPoint, 2f, direction);
+            } else {
+                this.animation = animationClass.getConstructor(int.class, double.class, Direction.class).newInstance(ms, endPoint - startPoint, direction);
+            }
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

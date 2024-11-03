@@ -15,17 +15,17 @@ public class FetchPlaylistThread extends Thread {
     public void run() {
         try {
             Pages.recommendPage.addPlaylist(MusicApi.getDailySongs());
-            for (Playlist recommendedPlayList : MusicApi.getPersonalizedPlaylists()) {
+            for (Playlist recommendedPlayList : MusicApi.getPersonalized()) {
                 Pages.recommendPage.addPlaylist(recommendedPlayList);
             }
-            Pages.cloudPage.setPlaylist(MusicApi.getCloudMusics());
+            Pages.cloudPage.setPlaylist(MusicApi.getCloudMusic());
             for (Playlist userPlaylist : MusicApi.getUserPlaylists()) {
                 Pages.customPage.addLike(userPlaylist);
             }
-            for (Playlist radarPlaylist : MusicApi.getRadarPlaylists()) {
+            for (Playlist radarPlaylist : MusicApi.getRadars()) {
                 Pages.customPage.addRadar(radarPlaylist);
             }
-            for (Playlist recommendedPlaylist : MusicApi.getRecommendedPlaylists()) {
+            for (Playlist recommendedPlaylist : MusicApi.getRecommended()) {
                 Pages.customPage.addRecommend(recommendedPlaylist);
             }
         } catch (IOException e) {

@@ -5,6 +5,7 @@ import cn.feng.aluminium.event.EventManager;
 import cn.feng.aluminium.module.ModuleManager;
 import cn.feng.aluminium.ui.UIManager;
 import cn.feng.aluminium.ui.music.MusicManager;
+import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
 
 /**
@@ -30,9 +31,11 @@ public class Aluminium {
         configManager.init();
         moduleManager.init();
         musicManager.init();
+        uiManager.init();
         configManager.loadConfigs();
 
         ShaderUtil.init();
+        NanoFontLoader.registerFonts();
     }
 
     public void stop() {

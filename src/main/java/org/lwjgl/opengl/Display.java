@@ -7,6 +7,7 @@ import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import cn.feng.aluminium.ui.nanovg.NanoLoader;
 import org.lwjgl.glfw.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCharCallback;
@@ -304,6 +305,8 @@ public class Display {
         drawable = new DrawableGL();
         GL.createCapabilities();
 
+        NanoLoader.init();
+
         if (savedIcons != null) {
             setIcon(savedIcons);
             savedIcons = null;
@@ -383,6 +386,7 @@ public class Display {
     }
 
     public static void destroy() {
+        NanoLoader.destroy();
         Window.releaseCallbacks();
         glfwDestroyWindow(Window.handle);
 
