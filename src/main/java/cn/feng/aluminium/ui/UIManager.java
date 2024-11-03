@@ -8,11 +8,13 @@ import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.ui.widget.impl.IslandWidget;
+import cn.feng.aluminium.ui.widget.impl.MusicWidget;
 import cn.feng.aluminium.util.Util;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ChengFeng
@@ -26,25 +28,45 @@ public class UIManager extends Util {
     }
 
     public void init() {
-        widgetList.add(new IslandWidget());
+        register(new IslandWidget());
+        register(new MusicWidget());
+    }
+
+    private void register(Widget widget) {
+        Aluminium.INSTANCE.moduleManager.register(widget);
+        widgetList.add(widget);
+        Aluminium.INSTANCE.eventManager.register(widget);
     }
 
     @EventTarget
     private void onRender2D(EventRender2D event) {
         FontManager.noto(20).drawString("Aluminium", 10, 10, Color.WHITE.getRGB());
-        NanoUtil.beginFrame();
-        NanoUtil.drawGradientRect(10, 10, 10, 10, Color.BLACK, Color.WHITE);
         for (Widget widget : widgetList) {
             widget.update();
-            widget.render();
         }
+        List<Widget> widgets = widgetList.stream().filter(it -> Aluminium.INSTANCE.moduleManager.getModule(it).isEnabled()).collect(Collectors.toList());
+        NanoUtil.beginFrame();
+        widgets.forEach(Widget::renderNanoVG);
         NanoUtil.endFrame();
+        widgets.forEach(Widget::render2D);
     }
 
     @EventTarget
-    private void onChatGUI(EventChatGUI e) {
+    private void onChatGUI(EventChatGUI event) {
+        Widget draggingWidget = null;
+        List<Widget> widgets = widgetList.stream().filter(it -> Aluminium.INSTANCE.moduleManager.getModule(it).isEnabled()).collect(Collectors.toList());
         for (Widget widget : widgetList) {
-            widget.onChatGUI(e.getMouseX(), e.getMouseY(), true);
+            if (widgets.contains(widget) && widget.dragging) {
+                draggingWidget = widget;
+                break;
+            }
+        }
+
+        for (Widget widget : widgetList) {
+            if (widgets.contains(widget)) {
+                widget.onChatGUI(event.getMouseX(), event.getMouseY(), (draggingWidget == null || draggingWidget == widget));
+                if (widget.dragging) draggingWidget = widget;
+            }
         }
     }
 }

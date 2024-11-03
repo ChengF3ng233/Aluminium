@@ -24,7 +24,6 @@ public class MusicConfig extends Config {
         if (!user.getCookie().isEmpty()) {
             MusicApi.updateUserInfo();
             new FetchPlaylistThread().start();
-            System.out.println("Loaded user");
         }
     }
 

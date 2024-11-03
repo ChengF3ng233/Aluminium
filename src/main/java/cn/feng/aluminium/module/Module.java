@@ -2,6 +2,10 @@ package cn.feng.aluminium.module;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.util.Util;
+import cn.feng.aluminium.value.Value;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ChengFeng
@@ -14,6 +18,7 @@ public class Module extends Util {
     private int keyBind = -1;
     private boolean enabled = false;
     private boolean locked = false;
+    private final List<Value<?>> valueList = new ArrayList<>();
 
     public Module(String name, ModuleCategory category) {
         this.name = name;
@@ -28,6 +33,10 @@ public class Module extends Util {
 
     protected void lock() {
         locked = true;
+    }
+
+    protected void unlock() {
+        locked = false;
     }
 
     protected void onEnable() {
@@ -83,5 +92,13 @@ public class Module extends Util {
     public void setEnabled(boolean enabled) {
         if (this.enabled == enabled) return;
         toggle();
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public List<Value<?>> getValueList() {
+        return valueList;
     }
 }

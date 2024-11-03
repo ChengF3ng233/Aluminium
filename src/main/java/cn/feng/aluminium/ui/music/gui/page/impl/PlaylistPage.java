@@ -51,12 +51,12 @@ public class PlaylistPage extends Page {
         if (playlist != null) {
             RenderUtil.bindTexture(playlist.getCover().getCoverImage());
             ShaderUtil.drawRoundTextured(x + 5f, y + 5f, 100f, 100f, 3f, 1f);
-            float titleY = FontManager.notoBold(45).drawFitString(playlist.getTitle(), x + 110f, y + 7f, width - 115f, 2, 3f, Color.WHITE.darker().getRGB());
+            float titleY = FontManager.pingfangBold(45).drawFitString(playlist.getTitle(), x + 110f, y + 7f, width - 115f, 2, 3f, Color.WHITE.darker().getRGB());
             if (playlist.getAuthor() != null) {
-                FontManager.notoBold(16).drawString(playlist.getAuthor(), x + 110f, titleY + 10f, Color.WHITE.getRGB());
+                FontManager.pingfangBold(16).drawString(playlist.getAuthor(), x + 110f, titleY + 10f, Color.WHITE.getRGB());
             }
             if (playlist.getDescription() != null) {
-                FontManager.notoBold(16).drawString(playlist.getDescription(), x + 110f, titleY + 25f, Color.WHITE.darker().darker().getRGB());
+                FontManager.pingfangBold(16).drawString(playlist.getDescription(), x + 110f, titleY + 25f, Color.WHITE.darker().darker().getRGB());
             }
         } else {
             ShaderUtil.drawGradientCornerLR(x + 5f, y + 5f, 100f, 100f, 3f, ColorUtil.fade(5, 1, Theme.layerBackground, 0.7f), ColorUtil.fade(5, 3, Theme.layerBackground, 0.7f));

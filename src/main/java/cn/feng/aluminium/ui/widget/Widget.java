@@ -15,14 +15,14 @@ import java.awt.*;
  * @since 2024/7/28
  **/
 public abstract class Widget extends Util {
-    public String name;
+    private String name;
     /**
      * x, y都使用相对位置 （百分比），防止因窗口缩放导致组件乱动
      */
     public float x, y;
     protected float renderX, renderY;
     public float width, height;
-    public final boolean defaultOn;
+    private final boolean defaultOn;
     public boolean dragging;
     private int dragX, dragY;
     private int align;
@@ -30,7 +30,7 @@ public abstract class Widget extends Util {
     protected ScaledResolution sr;
 
     public Widget(String name, boolean defaultOn) {
-        this.name = name;
+        this.setName(name);
         this.defaultOn = defaultOn;
         this.x = 0f;
         this.y = 0f;
@@ -44,7 +44,17 @@ public abstract class Widget extends Util {
         this.align = align;
     }
 
-    public abstract void render();
+    public void renderNanoVG() {
+
+    }
+
+    public void render2D() {
+
+    }
+
+    public void renderShader() {
+
+    }
 
     public void update() {
         sr = new ScaledResolution(mc);
@@ -101,7 +111,7 @@ public abstract class Widget extends Util {
         boolean hovering = RenderUtil.hovering(mouseX, mouseY, renderX, renderY, width, height);
 
         if (hovering || dragging) {
-            FontManager.poppins(16).drawString(name, renderX, renderY - FontManager.poppins(16).getHeight() - 3f, Color.WHITE.getRGB(), true);
+            FontManager.poppins(16).drawString(getName(), renderX, renderY - FontManager.poppins(16).getHeight() - 3f, Color.WHITE.getRGB(), true);
         }
 
         if (dragging) {
@@ -126,5 +136,17 @@ public abstract class Widget extends Util {
             dragX = mouseX;
             dragY = mouseY;
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isDefaultOn() {
+        return defaultOn;
     }
 }

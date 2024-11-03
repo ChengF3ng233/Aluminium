@@ -1,6 +1,8 @@
 package cn.feng.aluminium.ui.music.api.player;
 
+import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.config.ConfigManager;
+import cn.feng.aluminium.event.events.EventChangeMusic;
 import cn.feng.aluminium.ui.music.api.bean.Music;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.thread.FetchMusicURLThread;

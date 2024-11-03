@@ -15,6 +15,7 @@ public class NanoFontLoader {
     public static NanoFontRenderer poppins;
     public static NanoFontRenderer quicksand;
     public static NanoFontRenderer archivo;
+    public static NanoFontRenderer pingfang;
 
     public static void registerFonts() {
         noto = new NanoFontRenderer("Noto", "noto");
@@ -23,6 +24,7 @@ public class NanoFontLoader {
         poppins = new NanoFontRenderer("Poppins", "poppins");
         quicksand = new NanoFontRenderer("Quicksand", "quicksand");
         archivo = new NanoFontRenderer("Archivo", "archivo");
+        pingfang = new NanoFontRenderer("Pingfang", "pingfang");
 
         renderers.add(noto);
         renderers.add(emoji);
@@ -30,6 +32,7 @@ public class NanoFontLoader {
         renderers.add(poppins);
         renderers.add(quicksand);
         renderers.add(archivo);
+        renderers.add(pingfang);
     }
 
     public static String[] getRenderers() {

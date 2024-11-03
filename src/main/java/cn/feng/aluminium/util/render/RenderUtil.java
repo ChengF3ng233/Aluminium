@@ -22,7 +22,8 @@ import static org.lwjgl.opengl.GL11.*;
  * @since 2024/9/16
  **/
 public class RenderUtil extends Util {
-    private static final Map<BufferedImage, DynamicTexture> bufferedImageMap = new HashMap<>();
+    private static final Map<BufferedImage, DynamicTexture> textureMap = new HashMap<>();
+    private static final Map<BufferedImage, Color> colorMap = new HashMap<>();
 
     // 上一帧的帧时间
     public static double lastFrame = System.nanoTime();
@@ -44,19 +45,19 @@ public class RenderUtil extends Util {
     }
 
     public static void uploadTexture(BufferedImage image) {
-        if (bufferedImageMap.containsKey(image)) return;
-        bufferedImageMap.put(image, new DynamicTexture(image));
+        if (textureMap.containsKey(image)) return;
+        textureMap.put(image, new DynamicTexture(image));
     }
 
     public static void deleteTexture(BufferedImage image) {
-        if (!bufferedImageMap.containsKey(image)) return;
-        bufferedImageMap.get(image).deleteGlTexture();
-        bufferedImageMap.remove(image);
+        if (!textureMap.containsKey(image)) return;
+        textureMap.get(image).deleteGlTexture();
+        textureMap.remove(image);
     }
 
     public static void bindTexture(BufferedImage image) {
         uploadTexture(image);
-        GlStateManager.bindTexture(bufferedImageMap.get(image).getGlTextureId());
+        GlStateManager.bindTexture(textureMap.get(image).getGlTextureId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
@@ -235,7 +236,7 @@ public class RenderUtil extends Util {
 
     public static void drawImage(BufferedImage image, float x, float y, float imgWidth, float imgHeight) {
         uploadTexture(image);
-        drawImage(bufferedImageMap.get(image), x, y, imgWidth, imgHeight);
+        drawImage(textureMap.get(image), x, y, imgWidth, imgHeight);
     }
 
     public static void drawImage(ResourceLocation resourceLocation, float x, float y, float imgWidth, float imgHeight, Color color) {
@@ -290,6 +291,40 @@ public class RenderUtil extends Util {
         double finalX = x * scale;
         double finalWidth = width * scale;
         glScissor((int) finalX, (int) (finalY - finalHeight), (int) finalWidth, (int) finalHeight);
+    }
+
+    public static Color getMainColor(BufferedImage image) {
+        if (colorMap.containsKey(image)) return colorMap.get(image);
+        int[] colorCount = new int[256 * 256 * 256];
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int rgb = image.getRGB(x, y);
+                int red = (rgb >> 16) & 0xFF;
+                int green = (rgb >> 8) & 0xFF;
+                int blue = rgb & 0xFF;
+                int index = (red << 16) + (green << 8) + blue;
+                colorCount[index]++;
+            }
+        }
+
+        int maxCount = 0;
+        int mainColor = 0;
+
+        for (int i = 0; i < colorCount.length; i++) {
+            if (colorCount[i] > maxCount) {
+                maxCount = colorCount[i];
+                mainColor = i;
+            }
+        }
+
+        int red = (mainColor >> 16) & 0xFF;
+        int green = (mainColor >> 8) & 0xFF;
+        int blue = mainColor & 0xFF;
+
+        Color color = new Color(red, green, blue);
+        colorMap.put(image, color);
+        return color;
     }
 
     public static void scissorStart(double x, double y, double width, double height, double centerX, double centerY, double scale) {

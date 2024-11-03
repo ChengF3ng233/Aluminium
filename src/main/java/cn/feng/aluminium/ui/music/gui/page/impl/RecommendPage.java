@@ -5,7 +5,7 @@ import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.gui.component.impl.button.PlaylistCard;
 import cn.feng.aluminium.ui.music.gui.page.Page;
-import cn.feng.aluminium.util.misc.StringUtil;
+import cn.feng.aluminium.util.data.StringUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 
 import java.awt.*;

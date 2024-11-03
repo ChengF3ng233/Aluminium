@@ -12,8 +12,9 @@ import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.ui.widget.WidgetAlign;
 import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
-import cn.feng.aluminium.util.misc.ChatUtil;
 import cn.feng.aluminium.util.misc.TimerUtil;
+import cn.feng.aluminium.util.render.ColorUtil;
+import cn.feng.aluminium.util.render.RenderUtil;
 import org.lwjgl.nanovg.NanoVG;
 
 import java.awt.*;
@@ -23,14 +24,14 @@ public class IslandWidget extends Widget {
     private final CustomAnimation heightAnimation = new CustomAnimation(EaseBackIn.class, 250, 0, 0);
     private LyricLine lyricLine;
     private LyricChar lyricChar;
-    private TimerUtil switchTimer = new TimerUtil();
+    private final TimerUtil switchTimer = new TimerUtil();
 
     public IslandWidget() {
         super("Island", true, WidgetAlign.TOP | WidgetAlign.CENTER);
     }
 
     @Override
-    public void render() {
+    public void renderNanoVG() {
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
         if (player.available() && player.getMusic().getLyric() != null) {
             int currentTime = (int) player.getCurrentTime();
@@ -50,7 +51,7 @@ public class IslandWidget extends Widget {
                     lyricChar = currentChar;
                 }
 
-                NanoFontRenderer font = NanoFontLoader.noto;
+                NanoFontRenderer font = NanoFontLoader.pingfang.bold();
                 float stringWidth = font.getStringWidth(lyricLine.getLine(), 15f);
                 if (switchTimer.hasTimeElapsed(200)) {
                     widthAnimation.setEndPoint(stringWidth + 22f, true);
@@ -70,15 +71,17 @@ public class IslandWidget extends Widget {
                     playedWidth = currentWidth + beforeWidth;
                 }
 
-                NanoUtil.drawRoundedRect(renderX, renderY, width, height, height / 2f, new Color(20, 20, 20));
+                NanoUtil.drawRoundedRect(renderX, renderY, width, height, height / 2f, new Color(20, 20, 20, 200));
                 NanoUtil.drawImageCircle(player.getMusic().getAlbum().getCover().getCoverImage(), renderX + 8.5f, renderY + 8.5f, 6f);
 
-                NanoUtil.scaleXStart(renderX + width / 2f, renderY + height / 2f, widthAnimation.getOutput().floatValue() / (stringWidth + 22f));
-                font.drawString(lyricLine.getLine(), renderX + width / 2f + 8f, renderY + height / 2f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, new Color(90, 90, 90));
+                NanoUtil.scissorStart(renderX, renderY, width, height);
+                NanoUtil.scaleXStart(renderX + width / 2f + 8f, renderY + height / 2f, widthAnimation.getOutput().floatValue() / (stringWidth + 22f));
+                font.drawString(lyricLine.getLine(), renderX + width / 2f + 8f, renderY + height / 2f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, new Color(200, 200, 200, 200));
                 NanoUtil.scissorStart(renderX + 8f + width / 2f - stringWidth / 2f, renderY, playedWidth, height, false);
                 font.drawString(lyricLine.getLine(), renderX + width / 2f + 8f, renderY + height / 2f - 0.1f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, Color.WHITE);
                 NanoUtil.scissorEnd();
                 NanoUtil.scaleEnd();
+                NanoUtil.scissorEnd();
             }
         }
     }

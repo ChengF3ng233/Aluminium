@@ -11,6 +11,7 @@ import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.data.DataUtil;
+import cn.feng.aluminium.util.data.HttpUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -139,6 +140,10 @@ public class MusicApi extends Util {
         return musics;
     }
 
+    public static BufferedImage downloadImage(String url) {
+        return HttpUtil.downloadImage(wrapImage(url));
+    }
+
     private static Album parseAlbum(JsonObject albumObj, boolean hasCover) {
         long id = albumObj.get("id").getAsLong();
         if (Aluminium.INSTANCE.musicManager.getAlbumMap().containsKey(id))
@@ -148,7 +153,7 @@ public class MusicApi extends Util {
         if (hasCover) {
             coverUrl = albumObj.get("picUrl").getAsString();
         }
-        Album album = hasCover ? new Album(id, name, new Cover(coverUrl, downloadImage(wrapImage(coverUrl)))) : new Album(id, name);
+        Album album = hasCover ? new Album(id, name, new Cover(coverUrl, downloadImage(coverUrl))) : new Album(id, name);
         Aluminium.INSTANCE.musicManager.getAlbumMap().put(id, album);
         return album;
     }
@@ -332,7 +337,7 @@ public class MusicApi extends Util {
             String description = (obj.get("description") instanceof JsonNull || obj.get("description") == null) ? "没有描述，你自己进去看看" : obj.get("description").getAsString();
             File file = new File(ConfigManager.coverDir, "playlist_" + obj.get("id").getAsLong() + ".jpg");
 
-            downloadImage(wrapImage(obj.get("picUrl").getAsString()), file, true);
+            HttpUtil.downloadImage(wrapImage(obj.get("picUrl").getAsString()), file, true);
 
             result.add(new Playlist(
                     obj.get("id").getAsLong(),

@@ -2,6 +2,7 @@ package net.minecraft.client.gui;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.events.EventRender2D;
+import cn.feng.aluminium.event.events.EventShader;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -348,6 +349,8 @@ public class GuiIngame extends Gui {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableLighting();
         GlStateManager.enableAlpha();
+
+        Aluminium.INSTANCE.eventManager.call(new EventShader());
         Aluminium.INSTANCE.eventManager.call(new EventRender2D());
     }
 

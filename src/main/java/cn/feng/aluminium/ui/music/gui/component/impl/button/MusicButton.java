@@ -34,8 +34,8 @@ public class MusicButton extends Component {
     @Override
     public void render() {
         UFontRenderer poppins = FontManager.poppinsBold(14);
-        UFontRenderer notoBold = FontManager.notoBold(14);
-        UFontRenderer noto = FontManager.noto(14);
+        UFontRenderer notoBold = FontManager.pingfangBold(14);
+        UFontRenderer noto = FontManager.pingfang(14);
         float textY = y + height / 2f;
 
         // Background

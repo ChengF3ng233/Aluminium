@@ -11,6 +11,8 @@ public class FontManager {
     private static final HashMap<Integer, UFontRenderer> poppinsMap = new HashMap<>();
     private static final HashMap<Integer, UFontRenderer> poppinsBoldMap = new HashMap<>();
     private static final HashMap<Integer, UFontRenderer> archivoMap = new HashMap<>();
+    private static final HashMap<Integer, UFontRenderer> pingfangMap = new HashMap<>();
+    private static final HashMap<Integer, UFontRenderer> pingfangBoldMap = new HashMap<>();
 
     private static UFontRenderer getRenderer(String name, int size, HashMap<Integer, UFontRenderer> map) {
         if (map.containsKey(size)) {
@@ -19,6 +21,14 @@ public class FontManager {
         UFontRenderer newRenderer = new UFontRenderer(name, size);
         map.put(size, newRenderer);
         return newRenderer;
+    }
+
+    public static UFontRenderer pingfang(int size) {
+        return getRenderer("pingfang", size, pingfangMap);
+    }
+
+    public static UFontRenderer pingfangBold(int size) {
+        return getRenderer("pingfang-bold", size, pingfangBoldMap);
     }
 
     public static UFontRenderer noto(int size) {

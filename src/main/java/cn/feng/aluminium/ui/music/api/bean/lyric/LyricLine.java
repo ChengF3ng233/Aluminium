@@ -1,28 +1,37 @@
 package cn.feng.aluminium.ui.music.api.bean.lyric;
 
+import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
+import cn.feng.aluminium.ui.nanovg.NanoFontRenderer;
+import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
+import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import cn.feng.aluminium.util.data.DataUtil;
-import cn.feng.aluminium.util.misc.ChatUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.lwjgl.nanovg.NanoVG;
 
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * @author ChengFeng
  * @since 2024/9/16
  **/
 public class LyricLine {
-    private String line;
     private final int startTime;
+    private String line;
     private int duration;
-
     private List<LyricChar> charList = new ArrayList<>();
+
+    // Rendering
+    private float originX, originY;
+    private int index;
+    private boolean played;
+    private final CustomAnimation scrollAnim = new CustomAnimation(EaseOutCubic.class, 300, 0, 0);
+    private final ColorAnimation colorAnim = new ColorAnimation(new Color(200, 200, 200, 200), new Color(200, 200, 200, 200), 300);
 
     public LyricLine(String line, int startTime, int duration) {
         this.line = line;
@@ -35,13 +44,6 @@ public class LyricLine {
         this.startTime = startTime;
         this.duration = duration;
         this.charList = charList;
-    }
-
-    public LyricChar seek(int time) {
-        for (LyricChar lyricChar : charList) {
-            if (lyricChar.getStartTime() <= time && lyricChar.getStartTime() + lyricChar.getDuration() >= time) return lyricChar;
-        }
-        return null;
     }
 
     public static LyricLine parseLrc(String line) {
@@ -96,8 +98,46 @@ public class LyricLine {
         return null;
     }
 
-    public boolean match(int time) {
-        return startTime <= time && startTime + duration >= time;
+    public void renderSetup(float originX, float originY, int index) {
+        this.originX = originX;
+        this.originY = originY;
+        this.index = index;
+    }
+
+    public boolean isPlayed() {
+        return played;
+    }
+
+    public void setPlayed(boolean played) {
+        this.played = played;
+    }
+
+    public void render(float time, int currentIndex) {
+        NanoFontRenderer font = NanoFontLoader.pingfang.bold();
+        colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, 200));
+        font.drawBlurString(line, originX, originY - scrollAnim.getOutput().floatValue(), 20f, Math.min(Math.abs(index - currentIndex) * 0.5f, 2f), NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP, colorAnim.getOutput(), false);
+    }
+
+    public void scrollDown(int index) {
+        scrollAnim.setDuration(Math.max(this.index - (index - 1), 0) * 150 + 300);
+        scrollAnim.setEndPoint(scrollAnim.getEndPoint() + 20f, true);
+    }
+
+    public void reset() {
+        scrollAnim.setEndPoint(0d, true);
+        played = false;
+    }
+
+    public LyricChar seek(int time) {
+        for (LyricChar lyricChar : charList) {
+            if (lyricChar.getStartTime() <= time && lyricChar.getStartTime() + lyricChar.getDuration() >= time)
+                return lyricChar;
+        }
+        return null;
+    }
+
+    public boolean match(float time) {
+        return startTime < time && startTime + duration > time;
     }
 
     public String getStringBefore(double currentTime) {
@@ -108,12 +148,12 @@ public class LyricLine {
         return sb.toString();
     }
 
-    public void setLine(String line) {
-        this.line = line;
-    }
-
     public String getLine() {
         return line;
+    }
+
+    public void setLine(String line) {
+        this.line = line;
     }
 
     public int getStartTime() {
