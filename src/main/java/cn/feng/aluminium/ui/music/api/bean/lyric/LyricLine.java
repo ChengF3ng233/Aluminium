@@ -4,10 +4,7 @@ import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
 import cn.feng.aluminium.ui.nanovg.NanoFontRenderer;
 import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
 import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
-import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
-import cn.feng.aluminium.util.data.DataUtil;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
 import org.lwjgl.nanovg.NanoVG;
 
 import java.awt.*;
@@ -22,16 +19,15 @@ import java.util.regex.Pattern;
  **/
 public class LyricLine {
     private final int startTime;
+    private final CustomAnimation scrollAnim = new CustomAnimation(EaseBackIn.class, 300, 0, 0);
+    private final ColorAnimation colorAnim = new ColorAnimation(new Color(200, 200, 200, 200), new Color(200, 200, 200, 200), 300);
     private String line;
     private int duration;
     private List<LyricChar> charList = new ArrayList<>();
-
     // Rendering
-    private float originX, originY;
+    private float originX, originY, maxWidth;
     private int index;
     private boolean played;
-    private final CustomAnimation scrollAnim = new CustomAnimation(EaseOutCubic.class, 300, 0, 0);
-    private final ColorAnimation colorAnim = new ColorAnimation(new Color(200, 200, 200, 200), new Color(200, 200, 200, 200), 300);
 
     public LyricLine(String line, int startTime, int duration) {
         this.line = line;
@@ -63,17 +59,6 @@ public class LyricLine {
         return null;
     }
 
-    public static LyricLine parseMetadata(String line) {
-        JsonObject metadata = DataUtil.gson.fromJson(line, JsonObject.class);
-        int startTime = metadata.get("t").getAsInt();
-        StringBuilder text = new StringBuilder();
-        for (JsonElement e : metadata.get("c").getAsJsonArray()) {
-            JsonObject data = e.getAsJsonObject();
-            text.append(data.get("tx").getAsString());
-        }
-        return new LyricLine(text.toString(), startTime, -1);
-    }
-
     public static LyricLine parseYrc(String line) {
         List<LyricChar> chars = new ArrayList<>();
         Pattern charPattern = Pattern.compile("\\((\\d+),(\\d+),\\d+\\)([^()]+)");
@@ -98,10 +83,16 @@ public class LyricLine {
         return null;
     }
 
-    public void renderSetup(float originX, float originY, int index) {
+    public float getCurrentY() {
+        return originY - scrollAnim.getOutput().floatValue();
+    }
+
+    public float renderSetup(float originX, float originY, float maxWidth, int index) {
         this.originX = originX;
         this.originY = originY;
         this.index = index;
+        this.maxWidth = maxWidth;
+        return NanoFontLoader.pingfang.bold().calculateChunkHeight(line, maxWidth, 3, 3f, 20f);
     }
 
     public boolean isPlayed() {
@@ -115,12 +106,13 @@ public class LyricLine {
     public void render(float time, int currentIndex) {
         NanoFontRenderer font = NanoFontLoader.pingfang.bold();
         colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, 200));
-        font.drawBlurString(line, originX, originY - scrollAnim.getOutput().floatValue(), 20f, Math.min(Math.abs(index - currentIndex) * 0.5f, 2f), NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP, colorAnim.getOutput(), false);
+        font.drawTrimBlurString(line, originX, originY - scrollAnim.getOutput().floatValue(), maxWidth, 3, 3f, 20f, Math.min(Math.abs(index - currentIndex) * 0.5f, 2f), NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP, colorAnim.getOutput());
     }
 
-    public void scrollDown(int index) {
-        scrollAnim.setDuration(Math.max(this.index - (index - 1), 0) * 150 + 300);
-        scrollAnim.setEndPoint(scrollAnim.getEndPoint() + 20f, true);
+    public void scrollDown(String text, int index) {
+        int duration = Math.max(this.index - (index - 1), 0) * 170 + 300;
+        scrollAnim.setDuration(duration);
+        scrollAnim.setEndPoint(scrollAnim.getEndPoint() + NanoFontLoader.pingfang.bold().calculateChunkHeight(text, maxWidth, 3, 3f, 20f) + 5f, true);
     }
 
     public void reset() {
@@ -138,6 +130,14 @@ public class LyricLine {
 
     public boolean match(float time) {
         return startTime < time && startTime + duration > time;
+    }
+
+    public boolean before(float time) {
+        return startTime + duration < time;
+    }
+
+    public boolean after(float time) {
+        return startTime > time;
     }
 
     public String getStringBefore(double currentTime) {

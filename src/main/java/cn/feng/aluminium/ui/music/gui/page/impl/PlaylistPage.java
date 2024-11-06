@@ -1,7 +1,6 @@
 package cn.feng.aluminium.ui.music.gui.page.impl;
 
 import cn.feng.aluminium.ui.font.FontManager;
-import cn.feng.aluminium.ui.font.impl.UFontRenderer;
 import cn.feng.aluminium.ui.music.Theme;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.gui.component.impl.composed.PlaylistComponent;
@@ -51,7 +50,7 @@ public class PlaylistPage extends Page {
         if (playlist != null) {
             RenderUtil.bindTexture(playlist.getCover().getCoverImage());
             ShaderUtil.drawRoundTextured(x + 5f, y + 5f, 100f, 100f, 3f, 1f);
-            float titleY = FontManager.pingfangBold(45).drawFitString(playlist.getTitle(), x + 110f, y + 7f, width - 115f, 2, 3f, Color.WHITE.darker().getRGB());
+            float titleY = FontManager.pingfangBold(45).drawTrimString(playlist.getTitle(), x + 110f, y + 7f, width - 115f, 2, 3f, Color.WHITE.darker().getRGB());
             if (playlist.getAuthor() != null) {
                 FontManager.pingfangBold(16).drawString(playlist.getAuthor(), x + 110f, titleY + 10f, Color.WHITE.getRGB());
             }

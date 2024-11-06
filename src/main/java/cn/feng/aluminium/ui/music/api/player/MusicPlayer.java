@@ -3,6 +3,7 @@ package cn.feng.aluminium.ui.music.api.player;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.config.ConfigManager;
 import cn.feng.aluminium.event.events.EventChangeMusic;
+import cn.feng.aluminium.event.events.EventLyricReset;
 import cn.feng.aluminium.ui.music.api.bean.Music;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.thread.FetchMusicURLThread;
@@ -38,6 +39,7 @@ public class MusicPlayer {
 
     public void setMusic(Music music) {
         this.music = music;
+        Aluminium.INSTANCE.eventManager.call(new EventChangeMusic(music));
         new FetchMusicURLThread(music).start();
     }
 
@@ -118,15 +120,16 @@ public class MusicPlayer {
         setMusic(musicList.get(newIndex));
     }
 
-    public double getCurrentTime() {
-        return mediaPlayer.getCurrentTime().toMillis();
+    public float getCurrentTime() {
+        return (float) mediaPlayer.getCurrentTime().toMillis();
     }
 
-    public double getCurrentPercent() {
-        return mediaPlayer.getCurrentTime().toMillis() / mediaPlayer.getStopTime().toMillis();
+    public float getCurrentPercent() {
+        return (float) (mediaPlayer.getCurrentTime().toMillis() / mediaPlayer.getStopTime().toMillis());
     }
 
-    public void seek(double newTime) {
+    public void seek(float newTime) {
         mediaPlayer.seek(Duration.millis(newTime));
+        Aluminium.INSTANCE.eventManager.call(new EventLyricReset(music, newTime));
     }
 }

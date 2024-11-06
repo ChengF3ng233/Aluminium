@@ -16,7 +16,7 @@ public class LyricChar {
     }
 
     public boolean match(float time) {
-        return startTime <= time && startTime + duration >= time;
+        return startTime < time && startTime + duration > time;
     }
 
     public boolean before(float time) {

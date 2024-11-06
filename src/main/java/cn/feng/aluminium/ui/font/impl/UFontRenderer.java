@@ -121,7 +121,7 @@ public class UFontRenderer extends FontRenderer {
      * Automatically 换行
      * @return Actual rows that are rendered.
      */
-    public float drawFitString(String text, float x, float y, float maxWidth, int maxRows, float gap, int color) {
+    public float drawTrimString(String text, float x, float y, float maxWidth, int maxRows, float gap, int color) {
         float currentY = y;
         int row = 1;
         while (row <= maxRows) {

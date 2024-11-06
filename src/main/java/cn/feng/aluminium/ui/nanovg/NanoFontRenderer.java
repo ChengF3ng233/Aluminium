@@ -11,6 +11,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static cn.feng.aluminium.ui.nanovg.NanoLoader.ctx;
 import static cn.feng.aluminium.ui.nanovg.NanoUtil.createGradient;
@@ -80,6 +82,7 @@ public class NanoFontRenderer extends Util {
 
     public float getHeight(String text, float size) {
         if (text == null) return 0f;
+        if (text.isEmpty()) return getHeight(size);
         nvgFontFaceId(ctx, font);
         nvgFontSize(ctx, size);
         float[] bounds = new float[4];
@@ -87,7 +90,36 @@ public class NanoFontRenderer extends Util {
         return (bounds[3] - bounds[1]) / 2f;
     }
 
+    public float calculateChunkHeight(String text, float maxWidth, int maxRows, float gap, float size) {
+        float currentY = 0f;
+        int row = 1;
+        while (row <= maxRows) {
+            String toRender = trimStringToWidth(text, maxWidth, size, false, row == maxRows);
+            text = text.replace(toRender.replace("...", ""), "");
+            currentY += toRender.isEmpty()? 0 : getHeight(toRender, size) + gap;
+            row++;
+        }
+        return currentY;
+    }
     // Plain
+
+    /**
+     * Automatically 换行
+     * @return Chunk height
+     */
+    public float drawTrimString(String text, float x, float y, float maxWidth, int maxRows, float gap, float size, int align, Color color) {
+        float currentY = y;
+        int row = 1;
+        while (row <= maxRows) {
+            String toRender = trimStringToWidth(text, maxWidth, size, false, row == maxRows);
+            text = text.replace(toRender.replace("...", ""), "");
+            renderPlainString(toRender, x, currentY, size, align, color);
+            currentY += toRender.isEmpty()? 0 : getHeight(toRender, size) + gap;
+            row++;
+        }
+        return currentY - y;
+    }
+
     public void drawString(String text, float x, float y, float size, int align, Color color) {
         renderPlainString(text, x, y, size, align, color);
     }
@@ -106,6 +138,21 @@ public class NanoFontRenderer extends Util {
         }
 
         renderPlainString(text, x, y, size, align, color);
+    }
+
+    /**
+     * Automatically 换行
+     */
+    public void drawTrimBlurString(String text, float x, float y, float maxWidth, int maxRows, float gap, float size, float radius, int align, Color color) {
+        float currentY = y;
+        int row = 1;
+        while (row <= maxRows) {
+            String toRender = trimStringToWidth(text, maxWidth, size, false, row == maxRows);
+            text = text.replace(toRender.replace("...", ""), "");
+            renderBlurString(toRender, x, currentY, size, radius, align, color);
+            currentY += toRender.isEmpty()? 0 : getHeight(toRender, size) + gap;
+            row++;
+        }
     }
 
     public void drawBlurString(String text, float x, float y, float size, float radius, int align, Color color, boolean shadow) {

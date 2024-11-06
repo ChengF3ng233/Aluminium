@@ -2,7 +2,7 @@ package cn.feng.aluminium.ui.widget.impl;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
-import cn.feng.aluminium.event.events.EventChangeMusic;
+import cn.feng.aluminium.event.events.EventLyricReset;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
 import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
@@ -10,7 +10,6 @@ import cn.feng.aluminium.ui.nanovg.NanoFontRenderer;
 import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.util.data.StringUtil;
-import cn.feng.aluminium.util.misc.ChatUtil;
 import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.blur.BlurUtil;
@@ -20,11 +19,11 @@ import java.awt.*;
 import java.util.List;
 
 public class MusicWidget extends Widget {
+    private LyricLine lastLine;
+
     public MusicWidget() {
         super("Music", true);
     }
-
-    private LyricLine lastLine;
 
     @Override
     public void render2D() {
@@ -35,7 +34,7 @@ public class MusicWidget extends Widget {
 
         BlurUtil.processStart();
         ShaderUtil.drawRound(renderX, renderY, width, height, 3f, Color.BLACK);
-        BlurUtil.blurEnd(2, 2);
+        BlurUtil.blurEnd(3, 10);
         ShaderUtil.drawRound(renderX, renderY, width, height, 3f, ColorUtil.applyOpacity(RenderUtil.getMainColor(player.getMusic().getAlbum().getCover().getCoverImage()), 0.5f).darker());
 
         BlurUtil.processStart();
@@ -47,45 +46,71 @@ public class MusicWidget extends Widget {
 
         NanoUtil.beginFrame();
         NanoFontRenderer font = NanoFontLoader.pingfang.bold();
+
+        // Info
         font.drawString(player.getMusic().getTitle(), renderX + 10f, renderY + 85, 16f, Color.WHITE);
         font.drawString(player.getMusic().getArtist(), renderX + 10f, renderY + 95, 16f, new Color(200, 200, 200, 200));
 
-        if (player.getMusic().getLyric() == null) return;
+        // Progress bar
+        NanoUtil.drawRect(renderX + 10f, renderY + 110f, 70f, 3f, new Color(200, 200, 200, 200));
+        NanoUtil.drawRect(renderX + 10f, renderY + 110f, 70f * player.getCurrentPercent(), 3f, Color.WHITE);
+        font.drawString(StringUtil.convertMillisToMinSec((long) player.getCurrentTime()), renderX + 10f, renderY + 117f, 14f, Color.WHITE);
+        font.drawString(StringUtil.convertMillisToMinSec((long) (player.getMusic().getDuration() - player.getCurrentTime())), renderX + 67f, renderY + 117f, 14f, Color.WHITE);
+
+        if (player.getMusic().getLyric() == null) {
+            NanoUtil.endFrame();
+            return;
+        }
+
         List<LyricLine> lyricLines = player.getMusic().getLyric().getLyricLines();
 
         float currentX = renderX + 85f;
         float currentY = renderY + 30f;
         for (LyricLine lyricLine : lyricLines) {
-            lyricLine.renderSetup(currentX, currentY, lyricLines.indexOf(lyricLine));
-            currentY += 20f;
+            currentY += lyricLine.renderSetup(currentX, currentY, width - 100f, lyricLines.indexOf(lyricLine)) + 5f;
         }
 
+        float time = player.getCurrentTime();
         NanoUtil.scissorStart(renderX + 85f, renderY + 10f, width - 95f, height - 20f);
+
         for (LyricLine lyricLine : lyricLines) {
-            if (lyricLine.match((float) player.getCurrentTime()) && lyricLine != lastLine) {
-                if (lastLine != null && !lyricLine.isPlayed()) {
-                    for (LyricLine line : lyricLines) {
-                        line.scrollDown(lastLine == null? 0 : lyricLines.indexOf(lastLine));
-                    }
-                    lyricLine.setPlayed(true);
+            if (lyricLine.match(time) && lyricLine != lastLine) {
+                if (lastLine != null) {
+                    scrollAllLines(lyricLines, lastLine);
                 }
                 lastLine = lyricLine;
             }
-            lyricLine.render((float) player.getCurrentTime(), lastLine == null? 0 : lyricLines.indexOf(lastLine));
+            if (lyricLine.getCurrentY() < renderY + height && lyricLine.getCurrentY() > renderY - 50f) {
+                lyricLine.render(player.getCurrentTime(), lastLine == null ? 0 : lyricLines.indexOf(lastLine));
+            }
         }
+
+
         NanoUtil.scissorEnd();
-        NanoUtil.drawRect(renderX + 10f, renderY + 110f, 70f, 3f, new Color(200, 200, 200, 200));
-        NanoUtil.drawRect(renderX + 10f, renderY + 110f, 70f * (float) (player.getCurrentPercent()), 3f, Color.WHITE);
-        font.drawString(StringUtil.convertMillisToMinSec((long) player.getCurrentTime()), renderX + 10f, renderY + 117f, 14f, Color.WHITE);
-        font.drawString(StringUtil.convertMillisToMinSec((long) (player.getMusic().getDuration() - player.getCurrentTime())), renderX + 67f, renderY + 117f, 14f, Color.WHITE);
         NanoUtil.endFrame();
     }
 
+    private void scrollAllLines(List<LyricLine> lyricLines, LyricLine lastLine) {
+        for (LyricLine lyricLine : lyricLines) {
+            lyricLine.scrollDown(lastLine.getLine(), lyricLines.indexOf(lastLine));
+        }
+        lastLine.setPlayed(true);
+    }
+
     @EventTarget
-    private void onChangeMusic(EventChangeMusic event) {
+    private void onLyricReset(EventLyricReset event) {
         lastLine = null;
-        for (LyricLine lyricLine : event.getMusic().getLyric().getLyricLines()) {
+        List<LyricLine> lyricLines = event.getMusic().getLyric().getLyricLines();
+        for (LyricLine lyricLine : lyricLines) {
             lyricLine.reset();
+        }
+        boolean first = true;
+        for (LyricLine lyricLine : lyricLines) {
+            if (lyricLine.before(event.getTime()) && !lyricLine.isPlayed() && !first) {
+                scrollAllLines(lyricLines, lyricLine);
+                lastLine = lyricLine;
+            }
+            first = false;
         }
     }
 }

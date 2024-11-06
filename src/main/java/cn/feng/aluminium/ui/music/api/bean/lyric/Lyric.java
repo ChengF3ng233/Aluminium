@@ -40,6 +40,7 @@ public class Lyric {
     }
 
     public void init() {
+        if (lyricLines.isEmpty()) return;
         // 补全歌词时长
         for (int i = 0; i < lyricLines.size(); i++) {
             LyricLine line = lyricLines.get(i);

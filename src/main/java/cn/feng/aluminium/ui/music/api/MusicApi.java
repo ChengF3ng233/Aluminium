@@ -305,10 +305,8 @@ public class MusicApi extends Util {
         for (String line : lyricString.split("\n")) {
             if (line.isEmpty()) continue;
 
-            // 创作者数据
-            if (line.startsWith("{")) {
-                lyric.getLyricLines().add(LyricLine.parseMetadata(line));
-            } else {
+            // 创作者数据不在处理，太恶心了，他时间是负的特别难算成正的，因为他关于原点不对称没办法取绝对值
+            if (line.startsWith("[")) {
                 if (verbatim) {
                     // 逐字歌词
                     lyric.getLyricLines().add(LyricLine.parseYrc(line));
