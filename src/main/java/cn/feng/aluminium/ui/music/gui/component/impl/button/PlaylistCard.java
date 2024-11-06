@@ -6,6 +6,7 @@ import cn.feng.aluminium.ui.music.Theme;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.gui.component.Component;
 import cn.feng.aluminium.ui.music.gui.page.impl.PlaylistPage;
+import cn.feng.aluminium.ui.music.thread.FetchCoverThread;
 import cn.feng.aluminium.util.animation.advanced.Animation;
 import cn.feng.aluminium.util.animation.advanced.Direction;
 import cn.feng.aluminium.util.animation.advanced.impl.DecelerateAnimation;
@@ -20,6 +21,7 @@ import java.awt.*;
 public class PlaylistCard extends Component {
     private Playlist playlist;
     private final Animation iconAlpha = new DecelerateAnimation(200, 1.0, Direction.BACKWARDS);
+    private Thread thread;
 
     public PlaylistCard(Playlist playlist) {
         this.playlist = playlist;
@@ -32,8 +34,16 @@ public class PlaylistCard extends Component {
     @Override
     public void render() {
         if (playlist != null) {
-            RenderUtil.bindTexture(playlist.getCover().getCoverImage());
-            ShaderUtil.drawRoundTextured(x, y, width, height, 3f, 1f);
+            if (playlist.getCover().getCoverImage() == null) {
+                ShaderUtil.drawGradientCornerLR(x, y, width, height, 3f, ColorUtil.fade(10, 1, new Color(40, 40, 40), 1f), ColorUtil.fade(10, 5, new Color(40, 40, 40), 1f));
+                if (thread == null) {
+                    thread = new FetchCoverThread(playlist.getCover());
+                    thread.start();
+                } else if (!thread.isAlive()) thread = null;
+            } else {
+                RenderUtil.bindTexture(playlist.getCover().getCoverImage());
+                ShaderUtil.drawRoundTextured(x, y, width, height, 3f, 1f);
+            }
             if (hovering) {
                 if (iconAlpha.getDirection().backwards()) iconAlpha.changeDirection();
             } else if (iconAlpha.getDirection().forwards()) iconAlpha.changeDirection();

@@ -25,6 +25,9 @@ public class FetchMusicURLThread extends Thread {
             Lyric lyric = MusicApi.getLyric(music);
             music.setLyric(lyric);
         }
+        if (music.getAlbum().getCover().getCoverImage() == null) {
+            music.getAlbum().getCover().setCoverImage(MusicApi.downloadImage(music.getAlbum().getCover().getCoverUrl()));
+        }
         Aluminium.INSTANCE.musicManager.getPlayer().play(url);
         Aluminium.INSTANCE.eventManager.call(new EventLyricReset(music, 0f));
     }

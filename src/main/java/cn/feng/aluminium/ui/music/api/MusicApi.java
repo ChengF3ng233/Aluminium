@@ -7,6 +7,7 @@ import cn.feng.aluminium.ui.music.api.bean.login.LoginResult;
 import cn.feng.aluminium.ui.music.api.bean.login.LoginState;
 import cn.feng.aluminium.ui.music.api.bean.login.QRCode;
 import cn.feng.aluminium.ui.music.api.bean.lyric.Lyric;
+import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLeader;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.util.Util;
@@ -24,8 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
-import static cn.feng.aluminium.util.data.HttpUtil.downloadImage;
 
 /**
  * @author ChengFeng
@@ -153,7 +152,7 @@ public class MusicApi extends Util {
         if (hasCover) {
             coverUrl = albumObj.get("picUrl").getAsString();
         }
-        Album album = hasCover ? new Album(id, name, new Cover(coverUrl, downloadImage(coverUrl))) : new Album(id, name);
+        Album album = hasCover ? new Album(id, name, new Cover(coverUrl)) : new Album(id, name);
         Aluminium.INSTANCE.musicManager.getAlbumMap().put(id, album);
         return album;
     }
@@ -243,7 +242,7 @@ public class MusicApi extends Util {
         for (JsonElement song : songs) {
             JsonObject obj = song.getAsJsonObject();
             String url = obj.get("al").getAsJsonObject().get("picUrl").getAsString();
-            result.put(obj.get("id").getAsLong(), new Cover(url, downloadImage(url)));
+            result.put(obj.get("id").getAsLong(), new Cover(url));
         }
         return result;
     }
@@ -316,6 +315,13 @@ public class MusicApi extends Util {
                 }
             }
         }
+
+        LyricLine first = lyric.getLyricLines().get(0);
+        List<LyricLine> lyrics = new ArrayList<>();
+        lyrics.add(new LyricLeader(0, first.getStartTime()));
+        lyrics.addAll(lyric.getLyricLines());
+        lyric.getLyricLines().clear();
+        lyric.getLyricLines().addAll(lyrics);
 
         if (!translateString.isEmpty()) {
             lyric.setTranslated(true);

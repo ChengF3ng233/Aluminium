@@ -11,6 +11,10 @@ public class Cover {
         this.coverImage = coverImage;
     }
 
+    public Cover(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
+
     public void setCoverUrl(String coverUrl) {
         this.coverUrl = coverUrl;
     }

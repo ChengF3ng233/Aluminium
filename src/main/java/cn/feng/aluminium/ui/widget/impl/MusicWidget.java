@@ -3,6 +3,7 @@ package cn.feng.aluminium.ui.widget.impl;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventLyricReset;
+import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLeader;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
 import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
@@ -71,7 +72,7 @@ public class MusicWidget extends Widget {
         }
 
         float time = player.getCurrentTime();
-        NanoUtil.scissorStart(renderX + 85f, renderY + 10f, width - 95f, height - 20f);
+        NanoUtil.scissorStart(renderX + 80f, renderY + 10f, width - 95f, height - 20f);
 
         for (LyricLine lyricLine : lyricLines) {
             if (lyricLine.match(time) && lyricLine != lastLine) {
@@ -110,7 +111,9 @@ public class MusicWidget extends Widget {
                 scrollAllLines(lyricLines, lyricLine);
                 lastLine = lyricLine;
             }
-            first = false;
+            if (!(lyricLine instanceof LyricLeader)) {
+                first = false;
+            }
         }
     }
 }

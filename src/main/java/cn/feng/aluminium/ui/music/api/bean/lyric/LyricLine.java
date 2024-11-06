@@ -2,9 +2,13 @@ package cn.feng.aluminium.ui.music.api.bean.lyric;
 
 import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
 import cn.feng.aluminium.ui.nanovg.NanoFontRenderer;
+import cn.feng.aluminium.ui.nanovg.NanoUtil;
+import cn.feng.aluminium.util.animation.advanced.Animation;
+import cn.feng.aluminium.util.animation.advanced.Direction;
 import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
 import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import org.lwjgl.nanovg.NanoVG;
 
 import java.awt.*;
@@ -18,16 +22,16 @@ import java.util.regex.Pattern;
  * @since 2024/9/16
  **/
 public class LyricLine {
-    private final int startTime;
-    private final CustomAnimation scrollAnim = new CustomAnimation(EaseBackIn.class, 300, 0, 0);
-    private final ColorAnimation colorAnim = new ColorAnimation(new Color(200, 200, 200, 200), new Color(200, 200, 200, 200), 300);
+    protected final int startTime;
     private String line;
-    private int duration;
+    protected int duration;
     private List<LyricChar> charList = new ArrayList<>();
     // Rendering
-    private float originX, originY, maxWidth;
+    protected float originX, originY, maxWidth;
     private int index;
     private boolean played;
+    protected final CustomAnimation scrollAnim = new CustomAnimation(EaseBackIn.class, 300, 0, 0);
+    private final ColorAnimation colorAnim = new ColorAnimation(new Color(200, 200, 200, 200), new Color(200, 200, 200, 200), 300);
 
     public LyricLine(String line, int startTime, int duration) {
         this.line = line;
@@ -105,7 +109,7 @@ public class LyricLine {
 
     public void render(float time, int currentIndex) {
         NanoFontRenderer font = NanoFontLoader.pingfang.bold();
-        colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, 200));
+        colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, Math.max(Math.min((5 - (index - currentIndex)), 4), 1) * 50));
         font.drawTrimBlurString(line, originX, originY - scrollAnim.getOutput().floatValue(), maxWidth, 3, 3f, 20f, Math.min(Math.abs(index - currentIndex) * 0.5f, 2f), NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP, colorAnim.getOutput());
     }
 

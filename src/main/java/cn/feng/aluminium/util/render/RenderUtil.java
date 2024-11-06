@@ -294,6 +294,7 @@ public class RenderUtil extends Util {
     }
 
     public static Color getMainColor(BufferedImage image) {
+        if (image == null) return Color.BLACK;
         if (colorMap.containsKey(image)) return colorMap.get(image);
         int[] colorCount = new int[256 * 256 * 256];
 

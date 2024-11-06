@@ -39,7 +39,9 @@ public class IslandWidget extends Widget {
 
         // 背景
         NanoUtil.drawRoundedRect(renderX, renderY, width, height, height / 2f, new Color(20, 20, 20, 200));
-        NanoUtil.drawImageCircle(player.getMusic().getAlbum().getCover().getCoverImage(), renderX + height / 2f, renderY + height / 2f, height / 2f - 1f);
+        if (player.getMusic().getAlbum().getCover().getCoverImage() != null) {
+            NanoUtil.drawImageCircle(player.getMusic().getAlbum().getCover().getCoverImage(), renderX + height / 2f, renderY + height / 2f, height / 2f - 1f);
+        }
         width = widthAnimation.getOutput().floatValue();
         height = heightAnimation.getOutput().floatValue();
 

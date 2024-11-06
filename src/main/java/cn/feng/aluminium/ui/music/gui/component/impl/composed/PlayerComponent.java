@@ -10,6 +10,7 @@ import cn.feng.aluminium.ui.music.gui.component.impl.button.SwitchButton;
 import cn.feng.aluminium.ui.music.gui.component.impl.slider.impl.ProgressSlider;
 import cn.feng.aluminium.util.data.ResourceType;
 import cn.feng.aluminium.util.data.ResourceUtil;
+import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.blur.BlurUtil;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
@@ -57,8 +58,12 @@ public class PlayerComponent extends Component {
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
 
         if (player.available()) {
-            RenderUtil.bindTexture(player.getMusic().getAlbum().getCover().getCoverImage());
-            ShaderUtil.drawRoundTextured(x + 5f, y + 5f, height - 10f, height - 10f, 3f, 1f);
+            if (player.getMusic().getAlbum().getCover().getCoverImage() != null) {
+                RenderUtil.bindTexture(player.getMusic().getAlbum().getCover().getCoverImage());
+                ShaderUtil.drawRoundTextured(x + 5f, y + 5f, height - 10f, height - 10f, 3f, 1f);
+            } else {
+                ShaderUtil.drawGradientCornerLR(x + 5f, y + 5f, height - 10f, height - 10f, 3f, ColorUtil.fade(10, 1, new Color(40, 40, 40), 1f), ColorUtil.fade(10, 5, new Color(40, 40, 40), 1f));
+            }
             FontManager.notoBold(15).drawString(player.getMusic().getTitle(), x + (height - 10f) + 8f, y + 8f, Color.WHITE.getRGB());
             FontManager.noto(15).drawString(player.getMusic().getArtist(), x + (height - 10f) + 8f, y + 17f, Color.WHITE.getRGB());
             progressSlider.render();
