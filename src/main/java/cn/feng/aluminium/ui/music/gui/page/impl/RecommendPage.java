@@ -45,7 +45,7 @@ public class RecommendPage extends Page {
         FontManager.notoBold(20).drawString(StringUtil.getGreeting() + "，" + Aluminium.INSTANCE.musicManager.getUser().getNickname(), x + 3f, scrolledY + 3f, Color.WHITE.getRGB());
         List<PlaylistCard> cardList = new ArrayList<>(cards);
         for (PlaylistCard playlistCard : cardList) {
-            if (playlistCard.getY() < y + height && playlistCard.getY() + playlistCard.getHeight() > y) playlistCard.render();
+            playlistCard.render();
         }
         RenderUtil.scissorEnd();
         postRender();

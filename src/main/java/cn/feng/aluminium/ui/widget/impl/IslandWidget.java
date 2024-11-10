@@ -12,17 +12,17 @@ import cn.feng.aluminium.ui.nanovg.NanoFontRenderer;
 import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.ui.widget.WidgetAlign;
+import cn.feng.aluminium.util.animation.advanced.Direction;
 import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
-import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import cn.feng.aluminium.util.misc.TimerUtil;
 import org.lwjgl.nanovg.NanoVG;
 
 import java.awt.*;
 
 public class IslandWidget extends Widget {
-    private final CustomAnimation widthAnimation = new CustomAnimation(EaseBackIn.class, 300, 0, 0);
-    private final CustomAnimation heightAnimation = new CustomAnimation(EaseBackIn.class, 300, 0, 0);
-    private final TimerUtil switchTimer = new TimerUtil();
+    private final CustomAnimation widthAnimation = new CustomAnimation(EaseOutCubic.class, 300, 0, 0);
+    private final CustomAnimation heightAnimation = new CustomAnimation(EaseOutCubic.class, 300, 0, 0);
     private final TimerUtil changeMusicTimer = new TimerUtil();
     private LyricLine lyricLine;
     private LyricChar lyricChar;
@@ -64,8 +64,7 @@ public class IslandWidget extends Widget {
 
             if (currentLine != null && currentLine != lyricLine && !currentLine.getLine().isEmpty()) {
                 lyricLine = currentLine;
-                switchTimer.reset();
-                widthAnimation.setEndPoint(34d, true);
+                widthAnimation.setEndPoint(20d, true);
             }
 
             if (lyricLine != null) {
@@ -76,7 +75,7 @@ public class IslandWidget extends Widget {
                 }
 
                 float stringWidth = font.getStringWidth(lyricLine.getLine(), 15f);
-                if (switchTimer.hasTimeElapsed(300)) {
+                if (widthAnimation.getAnimation().finished(Direction.FORWARDS)) {
                     widthAnimation.setEndPoint(stringWidth + 22f, true);
                 }
                 heightAnimation.setEndPoint(17f, true);
