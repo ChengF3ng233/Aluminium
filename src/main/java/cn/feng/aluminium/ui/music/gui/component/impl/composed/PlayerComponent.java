@@ -7,7 +7,9 @@ import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
 import cn.feng.aluminium.ui.music.gui.component.Component;
 import cn.feng.aluminium.ui.music.gui.component.impl.button.IconButton;
 import cn.feng.aluminium.ui.music.gui.component.impl.button.SwitchButton;
+import cn.feng.aluminium.ui.music.gui.component.impl.slider.Slider;
 import cn.feng.aluminium.ui.music.gui.component.impl.slider.impl.ProgressSlider;
+import cn.feng.aluminium.ui.music.gui.component.impl.slider.impl.VolumeSlider;
 import cn.feng.aluminium.util.data.ResourceType;
 import cn.feng.aluminium.util.data.ResourceUtil;
 import cn.feng.aluminium.util.render.ColorUtil;
@@ -22,6 +24,7 @@ import java.util.List;
 public class PlayerComponent extends Component {
     private final List<IconButton> iconButtons = new ArrayList<>();
     private final ProgressSlider progressSlider;
+    private final Slider volumeSlider;
 
     public PlayerComponent() {
         iconButtons.add(new IconButton(ResourceUtil.getResource("previous.png", ResourceType.ICON), () -> Aluminium.INSTANCE.musicManager.getPlayer().previous()));
@@ -32,6 +35,7 @@ public class PlayerComponent extends Component {
         }, ResourceUtil.getResource("pause.png", ResourceType.ICON), ResourceUtil.getResource("play.png", ResourceType.ICON), ResourceUtil.getResource("pause.png", ResourceType.ICON)));
         iconButtons.add(new IconButton(ResourceUtil.getResource("next.png", ResourceType.ICON), () -> Aluminium.INSTANCE.musicManager.getPlayer().next()));
         progressSlider = new ProgressSlider();
+        volumeSlider = new VolumeSlider();
     }
 
     @Override
@@ -46,6 +50,7 @@ public class PlayerComponent extends Component {
             buttonX += buttonSize + gap;
         }
         progressSlider.update(x, y, width, 2f, mouseX, mouseY);
+        volumeSlider.update(x + width - 70f, y + height / 2f - 1f, 50f, 2f, mouseX, mouseY);
     }
 
     @Override
@@ -67,6 +72,7 @@ public class PlayerComponent extends Component {
             FontManager.notoBold(15).drawString(player.getMusic().getTitle(), x + (height - 10f) + 8f, y + 8f, Color.WHITE.getRGB());
             FontManager.noto(15).drawString(player.getMusic().getArtist(), x + (height - 10f) + 8f, y + 17f, Color.WHITE.getRGB());
             progressSlider.render();
+            volumeSlider.render();
         }
 
         iconButtons.forEach(IconButton::render);
@@ -76,10 +82,12 @@ public class PlayerComponent extends Component {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         iconButtons.forEach(it -> it.mouseClicked(mouseX, mouseY, mouseButton));
         progressSlider.mouseClicked(mouseX, mouseY, mouseButton);
+        volumeSlider.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
     public void mouseReleased(int mouseX, int mouseY, int state) {
         progressSlider.mouseReleased(mouseX, mouseY, state);
+        volumeSlider.mouseReleased(mouseX, mouseY, state);
     }
 }

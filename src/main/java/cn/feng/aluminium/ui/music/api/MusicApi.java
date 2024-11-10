@@ -208,13 +208,13 @@ public class MusicApi extends Util {
     }
 
     public static Playlist search(String keywords) {
-        JsonArray songs = fetchObjectArray("/cloudsearch?keywords=" + keywords, "result", "songs");
+        JsonArray songs = fetchObjectArray("/search?keywords=" + keywords, "result", "songs");
         List<Music> musicList = new ArrayList<>();
         StringBuilder ids = new StringBuilder();
 
         for (JsonElement song : songs) {
             JsonObject obj = song.getAsJsonObject();
-            Music music = parseMusic(obj, false);
+            Music music = parseMusic(obj, true);
             musicList.add(music);
             System.out.println(music.getArtist());
             ids.append(ids.length() == 0 ? music.getId() : "," + music.getId());

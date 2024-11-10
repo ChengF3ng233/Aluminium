@@ -13,11 +13,11 @@ public class ProgressSlider extends Slider {
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
 
         if (player.available()) {
-            progressWidth = (float) (width * player.getCurrentPercent());
+            progressWidth = width * player.getCurrentPercent();
         }
 
         ShaderUtil.drawVaryingRound(x, y, width, height, 1f, 1f, 0f, 0f, new Color(50, 50, 50, 100));
-        ShaderUtil.drawVaryingRound(x, y, dragging? dragDelta : progressWidth, height, 1f, 1f, 0f, 0f, Color.WHITE);
+        ShaderUtil.drawVaryingRound(x, y, dragging ? dragDelta : progressWidth, height, 1f, 1f, 0f, 0f, Color.WHITE);
 
         if (dragging) {
             dragDelta = mouseX - x;

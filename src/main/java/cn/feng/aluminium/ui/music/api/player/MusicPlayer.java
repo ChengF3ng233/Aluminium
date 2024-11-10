@@ -98,8 +98,8 @@ public class MusicPlayer {
         }
     }
 
-    public double getVolume() {
-        return mediaPlayer.getVolume();
+    public float getVolume() {
+        return (float) mediaPlayer.getVolume();
     }
 
     public void setVolume(double volume) {

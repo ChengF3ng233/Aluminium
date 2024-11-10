@@ -9,6 +9,7 @@ import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
 import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
+import cn.feng.aluminium.util.animation.advanced.impl.SmoothStepAnimation;
 import org.lwjgl.nanovg.NanoVG;
 
 import java.awt.*;
@@ -30,7 +31,7 @@ public class LyricLine {
     protected float originX, originY, maxWidth;
     private int index;
     private boolean played;
-    protected final CustomAnimation scrollAnim = new CustomAnimation(EaseBackIn.class, 300, 0, 0);
+    protected final CustomAnimation scrollAnim = new CustomAnimation(EaseOutCubic.class, 300, 0, 0);
     private final ColorAnimation colorAnim = new ColorAnimation(new Color(200, 200, 200, 200), new Color(200, 200, 200, 200), 300);
 
     public LyricLine(String line, int startTime, int duration) {

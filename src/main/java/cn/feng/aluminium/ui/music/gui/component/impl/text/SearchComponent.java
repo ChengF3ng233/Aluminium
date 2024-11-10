@@ -9,6 +9,7 @@ import cn.feng.aluminium.util.animation.advanced.impl.DecelerateAnimation;
 import cn.feng.aluminium.util.misc.TimerUtil;
 import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
+import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -85,7 +86,9 @@ public class SearchComponent extends Component {
                 break;
             }
             default: {
-                text += c;
+                if (ChatAllowedCharacters.isAllowedCharacter(c)) {
+                    text += c;
+                }
             }
         }
     }

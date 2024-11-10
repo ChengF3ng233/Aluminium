@@ -21,7 +21,6 @@ import java.awt.*;
 public class PlaylistCard extends Component {
     private Playlist playlist;
     private final Animation iconAlpha = new DecelerateAnimation(200, 1.0, Direction.BACKWARDS);
-    private Thread thread;
 
     public PlaylistCard(Playlist playlist) {
         this.playlist = playlist;
@@ -36,10 +35,7 @@ public class PlaylistCard extends Component {
         if (playlist != null) {
             if (playlist.getCover().getCoverImage() == null) {
                 ShaderUtil.drawGradientCornerLR(x, y, width, height, 3f, ColorUtil.fade(10, 1, new Color(40, 40, 40), 1f), ColorUtil.fade(10, 5, new Color(40, 40, 40), 1f));
-                if (thread == null) {
-                    thread = new FetchCoverThread(playlist.getCover());
-                    thread.start();
-                } else if (!thread.isAlive()) thread = null;
+                playlist.getCover().load();
             } else {
                 RenderUtil.bindTexture(playlist.getCover().getCoverImage());
                 ShaderUtil.drawRoundTextured(x, y, width, height, 3f, 1f);

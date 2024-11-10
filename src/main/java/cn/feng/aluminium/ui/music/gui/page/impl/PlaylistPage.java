@@ -48,8 +48,13 @@ public class PlaylistPage extends Page {
         preRender();
         RenderUtil.scissorStart(x, y, width, height);
         if (playlist != null) {
-            RenderUtil.bindTexture(playlist.getCover().getCoverImage());
-            ShaderUtil.drawRoundTextured(x + 5f, y + 5f, 100f, 100f, 3f, 1f);
+            if (playlist.getCover().getCoverImage() == null) {
+                ShaderUtil.drawGradientCornerLR(x + 5f, y + 5f, 100f, 100f, 3f, ColorUtil.fade(10, 1, new Color(40, 40, 40), 1f), ColorUtil.fade(10, 5, new Color(40, 40, 40), 1f));
+                playlist.getCover().load();
+            } else {
+                RenderUtil.bindTexture(playlist.getCover().getCoverImage());
+                ShaderUtil.drawRoundTextured(x + 5f, y + 5f, 100f, 100f, 3f, 1f);
+            }
             float titleY = FontManager.pingfangBold(45).drawTrimString(playlist.getTitle(), x + 110f, y + 7f, width - 115f, 2, 3f, Color.WHITE.darker().getRGB());
             if (playlist.getAuthor() != null) {
                 FontManager.pingfangBold(16).drawString(playlist.getAuthor(), x + 110f, titleY + 10f, Color.WHITE.getRGB());

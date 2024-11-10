@@ -2,6 +2,7 @@ package net.minecraft.client;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.events.EventKey;
+import cn.feng.aluminium.util.render.RenderUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -896,6 +897,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      * Called repeatedly from run()
      */
     private void runGameLoop() throws IOException {
+        RenderUtil.calcFrameDelta();
+
         long i = System.nanoTime();
         this.mcProfiler.startSection("root");
 
@@ -1033,7 +1036,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     }
 
     public int getLimitFramerate() {
-        return this.theWorld == null && this.currentScreen != null ? 30 : this.gameSettings.limitFramerate;
+        return this.theWorld == null && this.currentScreen != null ? 90 : this.gameSettings.limitFramerate;
     }
 
     public boolean isFramerateLimitBelowMax() {
