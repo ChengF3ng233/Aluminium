@@ -12,6 +12,7 @@ import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.ui.nanovg.RollingText;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.util.data.StringUtil;
+import cn.feng.aluminium.util.misc.ChatUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.blur.BlurUtil;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
@@ -100,6 +101,7 @@ public class MusicWidget extends Widget {
     }
 
     private void scrollLyrics(List<LyricLine> lyricLines, LyricLine lastLine) {
+        if (lastLine.isPlayed()) return;
         for (LyricLine lyricLine : lyricLines) {
             lyricLine.scrollDown(lastLine.getLine(), lyricLines.indexOf(lastLine));
         }
@@ -121,11 +123,12 @@ public class MusicWidget extends Widget {
         }
         boolean first = true;
         for (LyricLine lyricLine : lyricLines) {
-            if (lyricLine.before(event.getTime()) && !lyricLine.isPlayed() && !first) {
+            boolean isLeader = lyricLine instanceof LyricLeader;
+            if (lyricLine.before(event.getTime()) && !lyricLine.isPlayed() && (!first || isLeader)) {
                 scrollLyrics(lyricLines, lyricLine);
                 lastLine = lyricLine;
             }
-            if (!(lyricLine instanceof LyricLeader)) {
+            if (!isLeader) {
                 first = false;
             }
         }

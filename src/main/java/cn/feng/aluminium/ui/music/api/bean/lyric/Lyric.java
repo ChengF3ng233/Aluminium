@@ -41,6 +41,11 @@ public class Lyric {
 
     public void init() {
         if (lyricLines.isEmpty()) return;
+
+        if (lyricLines.get(0).getStartTime() != 0) {
+            lyricLines.add(0, new LyricLeader());
+        }
+
         // 补全歌词时长
         for (int i = 0; i < lyricLines.size(); i++) {
             LyricLine line = lyricLines.get(i);

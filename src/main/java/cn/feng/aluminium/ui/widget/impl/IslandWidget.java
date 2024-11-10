@@ -34,7 +34,7 @@ public class IslandWidget extends Widget {
     @Override
     public void renderNanoVG() {
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
-        NanoFontRenderer font = NanoFontLoader.pingfang.bold();
+        NanoFontRenderer font = NanoFontLoader.pingfang;
         if (!player.available()) return;
 
         // 背景

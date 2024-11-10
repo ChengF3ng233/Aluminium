@@ -14,8 +14,8 @@ public class LyricLeader extends LyricLine {
     private final ColorAnimation circle3 = new ColorAnimation(Color.WHITE, new Color(200, 200, 200, 200), 250);
     private final Animation scale = new EaseOutCubic(300, 1.0, Direction.BACKWARDS);
 
-    public LyricLeader(int startTime, int duration) {
-        super("[前奏]", startTime, duration);
+    public LyricLeader() {
+        super("[前奏]", 0, -1);
     }
 
     @Override

@@ -216,7 +216,6 @@ public class MusicApi extends Util {
             JsonObject obj = song.getAsJsonObject();
             Music music = parseMusic(obj, true);
             musicList.add(music);
-            System.out.println(music.getArtist());
             ids.append(ids.length() == 0 ? music.getId() : "," + music.getId());
         }
 
@@ -315,13 +314,6 @@ public class MusicApi extends Util {
                 }
             }
         }
-
-        LyricLine first = lyric.getLyricLines().get(0);
-        List<LyricLine> lyrics = new ArrayList<>();
-        lyrics.add(new LyricLeader(0, first.getStartTime()));
-        lyrics.addAll(lyric.getLyricLines());
-        lyric.getLyricLines().clear();
-        lyric.getLyricLines().addAll(lyrics);
 
         if (!translateString.isEmpty()) {
             lyric.setTranslated(true);
