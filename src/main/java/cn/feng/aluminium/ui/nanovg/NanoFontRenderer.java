@@ -147,7 +147,7 @@ public class NanoFontRenderer extends Util {
         float currentY = y;
         int row = 1;
         while (row <= maxRows) {
-            String toRender = trimStringToWidth(text, maxWidth, size, false, row == maxRows);
+            String toRender = trimStringToWidth(text, maxWidth + 2f /*留一点空间防止刚刚好的时候不知道放在哪*/, size, false, row == maxRows);
             text = text.replace(toRender.replace("...", ""), "");
             renderBlurString(toRender, x, currentY, size, radius, align, color);
             currentY += toRender.isEmpty()? 0 : getHeight(toRender, size) + gap;

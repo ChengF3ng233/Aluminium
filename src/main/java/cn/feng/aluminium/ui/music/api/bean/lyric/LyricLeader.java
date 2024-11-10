@@ -32,10 +32,10 @@ public class LyricLeader extends LyricLine {
             if (circle3.getDirection().backwards()) circle3.changeDirection();
             if (scale.getDirection().backwards()) scale.changeDirection();
         }
-        NanoUtil.scaleStart(originX + 9f, originY - scrollAnim.getOutput().floatValue(), 1f - scale.getOutput().floatValue());
-        NanoUtil.drawCircle(originX + 3f, originY - scrollAnim.getOutput().floatValue(), 3f, circle1.getOutput());
-        NanoUtil.drawCircle(originX + 12f, originY - scrollAnim.getOutput().floatValue(), 3f, circle2.getOutput());
-        NanoUtil.drawCircle(originX + 21f, originY - scrollAnim.getOutput().floatValue(), 3f, circle3.getOutput());
+        NanoUtil.scaleStart(originX + 10f, originY - scrollAnim.getOutput().floatValue(), 1f - scale.getOutput().floatValue());
+        NanoUtil.drawCircle(originX + 4f, originY - scrollAnim.getOutput().floatValue(), 3f, circle1.getOutput());
+        NanoUtil.drawCircle(originX + 13f, originY - scrollAnim.getOutput().floatValue(), 3f, circle2.getOutput());
+        NanoUtil.drawCircle(originX + 22f, originY - scrollAnim.getOutput().floatValue(), 3f, circle3.getOutput());
         NanoUtil.scaleEnd();
     }
 }

@@ -62,10 +62,10 @@ public class MusicWidget extends Widget {
         author.drawString(player.getMusic().getArtist(), renderX + 10f, renderY + 95, 70f, 16f, new Color(200, 200, 200, 200));
 
         // Progress bar
-        NanoUtil.drawRect(renderX + 10f, renderY + 110f, 70f, 3f, new Color(200, 200, 200, 200));
+        NanoUtil.drawRect(renderX + 10f, renderY + 110f, 70f, 3f, new Color(200, 200, 200, 100));
         NanoUtil.drawRect(renderX + 10f, renderY + 110f, 70f * player.getCurrentPercent(), 3f, Color.WHITE);
-        NanoFontLoader.pingfang.drawString(StringUtil.convertMillisToMinSec((long) player.getCurrentTime()), renderX + 10f, renderY + 117f, 14f, Color.WHITE);
-        NanoFontLoader.pingfang.drawString(StringUtil.convertMillisToMinSec((long) (player.getMusic().getDuration() - player.getCurrentTime())), renderX + 67f, renderY + 117f, 14f, Color.WHITE);
+        NanoFontLoader.pingfang.drawString(StringUtil.convertMillisToMinSec((long) player.getCurrentTime()), renderX + 10f, renderY + 117f, 13f, new Color(200, 200, 200, 200));
+        NanoFontLoader.pingfang.drawString(StringUtil.convertMillisToMinSec((long) (player.getMusic().getDuration() - player.getCurrentTime())), renderX + 67f, renderY + 117f, 13f, new Color(200, 200, 200, 200));
 
         if (player.getMusic().getLyric() == null) {
             NanoUtil.endFrame();

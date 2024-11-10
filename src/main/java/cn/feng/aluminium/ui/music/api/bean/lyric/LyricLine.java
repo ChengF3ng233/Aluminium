@@ -110,7 +110,7 @@ public class LyricLine {
 
     public void render(float time, int currentIndex) {
         NanoFontRenderer font = NanoFontLoader.pingfang.bold();
-        colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, Math.max(Math.min((5 - (index - currentIndex)), 4), 1) * 50));
+        colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, (index - currentIndex) > 0? Math.max(200 - (index - currentIndex) * 60,  50) : 100));
         font.drawTrimBlurString(line, originX, originY - scrollAnim.getOutput().floatValue(), maxWidth, 3, 3f, 20f, Math.min(Math.abs(index - currentIndex) * 0.5f, 2f), NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP, colorAnim.getOutput());
     }
 
