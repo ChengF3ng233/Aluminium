@@ -64,7 +64,6 @@ public class IslandWidget extends Widget {
 
             if (currentLine != null && currentLine != lyricLine && !currentLine.getLine().isEmpty()) {
                 lyricLine = currentLine;
-                widthAnimation.setEndPoint(20d, true);
             }
 
             if (lyricLine != null) {
@@ -75,9 +74,7 @@ public class IslandWidget extends Widget {
                 }
 
                 float stringWidth = font.getStringWidth(lyricLine.getLine(), 15f);
-                if (widthAnimation.getAnimation().finished(Direction.FORWARDS)) {
-                    widthAnimation.setEndPoint(stringWidth + 22f, true);
-                }
+                widthAnimation.setEndPoint(stringWidth + 22f, true);
                 heightAnimation.setEndPoint(17f, true);
 
                 float playedWidth;
@@ -91,14 +88,12 @@ public class IslandWidget extends Widget {
                     playedWidth = currentWidth + beforeWidth;
                 }
 
-                NanoUtil.scaleXStart(renderX + width / 2f + 8f, renderY + height / 2f, widthAnimation.getOutput().floatValue() / (stringWidth + 22f));
                 NanoUtil.scissorStart(renderX, renderY, width, height);
                 font.drawString(lyricLine.getLine(), renderX + width / 2f + 8f, renderY + height / 2f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, new Color(200, 200, 200, 200));
                 NanoUtil.scissorStart(renderX + 8f + width / 2f - stringWidth / 2f - 1f, renderY, playedWidth + 1f, height, false);
                 font.drawString(lyricLine.getLine(), renderX + width / 2f + 8f, renderY + height / 2f - 0.1f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, Color.WHITE);
                 NanoUtil.scissorEnd();
                 NanoUtil.scissorEnd();
-                NanoUtil.scaleEnd();
             }
         }
     }
