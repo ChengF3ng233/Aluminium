@@ -84,13 +84,15 @@ public class KawaseBlur extends Util {
         Shader.drawQuads();
         kawaseUp.unload();
 
+        GlStateManager.clearColor(0, 0, 0, 0);
         mc.getFramebuffer().bindFramebuffer(true);
         RenderUtil.bindTexture(framebufferList.get(0).framebufferTexture);
         RenderUtil.setAlphaLimit(0);
         GLUtil.startBlend();
         Shader.drawQuads();
         GlStateManager.bindTexture(0);
-        GLUtil.endBlend();
+        RenderUtil.setAlphaLimit(0);
+        GLUtil.startBlend();
     }
 
     private static void renderFBO(Framebuffer framebuffer, int framebufferTexture, Shader shader, float offset) {
