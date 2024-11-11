@@ -3,10 +3,12 @@ package cn.feng.aluminium.ui.nanovg;
 import cn.feng.aluminium.config.ConfigManager;
 import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.data.IOUtil;
+import cn.feng.aluminium.util.misc.ChatUtil;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.nanovg.NVGColor;
 import org.lwjgl.nanovg.NVGPaint;
+import org.lwjgl.nanovg.NanoVG;
 import org.lwjgl.system.MemoryUtil;
 
 import javax.imageio.ImageIO;
@@ -104,19 +106,6 @@ public class NanoUtil extends Util {
         return nvgCreateImage(ctx, file.getAbsolutePath(), 0);
     }
 
-    public static void drawImageRect(String name, InputStream inputStream, float x, float y, float width, float height) {
-        int imageId = imageMap.containsKey(name) ? imageMap.get(name) : genImageId(inputStream);
-
-        if (imageId == -1 || imageId == 0) {
-            // 处理图像加载失败的情况
-            return;
-        }
-
-        drawImageRect(imageId, x, y, width, height);
-
-        imageMap.put(name, imageId);
-    }
-
     public static void drawImageRect(ResourceLocation location, float x, float y, float width, float height) {
         int imageId = 0;
         if (imageMap.containsKey(location.getResourcePath())) {
@@ -212,6 +201,35 @@ public class NanoUtil extends Util {
         nvgFill(ctx);  // 填充图像
 
         imgPaint.free();
+    }
+
+    public static void drawShadowRound(float x, float y, float width, float height, float radius) {
+        NVGPaint paint = NVGPaint.calloc();
+        nvgBoxGradient(ctx, x, y, width, height, radius, 5f, getColor(new Color(0, 0, 0, 255)), getColor(new Color(0, 0, 0, 0)), paint);
+        nvgBeginPath(ctx);
+        nvgRect(ctx, x - 5, y - 5, width + 10, height + 10);
+        nvgRoundedRect(ctx, x, y, width, height, radius);
+        nvgPathWinding(ctx, NVG_HOLE);
+        nvgFillPaint(ctx, paint);
+        nvgFill(ctx);
+        paint.free();
+    }
+
+    public static void drawImageRound(BufferedImage image, float x, float y, float width, float height, float radius) {
+        NVGPaint imgPaint = NVGPaint.calloc();
+        String key = image.toString();
+        int texture = imageMap.containsKey(key) ? imageMap.get(key) : genImageId(image);
+
+        nvgBeginPath(ctx);
+        nvgRoundedRect(ctx, x, y, width, height, radius);
+        nvgImagePattern(ctx, x, y, width, height, 0, texture, 1.0f, imgPaint);
+        nvgFillPaint(ctx, imgPaint);
+        nvgFill(ctx);
+
+        imgPaint.free();
+        if (!imageMap.containsKey(key)) {
+            imageMap.put(key, texture);
+        }
     }
 
     public static NVGPaint createGradient(float startX, float startY, float endX, float endY, Color left, Color right) {

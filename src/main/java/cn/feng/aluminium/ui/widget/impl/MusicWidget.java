@@ -46,16 +46,12 @@ public class MusicWidget extends Widget {
         ShaderUtil.drawRound(renderX, renderY, width, height, 3f, Color.BLACK);
         BlurUtil.blurEnd(3, 5);
 
-        BlurUtil.processStart();
-        ShaderUtil.drawRound(renderX + 10f, renderY + 10f, 70f, 70f, 2f, Color.BLACK);
-        BlurUtil.bloomEnd(2, 1);
+        NanoUtil.beginFrame();
 
         if (player.getMusic().getAlbum().getCover().getCoverImage() != null) {
-            RenderUtil.bindTexture(player.getMusic().getAlbum().getCover().getCoverImage());
-            ShaderUtil.drawRoundTextured(renderX + 10f, renderY + 10f, 70f, 70f, 2f, 1f);
+            NanoUtil.drawShadowRound(renderX + 10f, renderY + 10f, 70f, 70f, 2f);
+            NanoUtil.drawImageRound(player.getMusic().getAlbum().getCover().getCoverImage(), renderX + 10f, renderY + 10f, 70f, 70f, 2f);
         } else player.getMusic().getAlbum().getCover().load();
-
-        NanoUtil.beginFrame();
 
         // Info
         title.drawString(player.getMusic().getTitle(), renderX + 10f, renderY + 85, 70f, 16f, Color.WHITE);
@@ -94,7 +90,6 @@ public class MusicWidget extends Widget {
                 lyricLine.render(player.getCurrentTime(), lastLine == null ? 0 : lyricLines.indexOf(lastLine));
             }
         }
-
 
         NanoUtil.scissorEnd();
         NanoUtil.endFrame();
