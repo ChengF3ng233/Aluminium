@@ -20,7 +20,7 @@ public class ResourceUtil extends Util {
                 folder = "icon/";
                 break;
             case IMAGE:
-                folder = "image/";
+                folder = "img/";
                 break;
             case VIDEO:
                 folder = "video/";

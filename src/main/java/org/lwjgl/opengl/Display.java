@@ -36,7 +36,7 @@ public class Display {
     private static boolean displayResizable = false;
     private static boolean startFullscreen = false;
 
-    private static DisplayMode mode = new DisplayMode(854, 480);
+    private static DisplayMode mode = new DisplayMode(1280, 720);
     private static DisplayMode desktopDisplayMode = new DisplayMode(854, 480);
 
     private static int latestEventKey = 0;

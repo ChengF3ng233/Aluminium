@@ -8,6 +8,8 @@ import cn.feng.aluminium.ui.music.api.bean.Music;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.thread.FetchMusicURLThread;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.AudioSpectrumListener;
+import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -24,6 +26,7 @@ public class MusicPlayer {
     private Playlist playlist;
     private List<Music> musicList;
     private MediaPlayer mediaPlayer;
+    private float[] magnitudes;
 
     public MusicPlayer() {
         new JFXPanel();
@@ -67,9 +70,16 @@ public class MusicPlayer {
         double volume = mediaPlayer == null ? 1d : mediaPlayer.getVolume();
         if (mediaPlayer != null) mediaPlayer.stop();
         mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setAudioSpectrumListener((timestamp, duration, magnitudes, phases) -> {
+            this.magnitudes = magnitudes;
+        });
         mediaPlayer.setOnEndOfMedia(this::next);
         mediaPlayer.setVolume(volume);
         mediaPlayer.play();
+    }
+
+    public float[] getMagnitudes() {
+        return magnitudes;
     }
 
     public Playlist getPlaylist() {

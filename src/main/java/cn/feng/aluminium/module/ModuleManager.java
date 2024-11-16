@@ -4,6 +4,7 @@ import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventKey;
 import cn.feng.aluminium.module.modules.visual.MusicScreenMod;
+import cn.feng.aluminium.module.modules.visual.hud.HUD;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.util.exception.ModuleNotFoundException;
 import cn.feng.aluminium.util.exception.ValueLoadException;
@@ -90,7 +91,8 @@ public class ModuleManager {
 
 
     public void init() {
-        moduleList.add(new MusicScreenMod());
+        register(new MusicScreenMod());
+        register(new HUD());
     }
 
     @EventTarget

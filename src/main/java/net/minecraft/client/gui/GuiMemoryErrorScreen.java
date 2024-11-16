@@ -1,5 +1,6 @@
 package net.minecraft.client.gui;
 
+import cn.feng.aluminium.ui.menu.GuiMainMenu;
 import net.minecraft.client.resources.I18n;
 
 import java.io.IOException;

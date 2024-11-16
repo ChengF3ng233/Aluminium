@@ -2,6 +2,7 @@ package net.minecraft.client;
 
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.events.EventKey;
+import cn.feng.aluminium.ui.menu.GuiMainMenu;
 import cn.feng.aluminium.util.render.RenderUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -554,6 +555,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.displayWidth = Math.max(1, displaymode.getWidth());
             this.displayHeight = Math.max(1, displaymode.getHeight());
         } else {
+            this.displayWidth = 1280;
+            this.displayHeight = 720;
             Display.setDisplayMode(new DisplayMode(this.displayWidth, this.displayHeight));
         }
     }

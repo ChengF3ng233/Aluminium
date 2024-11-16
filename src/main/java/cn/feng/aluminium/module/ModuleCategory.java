@@ -5,6 +5,5 @@ public enum ModuleCategory {
     PLAYER,
     MOVEMENT,
     VISUAL,
-    WIDGET,
-    CLIENT
+    WIDGET
 }

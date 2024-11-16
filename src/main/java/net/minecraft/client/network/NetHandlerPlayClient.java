@@ -1,5 +1,6 @@
 package net.minecraft.client.network;
 
+import cn.feng.aluminium.ui.menu.GuiMainMenu;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;

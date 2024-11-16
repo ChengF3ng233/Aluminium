@@ -140,6 +140,10 @@ public class NanoFontRenderer extends Util {
         renderPlainString(text, x, y, size, align, color);
     }
 
+    public void setSpacing(float spacing) {
+        nvgTextLetterSpacing(ctx, spacing);
+    }
+
     /**
      * Automatically 换行
      */
