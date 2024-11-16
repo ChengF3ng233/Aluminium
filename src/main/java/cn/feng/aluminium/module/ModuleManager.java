@@ -3,6 +3,7 @@ package cn.feng.aluminium.module;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventKey;
+import cn.feng.aluminium.module.modules.visual.ClickGuiMod;
 import cn.feng.aluminium.module.modules.visual.MusicScreenMod;
 import cn.feng.aluminium.module.modules.visual.hud.HUD;
 import cn.feng.aluminium.ui.widget.Widget;
@@ -12,7 +13,10 @@ import cn.feng.aluminium.value.Value;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * @author ChengFeng
@@ -89,10 +93,22 @@ public class ModuleManager {
         throw new ModuleNotFoundException(widget.getName());
     }
 
+    public List<Module> getModuleByCategory(ModuleCategory category) {
+        return moduleList.stream().filter(it -> it.getCategory() == category).sorted(Comparator.comparing(Module::getName)).collect(Collectors.toList());
+    }
+
 
     public void init() {
         register(new MusicScreenMod());
         register(new HUD());
+        register(new ClickGuiMod());
+
+        for (ModuleCategory category : ModuleCategory.values()) {
+            int count = ThreadLocalRandom.current().nextInt(15, 30);
+            for (int i = 0; i < count; i++) {
+                register(new Module("TestModule" + i, category));
+            }
+        }
     }
 
     @EventTarget
