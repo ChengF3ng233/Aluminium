@@ -3,6 +3,8 @@ package net.minecraft.client;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.events.EventKey;
 import cn.feng.aluminium.ui.menu.GuiMainMenu;
+import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
+import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -35,7 +37,6 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -95,10 +96,13 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.nanovg.NanoVG;
 import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -110,6 +114,7 @@ import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -444,7 +449,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.refreshResources();
         this.renderEngine = new TextureManager(this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.renderEngine);
-        this.drawSplashScreen(this.renderEngine);
+        this.drawSplashScreen();
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
         this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
@@ -738,52 +743,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.displayHeight = displaymode.getHeight();
     }
 
-    private void drawSplashScreen(TextureManager textureManagerInstance) throws LWJGLException {
-        ScaledResolution scaledresolution = new ScaledResolution(this);
-        int i = scaledresolution.getScaleFactor();
-        Framebuffer framebuffer = new Framebuffer(scaledresolution.getScaledWidth() * i, scaledresolution.getScaledHeight() * i, true);
-        framebuffer.bindFramebuffer(false);
-        GlStateManager.matrixMode(5889);
-        GlStateManager.loadIdentity();
-        GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), 0.0D, 1000.0D, 3000.0D);
-        GlStateManager.matrixMode(5888);
-        GlStateManager.loadIdentity();
-        GlStateManager.translate(0.0F, 0.0F, -2000.0F);
-        GlStateManager.disableLighting();
-        GlStateManager.disableFog();
-        GlStateManager.disableDepth();
-        GlStateManager.enableTexture2D();
-        InputStream inputstream = null;
-
-        try {
-            inputstream = this.mcDefaultResourcePack.getInputStream(locationMojangPng);
-            this.mojangLogo = textureManagerInstance.getDynamicTextureLocation("logo", new DynamicTexture(ImageIO.read(inputstream)));
-            textureManagerInstance.bindTexture(this.mojangLogo);
-        } catch (IOException ioexception) {
-            logger.error("Unable to load logo: " + locationMojangPng, ioexception);
-        } finally {
-            IOUtils.closeQuietly(inputstream);
-        }
-
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        worldrenderer.pos(0.0D, this.displayHeight, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-        worldrenderer.pos(this.displayWidth, this.displayHeight, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-        worldrenderer.pos(this.displayWidth, 0.0D, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-        worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-        tessellator.draw();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        int j = 256;
-        int k = 256;
-        this.draw((scaledresolution.getScaledWidth() - j) / 2, (scaledresolution.getScaledHeight() - k) / 2, 0, 0, j, k, 255, 255, 255, 255);
-        GlStateManager.disableLighting();
-        GlStateManager.disableFog();
-        framebuffer.unbindFramebuffer();
-        framebuffer.framebufferRender(scaledresolution.getScaledWidth() * i, scaledresolution.getScaledHeight() * i);
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(516, 0.1F);
-        this.updateDisplay();
+    private void drawSplashScreen() {
+        ScaledResolution sr = new ScaledResolution(this);
+        NanoUtil.beginFrame();
+        NanoUtil.drawRect(0, 0, sr.getScaledWidth(), sr.getScaledHeight(), new Color(30, 30, 30));
+        NanoFontLoader.quicksand.bold().drawGlowString("Starting client...", sr.getScaledWidth() / 2f, sr.getScaledHeight() / 2f, 50f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, Color.WHITE);
+        NanoUtil.endFrame();
+        Display.update();
     }
 
     /**

@@ -7,6 +7,7 @@ import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
 import cn.feng.aluminium.ui.nanovg.NanoLoader;
 import org.lwjgl.glfw.*;
 import org.lwjgl.glfw.GLFW;
@@ -306,6 +307,7 @@ public class Display {
         GL.createCapabilities();
 
         NanoLoader.init();
+        NanoFontLoader.registerFonts();
 
         if (savedIcons != null) {
             setIcon(savedIcons);

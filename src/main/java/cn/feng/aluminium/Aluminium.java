@@ -35,7 +35,6 @@ public class Aluminium {
         configManager.loadConfigs();
 
         ShaderUtil.init();
-        NanoFontLoader.registerFonts();
     }
 
     public void stop() {
