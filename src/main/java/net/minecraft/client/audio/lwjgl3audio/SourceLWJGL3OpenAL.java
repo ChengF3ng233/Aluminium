@@ -27,11 +27,10 @@ public class SourceLWJGL3OpenAL extends Source {
         if (this.codec != null) {
             this.codec.reverseByteOrder(true);
         }
-
         this.listenerPosition = listenerPosition;
         this.myBuffer = myBuffer;
-        this.libraryType = SoundEngine.class;
-        this.pitch = 1.0F;
+        this.libraryType = LibraryLWJGL3OpenAL.class;
+        this.pitch = 1.0f;
         this.resetALInformation();
     }
 
@@ -41,11 +40,10 @@ public class SourceLWJGL3OpenAL extends Source {
         if (this.codec != null) {
             this.codec.reverseByteOrder(true);
         }
-
         this.listenerPosition = listenerPosition;
         this.myBuffer = myBuffer;
-        this.libraryType = SoundEngine.class;
-        this.pitch = 1.0F;
+        this.libraryType = LibraryLWJGL3OpenAL.class;
+        this.pitch = 1.0f;
         this.resetALInformation();
     }
 
@@ -53,8 +51,8 @@ public class SourceLWJGL3OpenAL extends Source {
         super(audioFormat, priority, sourcename, x, y, z, attModel, distOrRoll);
         this.channelOpenAL = (ChannelLWJGL3OpenAL) this.channel;
         this.listenerPosition = listenerPosition;
-        this.libraryType = SoundEngine.class;
-        this.pitch = 1.0F;
+        this.libraryType = LibraryLWJGL3OpenAL.class;
+        this.pitch = 1.0f;
         this.resetALInformation();
     }
 
@@ -66,7 +64,7 @@ public class SourceLWJGL3OpenAL extends Source {
         super.changeSource(priority, toStream, toLoop, sourcename, filenameURL, soundBuffer, x, y, z, attModel, distOrRoll, temporary);
         this.listenerPosition = listenerPosition;
         this.myBuffer = myBuffer;
-        this.pitch = 1.0F;
+        this.pitch = 1.0f;
         this.resetALInformation();
     }
 
@@ -74,66 +72,54 @@ public class SourceLWJGL3OpenAL extends Source {
         if (!this.toStream) {
             this.errorMessage("Method 'incrementSoundSequence' may only be used for streaming sources.");
             return false;
-        } else {
-            synchronized (this.soundSequenceLock) {
-                if (this.soundSequenceQueue != null && this.soundSequenceQueue.size() > 0) {
-                    this.filenameURL = this.soundSequenceQueue.remove(0);
-                    if (this.codec != null) {
-                        this.codec.cleanup();
-                    }
-
-                    this.codec = SoundSystemConfig.getCodec(this.filenameURL.getFilename());
-                    if (this.codec != null) {
-                        this.codec.reverseByteOrder(true);
-                        if (this.codec.getAudioFormat() == null) {
-                            this.codec.initialize(this.filenameURL.getURL());
-                        }
-
-                        AudioFormat audioFormat = this.codec.getAudioFormat();
-                        if (audioFormat == null) {
-                            this.errorMessage("Audio Format null in method 'incrementSoundSequence'");
-                            return false;
-                        }
-
-                        short soundFormat = 0;
-                        if (audioFormat.getChannels() == 1) {
-                            if (audioFormat.getSampleSizeInBits() == 8) {
-                                soundFormat = 4352;
-                            } else {
-                                if (audioFormat.getSampleSizeInBits() != 16) {
-                                    this.errorMessage("Illegal sample size in method 'incrementSoundSequence'");
-                                    return false;
-                                }
-
-                                soundFormat = 4353;
-                            }
-                        } else {
-                            if (audioFormat.getChannels() != 2) {
-                                this.errorMessage("Audio data neither mono nor stereo in method 'incrementSoundSequence'");
-                                return false;
-                            }
-
-                            if (audioFormat.getSampleSizeInBits() == 8) {
-                                soundFormat = 4354;
-                            } else {
-                                if (audioFormat.getSampleSizeInBits() != 16) {
-                                    this.errorMessage("Illegal sample size in method 'incrementSoundSequence'");
-                                    return false;
-                                }
-
-                                soundFormat = 4355;
-                            }
-                        }
-
-                        this.channelOpenAL.setFormat(soundFormat, (int) audioFormat.getSampleRate());
-                        this.preLoad = true;
-                    }
-
-                    return true;
+        }
+        synchronized (this.soundSequenceLock) {
+            AudioFormat audioFormat;
+            if (this.soundSequenceQueue == null) return false;
+            if (this.soundSequenceQueue.size() <= 0) return false;
+            this.filenameURL = this.soundSequenceQueue.remove(0);
+            if (this.codec != null) {
+                this.codec.cleanup();
+            }
+            this.codec = SoundSystemConfig.getCodec(this.filenameURL.getFilename());
+            if (this.codec == null) return true;
+            this.codec.reverseByteOrder(true);
+            if (this.codec.getAudioFormat() == null) {
+                this.codec.initialize(this.filenameURL.getURL());
+            }
+            if ((audioFormat = this.codec.getAudioFormat()) == null) {
+                this.errorMessage("Audio Format null in method 'incrementSoundSequence'");
+                return false;
+            }
+            int soundFormat = 0;
+            if (audioFormat.getChannels() == 1) {
+                if (audioFormat.getSampleSizeInBits() == 8) {
+                    soundFormat = 4352;
                 } else {
+                    if (audioFormat.getSampleSizeInBits() != 16) {
+                        this.errorMessage("Illegal sample size in method 'incrementSoundSequence'");
+                        return false;
+                    }
+                    soundFormat = 4353;
+                }
+            } else {
+                if (audioFormat.getChannels() != 2) {
+                    this.errorMessage("Audio data neither mono nor stereo in method 'incrementSoundSequence'");
                     return false;
                 }
+                if (audioFormat.getSampleSizeInBits() == 8) {
+                    soundFormat = 4354;
+                } else {
+                    if (audioFormat.getSampleSizeInBits() != 16) {
+                        this.errorMessage("Illegal sample size in method 'incrementSoundSequence'");
+                        return false;
+                    }
+                    soundFormat = 4355;
+                }
             }
+            this.channelOpenAL.setFormat(soundFormat, (int) audioFormat.getSampleRate());
+            this.preLoad = true;
+            return true;
         }
     }
 
@@ -148,15 +134,13 @@ public class SourceLWJGL3OpenAL extends Source {
         } else {
             this.positionChanged();
         }
-
         this.sourcePosition.put(0, x);
         this.sourcePosition.put(1, y);
         this.sourcePosition.put(2, z);
         if (this.channel != null && this.channel.attachedSource == this && this.channelOpenAL != null && this.channelOpenAL.ALSource != null) {
-            AL10.alSourcefv(this.channelOpenAL.ALSource.get(0), 4100, this.sourcePosition);
+            AL10.alSource(this.channelOpenAL.ALSource.get(0), 4100, this.sourcePosition);
             this.checkALError();
         }
-
     }
 
     public void positionChanged() {
@@ -166,16 +150,14 @@ public class SourceLWJGL3OpenAL extends Source {
             AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4106, this.gain * this.sourceVolume * Math.abs(this.fadeOutGain) * this.fadeInGain);
             this.checkALError();
         }
-
         this.checkPitch();
     }
 
     private void checkPitch() {
-        if (this.channel != null && this.channel.attachedSource == this && SoundEngine.alPitchSupported() && this.channelOpenAL != null && this.channelOpenAL.ALSource != null) {
+        if (this.channel != null && this.channel.attachedSource == this && LibraryLWJGL3OpenAL.alPitchSupported() && this.channelOpenAL != null && this.channelOpenAL.ALSource != null) {
             AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4099, this.pitch);
             this.checkALError();
         }
-
     }
 
     public void setLooping(boolean lp) {
@@ -186,10 +168,8 @@ public class SourceLWJGL3OpenAL extends Source {
             } else {
                 AL10.alSourcei(this.channelOpenAL.ALSource.get(0), 4103, 0);
             }
-
             this.checkALError();
         }
-
     }
 
     public void setAttenuation(int model) {
@@ -198,12 +178,10 @@ public class SourceLWJGL3OpenAL extends Source {
             if (model == 1) {
                 AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, this.distOrRoll);
             } else {
-                AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, 0.0F);
+                AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, 0.0f);
             }
-
             this.checkALError();
         }
-
     }
 
     public void setDistOrRoll(float dr) {
@@ -212,12 +190,10 @@ public class SourceLWJGL3OpenAL extends Source {
             if (this.attModel == 1) {
                 AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, dr);
             } else {
-                AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, 0.0F);
+                AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, 0.0f);
             }
-
             this.checkALError();
         }
-
     }
 
     public void setVelocity(float x, float y, float z) {
@@ -225,10 +201,9 @@ public class SourceLWJGL3OpenAL extends Source {
         this.sourceVelocity = BufferUtils.createFloatBuffer(3).put(new float[]{x, y, z});
         this.sourceVelocity.flip();
         if (this.channel != null && this.channel.attachedSource == this && this.channelOpenAL != null && this.channelOpenAL.ALSource != null) {
-            AL10.alSourcefv(this.channelOpenAL.ALSource.get(0), 4102, this.sourceVelocity);
+            AL10.alSource(this.channelOpenAL.ALSource.get(0), 4102, this.sourceVelocity);
             this.checkALError();
         }
-
     }
 
     public void setPitch(float value) {
@@ -236,144 +211,126 @@ public class SourceLWJGL3OpenAL extends Source {
         this.checkPitch();
     }
 
+    /*
+     * Enabled aggressive block sorting
+     */
     public void play(Channel c) {
+        boolean newChannel;
         if (!this.active()) {
             if (this.toLoop) {
                 this.toPlay = true;
             }
-
-        } else if (c == null) {
+            return;
+        }
+        if (c == null) {
             this.errorMessage("Unable to play source, because channel was null");
-        } else {
-            boolean newChannel = this.channel != c;
-            if (this.channel != null && this.channel.attachedSource != this) {
-                newChannel = true;
-            }
-
-            boolean wasPaused = this.paused();
-            super.play(c);
-            this.channelOpenAL = (ChannelLWJGL3OpenAL) this.channel;
-            if (newChannel) {
-                this.setPosition(this.position.x, this.position.y, this.position.z);
-                this.checkPitch();
-                if (this.channelOpenAL != null && this.channelOpenAL.ALSource != null) {
-                    if (SoundEngine.alPitchSupported()) {
-                        AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4099, this.pitch);
-                        this.checkALError();
-                    }
-
-                    AL10.alSourcefv(this.channelOpenAL.ALSource.get(0), 4100, this.sourcePosition);
-                    this.checkALError();
-                    AL10.alSourcefv(this.channelOpenAL.ALSource.get(0), 4102, this.sourceVelocity);
-                    this.checkALError();
-                    if (this.attModel == 1) {
-                        AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, this.distOrRoll);
-                    } else {
-                        AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, 0.0F);
-                    }
-
-                    this.checkALError();
-                    if (this.toLoop && !this.toStream) {
-                        AL10.alSourcei(this.channelOpenAL.ALSource.get(0), 4103, 1);
-                    } else {
-                        AL10.alSourcei(this.channelOpenAL.ALSource.get(0), 4103, 0);
-                    }
-
+            return;
+        }
+        boolean bl = newChannel = this.channel != c;
+        if (this.channel != null && this.channel.attachedSource != this) {
+            newChannel = true;
+        }
+        boolean wasPaused = this.paused();
+        super.play(c);
+        this.channelOpenAL = (ChannelLWJGL3OpenAL) this.channel;
+        if (newChannel) {
+            this.setPosition(this.position.x, this.position.y, this.position.z);
+            this.checkPitch();
+            if (this.channelOpenAL != null && this.channelOpenAL.ALSource != null) {
+                if (LibraryLWJGL3OpenAL.alPitchSupported()) {
+                    AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4099, this.pitch);
                     this.checkALError();
                 }
-
-                if (!this.toStream) {
-                    if (this.myBuffer == null) {
-                        this.errorMessage("No sound buffer to play");
-                        return;
-                    }
-
-                    this.channelOpenAL.attachBuffer(this.myBuffer);
+                AL10.alSource(this.channelOpenAL.ALSource.get(0), 4100, this.sourcePosition);
+                this.checkALError();
+                AL10.alSource(this.channelOpenAL.ALSource.get(0), 4102, this.sourceVelocity);
+                this.checkALError();
+                if (this.attModel == 1) {
+                    AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, this.distOrRoll);
+                } else {
+                    AL10.alSourcef(this.channelOpenAL.ALSource.get(0), 4129, 0.0f);
                 }
+                this.checkALError();
+                if (this.toLoop && !this.toStream) {
+                    AL10.alSourcei(this.channelOpenAL.ALSource.get(0), 4103, 1);
+                } else {
+                    AL10.alSourcei(this.channelOpenAL.ALSource.get(0), 4103, 0);
+                }
+                this.checkALError();
             }
-
-            if (!this.playing()) {
-                if (this.toStream && !wasPaused) {
-                    if (this.codec == null) {
-                        this.errorMessage("Decoder null in method 'play'");
-                        return;
-                    }
-
-                    if (this.codec.getAudioFormat() == null) {
-                        this.codec.initialize(this.filenameURL.getURL());
-                    }
-
-                    AudioFormat audioFormat = this.codec.getAudioFormat();
-                    if (audioFormat == null) {
-                        this.errorMessage("Audio Format null in method 'play'");
-                        return;
-                    }
-
-
-                    short soundFormat = 0;
-                    if (audioFormat.getChannels() == 1) {
-                        if (audioFormat.getSampleSizeInBits() == 8) {
-                            soundFormat = 4352;
-                        } else {
-                            if (audioFormat.getSampleSizeInBits() != 16) {
-                                this.errorMessage("Illegal sample size in method 'play'");
-                                return;
-                            }
-
-                            soundFormat = 4353;
-                        }
+            if (!this.toStream) {
+                if (this.myBuffer == null) {
+                    this.errorMessage("No sound buffer to play");
+                    return;
+                }
+                this.channelOpenAL.attachBuffer(this.myBuffer);
+            }
+        }
+        if (!this.playing()) {
+            if (this.toStream && !wasPaused) {
+                AudioFormat audioFormat;
+                if (this.codec == null) {
+                    this.errorMessage("Decoder null in method 'play'");
+                    return;
+                }
+                if (this.codec.getAudioFormat() == null) {
+                    this.codec.initialize(this.filenameURL.getURL());
+                }
+                if ((audioFormat = this.codec.getAudioFormat()) == null) {
+                    this.errorMessage("Audio Format null in method 'play'");
+                    return;
+                }
+                int soundFormat = 0;
+                if (audioFormat.getChannels() == 1) {
+                    if (audioFormat.getSampleSizeInBits() == 8) {
+                        soundFormat = 4352;
                     } else {
-                        if (audioFormat.getChannels() != 2) {
-                            this.errorMessage("Audio data neither mono nor stereo in method 'play'");
+                        if (audioFormat.getSampleSizeInBits() != 16) {
+                            this.errorMessage("Illegal sample size in method 'play'");
                             return;
                         }
-
-                        if (audioFormat.getSampleSizeInBits() == 8) {
-                            soundFormat = 4354;
-                        } else {
-                            if (audioFormat.getSampleSizeInBits() != 16) {
-                                this.errorMessage("Illegal sample size in method 'play'");
-                                return;
-                            }
-
-                            soundFormat = 4355;
-                        }
+                        soundFormat = 4353;
                     }
-
-                    this.channelOpenAL.setFormat(soundFormat, (int) audioFormat.getSampleRate());
-                    this.preLoad = true;
+                } else {
+                    if (audioFormat.getChannels() != 2) {
+                        this.errorMessage("Audio data neither mono nor stereo in method 'play'");
+                        return;
+                    }
+                    if (audioFormat.getSampleSizeInBits() == 8) {
+                        soundFormat = 4354;
+                    } else {
+                        if (audioFormat.getSampleSizeInBits() != 16) {
+                            this.errorMessage("Illegal sample size in method 'play'");
+                            return;
+                        }
+                        soundFormat = 4355;
+                    }
                 }
-
-                this.channel.play();
-                if (this.pitch != 1.0F) {
-                    this.checkPitch();
-                }
+                this.channelOpenAL.setFormat(soundFormat, (int) audioFormat.getSampleRate());
+                this.preLoad = true;
             }
-
+            this.channel.play();
+            if (this.pitch != 1.0f) {
+                this.checkPitch();
+            }
         }
     }
 
     public boolean preLoad() {
         if (this.codec == null) {
             return false;
-        } else {
-            this.codec.initialize(this.filenameURL.getURL());
-            LinkedList<byte[]> preLoadBuffers = new LinkedList();
-
-            for (int i = 0; i < SoundSystemConfig.getNumberStreamingBuffers(); ++i) {
-                this.soundBuffer = this.codec.read();
-                if (this.soundBuffer == null || this.soundBuffer.audioData == null) {
-                    break;
-                }
-
-                preLoadBuffers.add(this.soundBuffer.audioData);
-            }
-
-            this.positionChanged();
-            this.channel.preLoadBuffers(preLoadBuffers);
-            this.preLoad = false;
-            return true;
         }
+        this.codec.initialize(this.filenameURL.getURL());
+        LinkedList<byte[]> preLoadBuffers = new LinkedList<byte[]>();
+        for (int i = 0; i < SoundSystemConfig.getNumberStreamingBuffers(); ++i) {
+            this.soundBuffer = this.codec.read();
+            if (this.soundBuffer == null || this.soundBuffer.audioData == null) break;
+            preLoadBuffers.add(this.soundBuffer.audioData);
+        }
+        this.positionChanged();
+        this.channel.preLoadBuffers(preLoadBuffers);
+        this.preLoad = false;
+        return true;
     }
 
     private void resetALInformation() {
@@ -391,54 +348,49 @@ public class SourceLWJGL3OpenAL extends Source {
             double dZ = this.position.z - this.listenerPosition.get(2);
             this.distanceFromListener = (float) Math.sqrt(dX * dX + dY * dY + dZ * dZ);
         }
-
     }
 
     private void calculateGain() {
         if (this.attModel == 2) {
-            if (this.distanceFromListener <= 0.0F) {
-                this.gain = 1.0F;
-            } else if (this.distanceFromListener >= this.distOrRoll) {
-                this.gain = 0.0F;
-            } else {
-                this.gain = 1.0F - this.distanceFromListener / this.distOrRoll;
+            this.gain = this.distanceFromListener <= 0.0f ? 1.0f : (this.distanceFromListener >= this.distOrRoll ? 0.0f : 1.0f - this.distanceFromListener / this.distOrRoll);
+            if (this.gain > 1.0f) {
+                this.gain = 1.0f;
             }
-
-            if (this.gain > 1.0F) {
-                this.gain = 1.0F;
-            }
-
-            if (this.gain < 0.0F) {
-                this.gain = 0.0F;
+            if (this.gain < 0.0f) {
+                this.gain = 0.0f;
             }
         } else {
-            this.gain = 1.0F;
+            this.gain = 1.0f;
         }
-
     }
 
     private boolean checkALError() {
         switch (AL10.alGetError()) {
-            case 0:
+            case 0: {
                 return false;
-            case 40961:
+            }
+            case 40961: {
                 this.errorMessage("Invalid name parameter.");
                 return true;
-            case 40962:
+            }
+            case 40962: {
                 this.errorMessage("Invalid parameter.");
                 return true;
-            case 40963:
+            }
+            case 40963: {
                 this.errorMessage("Invalid enumerated parameter value.");
                 return true;
-            case 40964:
+            }
+            case 40964: {
                 this.errorMessage("Illegal call.");
                 return true;
-            case 40965:
+            }
+            case 40965: {
                 this.errorMessage("Unable to allocate memory.");
                 return true;
-            default:
-                this.errorMessage("An unrecognized error occurred.");
-                return true;
+            }
         }
+        this.errorMessage("An unrecognized error occurred.");
+        return true;
     }
 }

@@ -270,7 +270,7 @@ public class GuiStats extends GuiScreen implements IProgressMeter {
 
             if (this.field_148218_l >= 0) {
                 this.func_148212_h(this.field_148218_l);
-                this.mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                this.mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.click"), 1.0F));
             }
         }
 

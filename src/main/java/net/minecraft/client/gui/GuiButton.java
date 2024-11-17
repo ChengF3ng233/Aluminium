@@ -138,7 +138,7 @@ public class GuiButton extends Gui {
     }
 
     public void playPressSound(SoundHandler soundHandlerIn) {
-        soundHandlerIn.playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        soundHandlerIn.playSound(PositionedSoundRecord.create(new ResourceLocation("random.click"), 1.0F));
     }
 
     public int getButtonWidth() {

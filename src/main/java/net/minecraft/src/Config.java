@@ -17,7 +17,6 @@ import net.minecraft.util.Util;
 import net.minecraft.util.*;
 import net.optifine.DynamicLights;
 import net.optifine.GlErrors;
-import net.optifine.VersionCheckThread;
 import net.optifine.config.GlVersion;
 import net.optifine.gui.GuiMessage;
 import net.optifine.reflect.Reflector;
@@ -55,9 +54,10 @@ public class Config {
     public static final String OF_EDITION = "HD_U";
     public static final String OF_RELEASE = "M6_pre2";
     public static final String VERSION = "OptiFine_1.8.9_HD_U_M6_pre2";
-    private static String build = null;
-    private static String newRelease = null;
-    private static boolean notify64BitJava = false;
+    public static final Float DEF_ALPHA_FUNC_LEVEL = Float.valueOf(0.1F);
+    public static final boolean logDetail = System.getProperty("log.detail", "false").equals("true");
+    private static final Minecraft minecraft = Minecraft.getMinecraft();
+    private static final Logger LOGGER = LogManager.getLogger();
     public static String openGlVersion = null;
     public static String openGlRenderer = null;
     public static String openGlVendor = null;
@@ -67,27 +67,26 @@ public class Config {
     public static int minecraftVersionInt = -1;
     public static boolean fancyFogAvailable = false;
     public static boolean occlusionAvailable = false;
+    public static boolean zoomMode = false;
+    public static boolean zoomSmoothCamera = false;
+    public static boolean waterOpacityChanged = false;
+    public static float renderPartialTicks;
+    private static String build = null;
+    private static String newRelease = null;
+    private static boolean notify64BitJava = false;
     private static GameSettings gameSettings = null;
-    private static final Minecraft minecraft = Minecraft.getMinecraft();
     private static boolean initialized = false;
     private static Thread minecraftThread = null;
     private static DisplayMode desktopDisplayMode = null;
     private static DisplayMode[] displayModes = null;
     private static int antialiasingLevel = 0;
     private static int availableProcessors = 0;
-    public static boolean zoomMode = false;
-    public static boolean zoomSmoothCamera = false;
     private static int texturePackClouds = 0;
-    public static boolean waterOpacityChanged = false;
     private static boolean fullscreenModeChecked = false;
     private static boolean desktopModeChecked = false;
     private static DefaultResourcePack defaultResourcePackLazy = null;
-    public static final Float DEF_ALPHA_FUNC_LEVEL = Float.valueOf(0.1F);
-    private static final Logger LOGGER = LogManager.getLogger();
-    public static final boolean logDetail = System.getProperty("log.detail", "false").equals("true");
     private static String mcDebugLast = null;
     private static int fpsMinLast = 0;
-    public static float renderPartialTicks;
 
     public static String getVersion() {
         return "OptiFine_1.8.9_HD_U_M6_pre2";
@@ -137,7 +136,6 @@ public class Config {
             if (Display.isCreated()) {
                 initialized = true;
                 checkOpenGlCaps();
-                startVersionCheckThread();
             }
         }
     }
@@ -373,11 +371,6 @@ public class Config {
 
     public static boolean isMinecraftThread() {
         return Thread.currentThread() == minecraftThread;
-    }
-
-    private static void startVersionCheckThread() {
-        VersionCheckThread versioncheckthread = new VersionCheckThread();
-        versioncheckthread.start();
     }
 
     public static boolean isMipmaps() {
@@ -1424,7 +1417,7 @@ public class Config {
     }
 
     public static boolean equals(Object p_equals_0_, Object p_equals_1_) {
-        return p_equals_0_ == p_equals_1_ || (p_equals_0_ != null && p_equals_0_.equals(p_equals_1_));
+        return Objects.equals(p_equals_0_, p_equals_1_);
     }
 
     public static boolean equalsOne(Object p_equalsOne_0_, Object[] p_equalsOne_1_) {
@@ -1773,7 +1766,7 @@ public class Config {
             int[] aint = new int[j];
             System.arraycopy(p_addIntsToArray_0_, 0, aint, 0, i);
 
-            System.arraycopy(p_addIntsToArray_1_, 0, aint, 0 + i, p_addIntsToArray_1_.length);
+            System.arraycopy(p_addIntsToArray_1_, 0, aint, i, p_addIntsToArray_1_.length);
 
             return aint;
         } else {
