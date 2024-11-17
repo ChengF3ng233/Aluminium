@@ -34,6 +34,8 @@ public class IslandWidget extends Widget {
 
     public IslandWidget() {
         super("Island", true, WidgetAlign.TOP | WidgetAlign.CENTER);
+        x = 0.5f;
+        y = 0.01f;
     }
 
     @Override

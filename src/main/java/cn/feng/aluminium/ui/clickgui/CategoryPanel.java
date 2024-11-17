@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryPanel extends Scrollable {
+    private final ClickGui parent;
+
     private final List<ModuleButton> buttons = new ArrayList<>();
     private final ModuleCategory category;
 
@@ -25,11 +27,12 @@ public class CategoryPanel extends Scrollable {
     private final CustomAnimation heightAnim = new CustomAnimation(EaseOutCubic.class, 300, 0d, 0d);
     private float totalHeight;
 
-    public CategoryPanel(ModuleCategory category) {
+    public CategoryPanel(ClickGui parent, ModuleCategory category) {
+        this.parent = parent;
         this.category = category;
 
         for (Module module : Aluminium.INSTANCE.moduleManager.getModuleByCategory(category)) {
-            buttons.add(new ModuleButton(module));
+            buttons.add(new ModuleButton(this, module));
         }
 
         totalHeight = (buttons.size() + 1) * 20f + 3f;

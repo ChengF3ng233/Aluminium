@@ -104,7 +104,7 @@ public class ModuleManager {
         register(new ClickGuiMod());
 
         for (ModuleCategory category : ModuleCategory.values()) {
-            int count = ThreadLocalRandom.current().nextInt(15, 30);
+            int count = ThreadLocalRandom.current().nextInt(5, 30);
             for (int i = 0; i < count; i++) {
                 register(new Module("TestModule" + i, category));
             }

@@ -48,6 +48,7 @@ public class UIManager extends Util {
         for (Widget widget : widgetList) {
             widget.update();
         }
+
         List<Widget> widgets = widgetList.stream().filter(it -> Aluminium.INSTANCE.moduleManager.getModule(it).isEnabled()).collect(Collectors.toList());
         NanoUtil.beginFrame();
         widgets.forEach(Widget::renderNanoVG);

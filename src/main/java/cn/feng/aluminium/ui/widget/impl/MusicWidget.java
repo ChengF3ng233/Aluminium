@@ -4,6 +4,7 @@ import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventChangeMusic;
 import cn.feng.aluminium.event.events.EventResetLyric;
+import cn.feng.aluminium.ui.music.api.bean.lyric.Lyric;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLeader;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
@@ -26,6 +27,8 @@ public class MusicWidget extends Widget {
 
     public MusicWidget() {
         super("Music", true);
+        x = 0f;
+        y = 0.1f;
     }
 
     @Override
@@ -70,16 +73,9 @@ public class MusicWidget extends Widget {
             currentY += lyricLine.renderSetup(currentX, currentY, width - 100f, lyricLines.indexOf(lyricLine)) + 5f;
         }
 
-        float time = player.getCurrentTime();
         NanoUtil.scissorStart(renderX + 80f, renderY + 10f, width - 90f, height - 20f);
 
         for (LyricLine lyricLine : lyricLines) {
-            if (lyricLine.match(time) && lyricLine != lastLine) {
-                if (lastLine != null) {
-                    scrollLyrics(lyricLines, lastLine);
-                }
-                lastLine = lyricLine;
-            }
             if (lyricLine.getCurrentY() < renderY + height && lyricLine.getCurrentY() > renderY - 50f) {
                 lyricLine.render(player.getCurrentTime(), lastLine == null ? 0 : lyricLines.indexOf(lastLine));
             }
@@ -87,6 +83,25 @@ public class MusicWidget extends Widget {
 
         NanoUtil.scissorEnd();
         NanoUtil.endFrame();
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
+        if (!player.available()) return;
+        Lyric lyric = player.getMusic().getLyric();
+        if (lyric == null) return;
+        List<LyricLine> lyricLines = lyric.getLyricLines();
+        for (LyricLine lyricLine : lyricLines) {
+            if (lyricLine.match(player.getCurrentTime()) && lyricLine != lastLine) {
+                if (lastLine != null) {
+                    scrollLyrics(lyricLines, lastLine);
+                }
+                lastLine = lyricLine;
+            }
+        }
     }
 
     private void scrollLyrics(List<LyricLine> lyricLines, LyricLine lastLine) {

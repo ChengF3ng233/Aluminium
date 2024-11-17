@@ -4,6 +4,7 @@ import cn.feng.aluminium.module.ModuleCategory;
 import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import net.minecraft.client.gui.GuiScreen;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public class ClickGui extends GuiScreen {
 
     public ClickGui() {
         for (ModuleCategory category : ModuleCategory.values()) {
-            panels.add(new CategoryPanel(category));
+            panels.add(new CategoryPanel(this, category));
         }
     }
 
@@ -28,6 +29,7 @@ public class ClickGui extends GuiScreen {
         }
 
         NanoUtil.beginFrame();
+        NanoUtil.drawRect(0, 0, width, height, new Color(0, 0, 0, 100));
         for (CategoryPanel panel : panels) {
             panel.render();
         }
