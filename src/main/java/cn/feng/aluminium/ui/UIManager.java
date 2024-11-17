@@ -3,6 +3,7 @@ package cn.feng.aluminium.ui;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventChatGUI;
+import cn.feng.aluminium.event.events.EventNano;
 import cn.feng.aluminium.event.events.EventRender2D;
 import cn.feng.aluminium.module.modules.visual.hud.HUD;
 import cn.feng.aluminium.ui.clickgui.ClickGui;
@@ -53,6 +54,7 @@ public class UIManager extends Util {
         FontManager.noto(20).drawString("Aluminium", 10, 10, Color.WHITE.getRGB());
         List<Widget> widgets = widgetList.stream().filter(it -> Aluminium.INSTANCE.moduleManager.getModule(it).isEnabled()).collect(Collectors.toList());
         NanoUtil.beginFrame();
+        Aluminium.INSTANCE.eventManager.call(new EventNano());
         widgets.forEach(Widget::renderNanoVG);
         NanoUtil.endFrame();
         widgets.forEach(Widget::render2D);

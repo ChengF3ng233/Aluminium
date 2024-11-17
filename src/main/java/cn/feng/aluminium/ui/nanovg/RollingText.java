@@ -1,12 +1,10 @@
 package cn.feng.aluminium.ui.nanovg;
 
-import cn.feng.aluminium.util.misc.ChatUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 
 import java.awt.*;
 
 public class RollingText {
-    private long startTime = System.currentTimeMillis();
     private float addition;
     private NanoFontRenderer font;
 
@@ -20,15 +18,10 @@ public class RollingText {
         addition += (float) (RenderUtil.frameTime * 0.1f);
         if (addition > strWidth) {
             addition = -width;
-            reset();
         }
         NanoUtil.scissorStart(x, y - 1f, width, font.getHeight(text, size) + 2f);
-        font.drawString(text, strWidth > width? x - addition : x, y, size, color);
+        font.drawString(text, strWidth > width ? x - addition : x, y, size, color);
         NanoUtil.scissorEnd();
-    }
-
-    public void reset() {
-        startTime = System.currentTimeMillis();
     }
 
     public void setFont(NanoFontRenderer font) {

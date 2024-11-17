@@ -20,7 +20,6 @@ public class PlaylistComponent extends Component {
     private Playlist playlist;
     private FetchPlaylistMusicThread thread;
     private PlaylistType type = PlaylistType.NORMAL;
-    private float maxHeight;
 
     public PlaylistComponent(Playlist playlist) {
         this.playlist = playlist;

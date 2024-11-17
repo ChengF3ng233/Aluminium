@@ -5,6 +5,7 @@ import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventKey;
 import cn.feng.aluminium.module.modules.visual.ClickGuiMod;
 import cn.feng.aluminium.module.modules.visual.MusicScreenMod;
+import cn.feng.aluminium.module.modules.visual.StressTest;
 import cn.feng.aluminium.module.modules.visual.hud.HUD;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.util.exception.ModuleNotFoundException;
@@ -102,6 +103,7 @@ public class ModuleManager {
         register(new MusicScreenMod());
         register(new HUD());
         register(new ClickGuiMod());
+        register(new StressTest());
 
         for (ModuleCategory category : ModuleCategory.values()) {
             int count = ThreadLocalRandom.current().nextInt(5, 30);

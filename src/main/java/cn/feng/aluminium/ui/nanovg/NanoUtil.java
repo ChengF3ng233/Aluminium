@@ -4,6 +4,8 @@ import cn.feng.aluminium.config.ConfigManager;
 import cn.feng.aluminium.util.Util;
 import cn.feng.aluminium.util.data.IOUtil;
 import cn.feng.aluminium.util.misc.ChatUtil;
+import cn.feng.aluminium.util.render.GLUtil;
+import cn.feng.aluminium.util.render.RenderUtil;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.nanovg.NVGColor;
@@ -40,6 +42,8 @@ public class NanoUtil extends Util {
 
     public static void endFrame() {
         nvgEndFrame(ctx);
+        RenderUtil.setAlphaLimit(0);
+        GLUtil.startBlend();
     }
 
     public static void beginPath() {
