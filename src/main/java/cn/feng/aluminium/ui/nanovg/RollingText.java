@@ -19,10 +19,10 @@ public class RollingText {
         float strWidth = font.getStringWidth(text, size);
         addition += (float) (RenderUtil.frameTime * 0.1f);
         if (addition > strWidth) {
-            addition = -strWidth;
+            addition = -width;
             reset();
         }
-        NanoUtil.scissorStart(x, y, width, font.getHeight(text, size));
+        NanoUtil.scissorStart(x, y - 1f, width, font.getHeight(text, size) + 2f);
         font.drawString(text, strWidth > width? x - addition : x, y, size, color);
         NanoUtil.scissorEnd();
     }

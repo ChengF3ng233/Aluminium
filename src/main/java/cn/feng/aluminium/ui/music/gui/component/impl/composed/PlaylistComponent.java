@@ -113,7 +113,7 @@ public class PlaylistComponent extends Component {
                 musicButton.render();
             }
             MusicButton last = currentList.get(currentList.size() - 1);
-            FontManager.notoBold(15).drawCenteredString(playlist.isCompletelyDownloaded()? "已经到底了" : "正在加载更多...", x + width / 2f, last.getY() + last.getHeight() + 2f, new Color(200, 200, 200, 200).getRGB());
+            FontManager.notoBold(15).drawCenteredString(playlist.isCompletelyDownloaded()? "已经到底了" : "正在加载更多...", x + width / 2f, last.getY() + last.getHeight() + 7f, new Color(200, 200, 200, 200).getRGB());
             RenderUtil.scissorEnd();
         }
         RenderUtil.scissorEnd();

@@ -57,9 +57,9 @@ public class MusicButton extends Component {
         } else {
             poppins.drawCenteredStringV((parent.getMusicList().indexOf(music) + 1) + "", x + 5f, textY + 1f, new Color(170, 170, 170, 170).getRGB());
         }
-        notoBold.drawCenteredStringV(notoBold.trimStringToWidth(music.getTitle(), 75f), x + 20f, textY, Color.WHITE.getRGB());
-        noto.drawCenteredStringV(noto.trimStringToWidth(music.getArtist(), 125f), x + 100f, textY, new Color(200, 200, 200, 200).getRGB());
-        noto.drawCenteredStringV(noto.trimStringToWidth(music.getAlbum().getTitle(), 115f), x + 230f, textY, new Color(200, 200, 200, 200).getRGB());
+        notoBold.drawCenteredStringV(notoBold.trimString(music.getTitle(), 75f, true, false), x + 20f, textY, Color.WHITE.getRGB());
+        noto.drawCenteredStringV(noto.trimString(music.getArtist(), 125f, true, false), x + 100f, textY, new Color(200, 200, 200, 200).getRGB());
+        noto.drawCenteredStringV(noto.trimString(music.getAlbum().getTitle(), 115f, true, false), x + 230f, textY, new Color(200, 200, 200, 200).getRGB());
         poppins.drawCenteredStringV(TimeUtil.millisToMMSS(music.getDuration()), x + 350f, textY, new Color(200, 200, 200, 100).getRGB());
     }
 
