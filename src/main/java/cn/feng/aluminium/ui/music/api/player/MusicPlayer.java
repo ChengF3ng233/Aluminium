@@ -3,13 +3,12 @@ package cn.feng.aluminium.ui.music.api.player;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.config.ConfigManager;
 import cn.feng.aluminium.event.events.EventChangeMusic;
-import cn.feng.aluminium.event.events.EventLyricReset;
+import cn.feng.aluminium.event.events.EventPlayerStatus;
+import cn.feng.aluminium.event.events.EventResetLyric;
 import cn.feng.aluminium.ui.music.api.bean.Music;
 import cn.feng.aluminium.ui.music.api.bean.Playlist;
 import cn.feng.aluminium.ui.music.thread.FetchMusicURLThread;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.AudioSpectrumListener;
-import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -75,6 +74,15 @@ public class MusicPlayer {
         });
         mediaPlayer.setOnEndOfMedia(this::next);
         mediaPlayer.setVolume(volume);
+        mediaPlayer.setOnPlaying(() -> {
+            Aluminium.INSTANCE.eventManager.call(new EventPlayerStatus(MediaPlayer.Status.PLAYING));
+        });
+        mediaPlayer.setOnPaused(() -> {
+            Aluminium.INSTANCE.eventManager.call(new EventPlayerStatus(MediaPlayer.Status.PAUSED));
+        });
+        mediaPlayer.setOnStopped(() -> {
+            Aluminium.INSTANCE.eventManager.call(new EventPlayerStatus(MediaPlayer.Status.STOPPED));
+        });
         mediaPlayer.play();
     }
 
@@ -140,6 +148,6 @@ public class MusicPlayer {
 
     public void seek(float newTime) {
         mediaPlayer.seek(Duration.millis(newTime));
-        Aluminium.INSTANCE.eventManager.call(new EventLyricReset(music, newTime));
+        Aluminium.INSTANCE.eventManager.call(new EventResetLyric(music, newTime));
     }
 }

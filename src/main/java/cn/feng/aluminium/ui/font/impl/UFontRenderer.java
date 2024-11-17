@@ -98,7 +98,7 @@ public class UFontRenderer extends FontRenderer {
                 int extraWidth = getStringWidth("...");
                 do {
                     stringbuilder.deleteCharAt(reverse? 0 : stringbuilder.length() - 1);
-                } while (getStringWidth(stringbuilder.toString()) > width - extraWidth);
+                } while (getStringWidth(stringbuilder.toString()) > width - extraWidth && stringbuilder.length() > 0);
             }
         }
         return (more && reverse && !stringbuilder.toString().equals(text)? "..." : "") + stringbuilder + (more && !reverse && !stringbuilder.toString().equals(text)? "..." : "");

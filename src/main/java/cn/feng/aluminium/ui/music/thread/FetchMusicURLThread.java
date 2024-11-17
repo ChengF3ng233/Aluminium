@@ -1,8 +1,7 @@
 package cn.feng.aluminium.ui.music.thread;
 
 import cn.feng.aluminium.Aluminium;
-import cn.feng.aluminium.event.events.EventChangeMusic;
-import cn.feng.aluminium.event.events.EventLyricReset;
+import cn.feng.aluminium.event.events.EventResetLyric;
 import cn.feng.aluminium.ui.music.api.MusicApi;
 import cn.feng.aluminium.ui.music.api.bean.Music;
 import cn.feng.aluminium.ui.music.api.bean.lyric.Lyric;
@@ -29,6 +28,6 @@ public class FetchMusicURLThread extends Thread {
             music.getAlbum().getCover().setCoverImage(MusicApi.downloadImage(music.getAlbum().getCover().getCoverUrl()));
         }
         Aluminium.INSTANCE.musicManager.getPlayer().play(url);
-        Aluminium.INSTANCE.eventManager.call(new EventLyricReset(music, 0f));
+        Aluminium.INSTANCE.eventManager.call(new EventResetLyric(music, 0f));
     }
 }

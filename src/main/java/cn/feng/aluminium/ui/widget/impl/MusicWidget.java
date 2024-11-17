@@ -3,7 +3,7 @@ package cn.feng.aluminium.ui.widget.impl;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventChangeMusic;
-import cn.feng.aluminium.event.events.EventLyricReset;
+import cn.feng.aluminium.event.events.EventResetLyric;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLeader;
 import cn.feng.aluminium.ui.music.api.bean.lyric.LyricLine;
 import cn.feng.aluminium.ui.music.api.player.MusicPlayer;
@@ -12,7 +12,6 @@ import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.ui.nanovg.RollingText;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.util.data.StringUtil;
-import cn.feng.aluminium.util.misc.ChatUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.blur.BlurUtil;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
@@ -36,12 +35,7 @@ public class MusicWidget extends Widget {
         MusicPlayer player = Aluminium.INSTANCE.musicManager.getPlayer();
         if (!player.available()) return;
 
-        if (player.getMusic().getAlbum().getCover().getCoverImage() != null) {
-            RenderUtil.bindTexture(player.getMusic().getAlbum().getCover().getCoverImage());
-            ShaderUtil.drawRoundTextured(renderX + 1, renderY + 1, width - 2, height - 2, 3f, 0.7f);
-        }
-
-        ShaderUtil.drawRound(renderX + 1, renderY + 1, width - 2, height - 2, 3f, new Color(50, 50, 50, 100));
+        ShaderUtil.drawRound(renderX + 1, renderY + 1, width - 2, height - 2, 3f, new Color(0, 0, 0, 150));
         BlurUtil.processStart();
         ShaderUtil.drawRound(renderX, renderY, width, height, 3f, Color.BLACK);
         BlurUtil.blurEnd(3, 5);
@@ -110,7 +104,7 @@ public class MusicWidget extends Widget {
     }
 
     @EventTarget
-    private void onLyricReset(EventLyricReset event) {
+    private void onLyricReset(EventResetLyric event) {
         lastLine = null;
         List<LyricLine> lyricLines = event.getMusic().getLyric().getLyricLines();
         for (LyricLine lyricLine : lyricLines) {

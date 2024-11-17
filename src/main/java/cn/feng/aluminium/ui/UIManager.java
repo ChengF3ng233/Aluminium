@@ -8,7 +8,7 @@ import cn.feng.aluminium.ui.clickgui.ClickGui;
 import cn.feng.aluminium.ui.font.FontManager;
 import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.ui.widget.Widget;
-import cn.feng.aluminium.ui.widget.impl.IslandWidget;
+import cn.feng.aluminium.ui.widget.impl.island.IslandWidget;
 import cn.feng.aluminium.ui.widget.impl.MusicWidget;
 import cn.feng.aluminium.util.Util;
 import net.minecraft.client.gui.GuiScreen;
