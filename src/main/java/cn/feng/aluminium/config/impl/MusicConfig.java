@@ -4,6 +4,7 @@ import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.config.Config;
 import cn.feng.aluminium.ui.music.api.MusicApi;
 import cn.feng.aluminium.ui.music.api.bean.User;
+import cn.feng.aluminium.ui.music.gui.page.Pages;
 import cn.feng.aluminium.ui.music.thread.FetchPlaylistThread;
 import cn.feng.aluminium.util.data.DataUtil;
 import com.google.gson.JsonObject;
@@ -24,7 +25,7 @@ public class MusicConfig extends Config {
         if (!user.getCookie().isEmpty()) {
             MusicApi.updateUserInfo();
             new FetchPlaylistThread().start();
-        }
+        } else Aluminium.INSTANCE.musicManager.getScreen().changePage(Pages.userPage, false);
     }
 
     @Override

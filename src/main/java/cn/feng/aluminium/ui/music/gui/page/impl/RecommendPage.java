@@ -24,6 +24,8 @@ public class RecommendPage extends Page {
         super.update(x, y, width, height, mouseX, mouseY);
 
         int size = cards.size();
+        if (size == 0) return;
+
         final float cardSize = 100f;
         final float gap = 8f;
         float cardY = scrolledY + 25f;
@@ -42,10 +44,12 @@ public class RecommendPage extends Page {
     public void render() {
         preRender();
         RenderUtil.scissorStart(x, y, width, height);
-        FontManager.notoBold(20).drawString(StringUtil.getGreeting() + "，" + Aluminium.INSTANCE.musicManager.getUser().getNickname(), x + 3f, scrolledY + 3f, Color.WHITE.getRGB());
-        List<PlaylistCard> cardList = new ArrayList<>(cards);
-        for (PlaylistCard playlistCard : cardList) {
-            playlistCard.render();
+        if (!cards.isEmpty()) {
+            FontManager.notoBold(20).drawString(StringUtil.getGreeting() + "，" + Aluminium.INSTANCE.musicManager.getUser().getNickname(), x + 3f, scrolledY + 3f, Color.WHITE.getRGB());
+            List<PlaylistCard> cardList = new ArrayList<>(cards);
+            for (PlaylistCard playlistCard : cardList) {
+                playlistCard.render();
+            }
         }
         RenderUtil.scissorEnd();
         postRender();
@@ -53,6 +57,7 @@ public class RecommendPage extends Page {
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (cards.isEmpty()) return;
         for (PlaylistCard card : cards) {
             card.mouseClicked(mouseX, mouseY, mouseButton);
         }
@@ -61,6 +66,7 @@ public class RecommendPage extends Page {
     @Override
     public void disableHovering() {
         super.disableHovering();
+        if (cards.isEmpty()) return;
         cards.forEach(it -> it.setHovering(false));
     }
 }
