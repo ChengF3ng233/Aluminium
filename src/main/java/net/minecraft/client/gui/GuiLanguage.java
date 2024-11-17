@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.*;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.src.Config;
 import net.optifine.Lang;
 
 import java.io.IOException;
@@ -132,6 +133,8 @@ public class GuiLanguage extends GuiScreen {
             GuiLanguage.this.languageManager.onResourceManagerReload(mc.getResourceManager());
             GuiLanguage.this.languageManager.parseLanguageMetadata(mc.getResourcePacks());
             Lang.resourcesReloaded();
+            mc.fontRendererObj.onResourceManagerReload(mc.getResourceManager());
+            mc.standardGalacticFontRenderer.onResourceManagerReload(mc.getResourceManager());
             GuiLanguage.this.fontRendererObj.setUnicodeFlag(GuiLanguage.this.languageManager.isCurrentLocaleUnicode() || GuiLanguage.this.game_settings_3.forceUnicodeFont);
             GuiLanguage.this.fontRendererObj.setBidiFlag(GuiLanguage.this.languageManager.isCurrentLanguageBidirectional());
             GuiLanguage.this.confirmSettingsBtn.displayString = I18n.format("gui.done");
