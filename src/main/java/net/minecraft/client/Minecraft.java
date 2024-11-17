@@ -655,7 +655,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         return this.mcLanguageManager.isCurrentLocaleUnicode() || this.gameSettings.forceUnicodeFont;
     }
 
-    public void refreshResources() {
+    public List<IResourcePack> getResourcePacks() {
         List<IResourcePack> list = Lists.newArrayList(this.defaultResourcePacks);
 
         for (ResourcePackRepository.Entry resourcepackrepository$entry : this.mcResourcePackRepository.getRepositoryEntries()) {
@@ -665,6 +665,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         if (this.mcResourcePackRepository.getResourcePackInstance() != null) {
             list.add(this.mcResourcePackRepository.getResourcePackInstance());
         }
+
+        return list;
+    }
+
+    public void refreshResources() {
+        List<IResourcePack> list = getResourcePacks();
 
         try {
             this.mcResourceManager.reloadResources(list);
