@@ -43,7 +43,7 @@ public class GuiMainMenu extends GuiScreen {
         NanoUtil.beginFrame();
         NanoUtil.drawRect(0, 0, width, height, new Color(0, 0, 0, 100));
         NanoFontLoader.quicksand.bold().drawGlowString("Aluminium", centerX, centerY - 50f, 30f, 5f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_TOP, HUD.getAccentColor());
-        NanoUtil.drawRoundedRect(centerX - 60f, centerY - 30f, 120f, 125f, 10f, new Color(50, 50, 50, 220));
+        NanoUtil.drawRoundedRect(centerX - 60f, centerY - 30f, 120f, 125f, 10f, new Color(50, 50, 50));
         float buttonY = centerY - 30f;
         final float buttonX = centerX - 60f;
         final float buttonWidth = 120f;

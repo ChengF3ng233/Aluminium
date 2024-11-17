@@ -6,7 +6,6 @@ import cn.feng.aluminium.ui.nanovg.NanoFontLoader;
 import cn.feng.aluminium.ui.nanovg.NanoFontRenderer;
 import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.util.animation.advanced.composed.ColorAnimation;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.nanovg.NanoVG;
 
 import java.awt.*;
@@ -39,9 +38,9 @@ public class MainMenuButton extends Movable {
                 NanoUtil.drawRect(x, y, width, height, color.getOutput());
             }
         }
-        NanoFontRenderer font = NanoFontLoader.poppins.bold();
+        NanoFontRenderer font = NanoFontLoader.noto.bold();
         font.setSpacing(0.5f);
-        font.drawString(text, x + width / 2f, y + height / 2f, 16f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, HUD.getAccentColor());
+        font.drawString(text, x + width / 2f, y + height / 2f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, HUD.getAccentColor());
     }
 
     @Override
