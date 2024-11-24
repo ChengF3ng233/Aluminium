@@ -550,6 +550,7 @@ public abstract class EntityLivingBase extends Entity {
         while (iterator.hasNext()) {
             Integer integer = iterator.next();
             PotionEffect potioneffect = this.activePotionsMap.get(integer);
+            if (potioneffect == null) break;
 
             if (!potioneffect.onUpdate(this)) {
                 if (!this.worldObj.isRemote) {
@@ -573,7 +574,7 @@ public abstract class EntityLivingBase extends Entity {
         boolean flag1 = this.dataWatcher.getWatchableObjectByte(8) > 0;
 
         if (i > 0) {
-            boolean flag = false;
+            boolean flag;
 
             if (!this.isInvisible()) {
                 flag = this.rand.nextBoolean();
@@ -585,10 +586,10 @@ public abstract class EntityLivingBase extends Entity {
                 flag &= this.rand.nextInt(5) == 0;
             }
 
-            if (flag && i > 0) {
+            if (flag) {
                 double d0 = (double) (i >> 16 & 255) / 255.0D;
                 double d1 = (double) (i >> 8 & 255) / 255.0D;
-                double d2 = (double) (i >> 0 & 255) / 255.0D;
+                double d2 = (double) (i & 255) / 255.0D;
                 this.worldObj.spawnParticle(flag1 ? EnumParticleTypes.SPELL_MOB_AMBIENT : EnumParticleTypes.SPELL_MOB, this.posX + (this.rand.nextDouble() - 0.5D) * (double) this.width, this.posY + this.rand.nextDouble() * (double) this.height, this.posZ + (this.rand.nextDouble() - 0.5D) * (double) this.width, d0, d1, d2);
             }
         }

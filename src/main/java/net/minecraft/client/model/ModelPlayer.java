@@ -140,9 +140,9 @@ public class ModelPlayer extends ModelBiped {
 
     public void postRenderArm(float scale) {
         if (this.smallArms) {
-            ++this.bipedRightArm.rotationPointX;
+            this.bipedRightArm.rotationPointX += 0.5F;
             this.bipedRightArm.postRender(scale);
-            --this.bipedRightArm.rotationPointX;
+            this.bipedRightArm.rotationPointZ -= 0.5F;
         } else {
             this.bipedRightArm.postRender(scale);
         }

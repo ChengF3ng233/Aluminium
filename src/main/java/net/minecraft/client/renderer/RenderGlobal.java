@@ -1,5 +1,9 @@
 package net.minecraft.client.renderer;
 
+import cn.feng.aluminium.Aluminium;
+import cn.feng.aluminium.module.modules.visual.Camera;
+import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -97,7 +101,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     private final RenderManager renderManager;
     private WorldClient theWorld;
     private Set<RenderChunk> chunksToUpdate = Sets.newLinkedHashSet();
-    private List<RenderGlobal.ContainerLocalRenderInformation> renderInfos = Lists.newArrayListWithCapacity(69696);
+    private List<ContainerLocalRenderInformation> renderInfos = Lists.newArrayListWithCapacity(69696);
     private final Set<TileEntity> setTileEntities = Sets.newHashSet();
     private ViewFrustum viewFrustum;
 
@@ -342,10 +346,8 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     }
 
     private void renderSky(WorldRenderer worldRendererIn, float posY, boolean reverseX) {
-        int i = 64;
-        int j = 6;
         worldRendererIn.begin(7, DefaultVertexFormats.POSITION);
-        int k = (this.renderDistance / 64 + 1) * 64 + 64;
+        int k = (255 / 64 + 1) * 64 + 64;
 
         for (int l = -k; l <= k; l += 64) {
             for (int i1 = -k; i1 <= k; i1 += 64) {
@@ -667,7 +669,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             label926:
 
             for (Object o : this.renderInfosEntities) {
-                RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation = (ContainerLocalRenderInformation) o;
+                ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation = (ContainerLocalRenderInformation) o;
                 Chunk chunk = renderglobal$containerlocalrenderinformation.renderChunk.getChunk();
                 ClassInheritanceMultiMap<Entity> classinheritancemultimap = chunk.getEntityLists()[renderglobal$containerlocalrenderinformation.renderChunk.getPosition().getY() / 16];
 
@@ -741,7 +743,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             label1408:
 
             for (Object o : this.renderInfosTileEntities) {
-                RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 = (ContainerLocalRenderInformation) o;
+                ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 = (ContainerLocalRenderInformation) o;
                 List<TileEntity> list1 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
 
                 if (!list1.isEmpty()) {
@@ -861,7 +863,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         int i = this.viewFrustum.renderChunks.length;
         int j = 0;
 
-        for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfos) {
+        for (ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfos) {
             CompiledChunk compiledchunk = renderglobal$containerlocalrenderinformation.renderChunk.compiledChunk;
 
             if (compiledchunk != CompiledChunk.DUMMY && !compiledchunk.isEmpty()) {
@@ -919,7 +921,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         this.mc.mcProfiler.endStartSection("culling");
         BlockPos blockpos = new BlockPos(d3, d4 + (double) viewEntity.getEyeHeight(), d5);
         RenderChunk renderchunk = this.viewFrustum.getRenderChunk(blockpos);
-        new BlockPos(MathHelper.floor_double(d3 / 16.0D) * 16, MathHelper.floor_double(d4 / 16.0D) * 16, MathHelper.floor_double(d5 / 16.0D) * 16);
+        //new BlockPos(MathHelper.floor_double(d3 / 16.0D) * 16, MathHelper.floor_double(d4 / 16.0D) * 16, MathHelper.floor_double(d5 / 16.0D) * 16);
         this.displayListEntitiesDirty = this.displayListEntitiesDirty || !this.chunksToUpdate.isEmpty() || viewEntity.posX != this.lastViewEntityX || viewEntity.posY != this.lastViewEntityY || viewEntity.posZ != this.lastViewEntityZ || (double) viewEntity.rotationPitch != this.lastViewEntityPitch || (double) viewEntity.rotationYaw != this.lastViewEntityYaw;
         this.lastViewEntityX = viewEntity.posX;
         this.lastViewEntityY = viewEntity.posY;
@@ -966,7 +968,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                     RenderChunk renderchunk2 = iterator.next();
 
                     if (renderchunk2 != null && renderchunk2.getPosition().getY() <= j) {
-                        RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation = renderchunk2.getRenderInfo();
+                        ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation = renderchunk2.getRenderInfo();
 
                         if (!renderchunk2.compiledChunk.isEmpty() || renderchunk2.isNeedsUpdate()) {
                             this.renderInfos.add(renderglobal$containerlocalrenderinformation);
@@ -997,7 +999,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
             if (renderchunk != null && renderchunk.getPosition().getY() <= j) {
                 boolean flag2 = false;
-                RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation4 = new RenderGlobal.ContainerLocalRenderInformation(renderchunk, null, 0);
+                ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation4 = new ContainerLocalRenderInformation(renderchunk, null, 0);
                 Set set1 = SET_ALL_FACINGS;
 
                 if (set1.size() == 1) {
@@ -1033,7 +1035,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
                         if (renderchunk3 != null && renderchunk3.isBoundingBoxInFrustum(camera, frameCount)) {
                             renderchunk3.setFrameIndex(frameCount);
-                            RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 = renderchunk3.getRenderInfo();
+                            ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 = renderchunk3.getRenderInfo();
                             renderglobal$containerlocalrenderinformation1.initialize(null, 0);
                             deque.add(renderglobal$containerlocalrenderinformation1);
                         }
@@ -1045,7 +1047,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             boolean flag3 = Config.isFogOn();
 
             while (!deque.isEmpty()) {
-                RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation5 = (RenderGlobal.ContainerLocalRenderInformation) deque.poll();
+                ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation5 = (ContainerLocalRenderInformation) deque.poll();
                 RenderChunk renderchunk6 = renderglobal$containerlocalrenderinformation5.renderChunk;
                 EnumFacing enumfacing1 = renderglobal$containerlocalrenderinformation5.facing;
                 CompiledChunk compiledchunk = renderchunk6.compiledChunk;
@@ -1068,7 +1070,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
                         if (renderchunk4 != null && renderchunk4.setFrameIndex(frameCount) && renderchunk4.isBoundingBoxInFrustum(camera, frameCount)) {
                             int i1 = renderglobal$containerlocalrenderinformation5.setFacing | 1 << enumfacing.ordinal();
-                            RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation2 = renderchunk4.getRenderInfo();
+                            ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation2 = renderchunk4.getRenderInfo();
                             renderglobal$containerlocalrenderinformation2.initialize(enumfacing, i1);
                             deque.add(renderglobal$containerlocalrenderinformation2);
                         }
@@ -1097,7 +1099,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             this.chunksToUpdate = Sets.newLinkedHashSet();
             Lagometer.timerChunkUpdate.start();
 
-            for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation3 : this.renderInfos) {
+            for (ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation3 : this.renderInfos) {
                 RenderChunk renderchunk5 = renderglobal$containerlocalrenderinformation3.renderChunk;
 
                 if (renderchunk5.isNeedsUpdate() || set.contains(renderchunk5)) {
@@ -1227,7 +1229,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 int k = 0;
                 this.chunksToResortTransparency.clear();
 
-                for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfos) {
+                for (ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation : this.renderInfos) {
                     if (renderglobal$containerlocalrenderinformation.renderChunk.compiledChunk.isLayerStarted(blockLayerIn) && k++ < 15) {
                         this.chunksToResortTransparency.add(renderglobal$containerlocalrenderinformation.renderChunk);
                     }

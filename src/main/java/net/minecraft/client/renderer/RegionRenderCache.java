@@ -57,6 +57,8 @@ public class RegionRenderCache extends ChunkCache {
 
     public IBlockState getBlockState(BlockPos pos) {
         int i = this.getPositionIndex(pos);
+        if (i < 0 || i >= blockStates.length) return DEFAULT_STATE;
+
         IBlockState iblockstate = this.blockStates[i];
 
         if (iblockstate == null) {
