@@ -1914,7 +1914,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.thePlayer = null;
         }
 
-        System.gc();
         this.systemTime = 0L;
     }
 

@@ -53,13 +53,15 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
         NBTTagCompound nbttagcompound = this.chunksToRemove.get(chunkcoordintpair);
 
         if (nbttagcompound == null) {
-            DataInputStream datainputstream = RegionFileCache.getChunkInputStream(this.chunkSaveLocation, x, z);
+            DataInputStream stream = RegionFileCache.getChunkInputStream(this.chunkSaveLocation, x, z);
 
-            if (datainputstream == null) {
+            if (stream == null) {
                 return null;
             }
 
-            nbttagcompound = CompressedStreamTools.read(datainputstream);
+            NBTTagCompound result = CompressedStreamTools.read(stream);
+            stream.close();
+            nbttagcompound = result;
         }
 
         return this.checkedReadChunkFromNBT(worldIn, x, z, nbttagcompound);
