@@ -49,10 +49,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Config {
-    public static final String OF_NAME = "OptiFine";
-    public static final String MC_VERSION = "1.8.9";
-    public static final String OF_EDITION = "HD_U";
-    public static final String OF_RELEASE = "M6_pre2";
     public static final String VERSION = "OptiFine_1.8.9_HD_U_M6_pre2";
     public static final Float DEF_ALPHA_FUNC_LEVEL = Float.valueOf(0.1F);
     public static final boolean logDetail = System.getProperty("log.detail", "false").equals("true");
@@ -72,7 +68,6 @@ public class Config {
     public static boolean waterOpacityChanged = false;
     public static float renderPartialTicks;
     private static String build = null;
-    private static String newRelease = null;
     private static boolean notify64BitJava = false;
     private static GameSettings gameSettings = null;
     private static boolean initialized = false;
@@ -1301,14 +1296,6 @@ public class Config {
 
     public static GameSettings getGameSettings() {
         return gameSettings;
-    }
-
-    public static String getNewRelease() {
-        return newRelease;
-    }
-
-    public static void setNewRelease(String p_setNewRelease_0_) {
-        newRelease = p_setNewRelease_0_;
     }
 
     public static int compareRelease(String p_compareRelease_0_, String p_compareRelease_1_) {

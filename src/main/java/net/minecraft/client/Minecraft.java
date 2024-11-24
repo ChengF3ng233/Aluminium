@@ -297,11 +297,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     private TextureMap textureMapBlocks;
     private SoundHandler mcSoundHandler;
     private MusicTicker mcMusicTicker;
-    private ResourceLocation mojangLogo;
     private final MinecraftSessionService sessionService;
     private SkinManager skinManager;
     private final Queue<FutureTask<?>> scheduledTasks = Queues.newArrayDeque();
-    private final long field_175615_aJ = 0L;
     private final Thread mcThread = Thread.currentThread();
     private ModelManager modelManager;
 
@@ -424,7 +422,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     /**
      * Starts the game: initializes the canvas, the title, the settings, etcetera.
      */
-    private void startGame() throws LWJGLException, IOException {
+    private void startGame() {
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
         this.startTimerHackThread();
@@ -517,8 +515,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.displayGuiScreen(new GuiMainMenu());
         }
 
-        this.renderEngine.deleteTexture(this.mojangLogo);
-        this.mojangLogo = null;
         this.loadingScreen = new LoadingScreenRenderer(this);
 
         if (this.gameSettings.fullScreen && !this.fullscreen) {
@@ -545,13 +541,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.metadataSerializer_.registerMetadataSectionType(new LanguageMetadataSectionSerializer(), LanguageMetadataSection.class);
     }
 
-    private void createDisplay() throws LWJGLException {
+    private void createDisplay() {
         Display.setResizable(true);
         Display.setTitle("Minecraft 1.8.9");
         Display.create((new PixelFormat()).withDepthBits(24));
     }
 
-    private void setInitialDisplayMode() throws LWJGLException {
+    private void setInitialDisplayMode() {
         if (this.fullscreen) {
             Display.setFullscreen(true);
             DisplayMode displaymode = Display.getDisplayMode();
@@ -703,7 +699,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         return bytebuffer;
     }
 
-    private void updateDisplayMode() throws LWJGLException {
+    private void updateDisplayMode() {
         Set<DisplayMode> set = Sets.newHashSet();
         Collections.addAll(set, Display.getAvailableDisplayModes());
         DisplayMode displaymode = Display.getDesktopDisplayMode();
@@ -872,7 +868,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     private void runGameLoop() throws IOException {
         RenderUtil.calcFrameDelta();
 
-        long i = System.nanoTime();
+        long time = System.nanoTime();
         this.mcProfiler.startSection("root");
 
         if (Display.isCreated() && Display.isCloseRequested()) {
@@ -924,7 +920,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         if (!this.skipRenderWorld) {
             this.mcProfiler.endStartSection("gameRenderer");
-            this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
+            this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, time);
             this.mcProfiler.endSection();
         }
 
