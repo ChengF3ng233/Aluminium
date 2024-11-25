@@ -110,12 +110,19 @@ public class LyricLine {
 
     public void render(float time, int currentIndex) {
         NanoFontRenderer font = NanoFontLoader.pingfang.bold();
-        colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, (index - currentIndex) > 0? Math.max(200 - (index - currentIndex) * 60,  50) : 100));
-        font.drawTrimBlurString(line, originX, originY - scrollAnim.getOutput().floatValue(), maxWidth, 3, 3f, 20f, Math.min(Math.abs(index - currentIndex) * 0.5f, 2f), NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP, colorAnim.getOutput());
+        colorAnim.change(match(time) ? Color.WHITE : new Color(200, 200, 200, (index - currentIndex) > 0? Math.max(200 - (index - currentIndex) * 40,  0) : 100));
+        font.drawTrimBlurString(line, originX, originY - scrollAnim.getOutput().floatValue(), maxWidth, 3, 3f, 20f, Math.min(Math.abs(index - currentIndex), 5f), NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP, colorAnim.getOutput());
     }
 
     public void scrollDown(String text, int index) {
-        int duration = Math.max(this.index - (index - 1), 0) * 170 + 300;
+        int duration;
+        if (this.index < index) {
+            duration = Math.max(100, 300 - ((this.index - index) * 100));
+        } else if (this.index == index) {
+            duration = 300;
+        } else {
+            duration = Math.min(800, 300 + ((this.index - index) * 100));
+        }
         scrollAnim.setDuration(duration);
         scrollAnim.setEndPoint(scrollAnim.getEndPoint() + NanoFontLoader.pingfang.bold().calculateChunkHeight(text, maxWidth, 3, 3f, 20f) + 5f, true);
     }
