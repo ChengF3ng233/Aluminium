@@ -1,5 +1,7 @@
 package net.minecraft.client.entity;
 
+import cn.feng.aluminium.Aluminium;
+import cn.feng.aluminium.event.events.EventUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -145,6 +147,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
     public void onUpdate() {
         if (this.worldObj.isBlockLoaded(new BlockPos(this.posX, 0.0D, this.posZ))) {
             super.onUpdate();
+
+            Aluminium.INSTANCE.eventManager.call(new EventUpdate(posX, posY, posZ, rotationYaw, rotationPitch, onGround));
 
             if (this.isRiding()) {
                 this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));

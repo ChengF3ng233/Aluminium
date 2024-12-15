@@ -3,6 +3,7 @@ package cn.feng.aluminium.module;
 import cn.feng.aluminium.Aluminium;
 import cn.feng.aluminium.event.annotations.EventTarget;
 import cn.feng.aluminium.event.events.EventKey;
+import cn.feng.aluminium.module.modules.movement.Sprint;
 import cn.feng.aluminium.module.modules.visual.Camera;
 import cn.feng.aluminium.module.modules.visual.ClickGuiMod;
 import cn.feng.aluminium.module.modules.visual.MusicScreenMod;
@@ -106,6 +107,7 @@ public class ModuleManager {
         register(new ClickGuiMod());
         register(new StressTest());
         register(new Camera());
+        register(new Sprint());
 
         for (ModuleCategory category : ModuleCategory.values()) {
             int count = ThreadLocalRandom.current().nextInt(5, 30);
