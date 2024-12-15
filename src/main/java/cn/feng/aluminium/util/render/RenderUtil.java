@@ -293,41 +293,6 @@ public class RenderUtil extends Util {
         glScissor((int) finalX, (int) (finalY - finalHeight), (int) finalWidth, (int) finalHeight);
     }
 
-    public static Color getMainColor(BufferedImage image) {
-        if (image == null) return Color.BLACK;
-        if (colorMap.containsKey(image)) return colorMap.get(image);
-        int[] colorCount = new int[256 * 256 * 256];
-
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                int rgb = image.getRGB(x, y);
-                int red = (rgb >> 16) & 0xFF;
-                int green = (rgb >> 8) & 0xFF;
-                int blue = rgb & 0xFF;
-                int index = (red << 16) + (green << 8) + blue;
-                colorCount[index]++;
-            }
-        }
-
-        int maxCount = 0;
-        int mainColor = 0;
-
-        for (int i = 0; i < colorCount.length; i++) {
-            if (colorCount[i] > maxCount) {
-                maxCount = colorCount[i];
-                mainColor = i;
-            }
-        }
-
-        int red = (mainColor >> 16) & 0xFF;
-        int green = (mainColor >> 8) & 0xFF;
-        int blue = mainColor & 0xFF;
-
-        Color color = new Color(red, green, blue);
-        colorMap.put(image, color);
-        return color;
-    }
-
     public static void scissorStart(double x, double y, double width, double height, double centerX, double centerY, double scale) {
         glPushMatrix();
         glEnable(GL_SCISSOR_TEST);

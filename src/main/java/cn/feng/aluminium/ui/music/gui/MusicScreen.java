@@ -11,6 +11,7 @@ import cn.feng.aluminium.util.render.ColorUtil;
 import cn.feng.aluminium.util.render.RenderUtil;
 import cn.feng.aluminium.util.render.blur.GaussianBlur;
 import cn.feng.aluminium.util.render.shader.ShaderUtil;
+import lombok.Getter;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.awt.*;
@@ -31,6 +32,7 @@ public class MusicScreen extends GuiScreen {
     private boolean isDragging = false;
     private int lastMouseX, lastMouseY;
     // 页面
+    @Getter
     private Page currentPage = Pages.recommendPage;
 
     public void changePage(Page newPage, boolean reverse) {
@@ -47,10 +49,6 @@ public class MusicScreen extends GuiScreen {
         navigationComponent.onChangePage();
     }
 
-    public Page getCurrentPage() {
-        return currentPage;
-    }
-
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         // 处理拖动
@@ -65,7 +63,7 @@ public class MusicScreen extends GuiScreen {
         GaussianBlur.startBlur();
         ShaderUtil.drawRound(x, y, width, height, 3f, Color.BLACK);
         GaussianBlur.endBlur(15, 2);
-        ShaderUtil.drawGradientVertical(x, y, width, height, 3f, ColorUtil.applyOpacity(Theme.windowTop, 0.8f), ColorUtil.applyOpacity(Theme.windowBottom, 0.5f));
+        ShaderUtil.drawGradientVertical(x, y, width, height, 3f, ColorUtil.applyOpacity(Theme.windowTopAnim.getOutput(), 0.8f), ColorUtil.applyOpacity(Theme.windowBottom, 0.5f));
 
         // 更新组件坐标
         categorySidebar.update(x, y + topHeight, 40, height - topHeight, mouseX, mouseY);

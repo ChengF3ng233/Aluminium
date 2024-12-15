@@ -14,7 +14,9 @@ import cn.feng.aluminium.ui.nanovg.NanoFontRenderer;
 import cn.feng.aluminium.ui.nanovg.NanoUtil;
 import cn.feng.aluminium.ui.widget.Widget;
 import cn.feng.aluminium.ui.widget.WidgetAlign;
+import cn.feng.aluminium.util.animation.advanced.Direction;
 import cn.feng.aluminium.util.animation.advanced.composed.CustomAnimation;
+import cn.feng.aluminium.util.animation.advanced.impl.EaseBackIn;
 import cn.feng.aluminium.util.animation.advanced.impl.EaseOutCubic;
 import cn.feng.aluminium.util.misc.TimerUtil;
 import net.minecraft.client.Minecraft;
@@ -23,7 +25,7 @@ import org.lwjgl.nanovg.NanoVG;
 import java.awt.*;
 
 public class IslandWidget extends Widget {
-    private final CustomAnimation widthAnimation = new CustomAnimation(EaseOutCubic.class, 300, 0, 0);
+    private final CustomAnimation widthAnimation = new CustomAnimation(EaseBackIn.class, 300, 0, 0);
     private final CustomAnimation heightAnimation = new CustomAnimation(EaseOutCubic.class, 300, 0, 0);
     private IslandState state = IslandState.NORMAL;
 
@@ -67,6 +69,8 @@ public class IslandWidget extends Widget {
 
                 if (currentLine != null && currentLine != lyricLine && !currentLine.getLine().isEmpty()) {
                     lyricLine = currentLine;
+                    widthAnimation.setDuration(300);
+                    widthAnimation.setEndPoint(40f, true);
                 }
 
                 if (lyricLine != null) {
@@ -77,7 +81,10 @@ public class IslandWidget extends Widget {
                     }
 
                     float stringWidth = font.getStringWidth(lyricLine.getLine(), 15f);
-                    widthAnimation.setEndPoint(stringWidth + 22f, true);
+                    if (widthAnimation.getAnimation().isDone()) {
+                        widthAnimation.setDuration(350);
+                        widthAnimation.setEndPoint(stringWidth + 22f, true);
+                    }
                     heightAnimation.setEndPoint(17f, true);
 
                     float playedWidth;
@@ -91,10 +98,12 @@ public class IslandWidget extends Widget {
                         playedWidth = currentWidth + beforeWidth;
                     }
 
-                    NanoUtil.scissorStart(renderX, renderY, width, height);
+                    NanoUtil.scissorStart(renderX, renderY, width, height, false);
+                    NanoUtil.scaleXStart(renderX + width / 2f, renderY + height / 2f, width / (stringWidth + 22f));
                     font.drawString(lyricLine.getLine(), renderX + width / 2f + 8f, renderY + height / 2f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, new Color(200, 200, 200, 200));
                     NanoUtil.scissorStart(renderX + 8f + width / 2f - stringWidth / 2f - 1f, renderY, playedWidth + 1f, height, false);
                     font.drawString(lyricLine.getLine(), renderX + width / 2f + 8f, renderY + height / 2f - 0.1f, 15f, NanoVG.NVG_ALIGN_CENTER | NanoVG.NVG_ALIGN_MIDDLE, Color.WHITE);
+                    NanoUtil.scaleEnd();
                     NanoUtil.scissorEnd();
                     NanoUtil.scissorEnd();
                 }

@@ -31,6 +31,9 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
     // Music player
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '5.0.0-alpha.14'
     implementation 'org.jflac:jflac-codec:1.5.2'

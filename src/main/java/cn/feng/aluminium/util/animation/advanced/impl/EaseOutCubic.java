@@ -18,6 +18,6 @@ public class EaseOutCubic extends Animation {
 
     @Override
     protected double getEquation(double x) {
-        return 1 - Math.pow(1 - x, 4);
+        return 1 - Math.pow(1 - x, 3);
     }
 }

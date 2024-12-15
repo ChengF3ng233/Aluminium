@@ -31,8 +31,6 @@ public class MusicUtil {
             // 关闭流
             wavOutputStream.close();
             flacInputStream.close();
-
-            System.out.println("Down");
         } catch (UnsupportedAudioFileException | IOException e) {
             throw new RuntimeException(e);
         }

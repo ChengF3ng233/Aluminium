@@ -12,7 +12,7 @@ public class LyricLeader extends LyricLine {
     private final ColorAnimation circle1 = new ColorAnimation(Color.WHITE, new Color(200, 200, 200, 200), 250);
     private final ColorAnimation circle2 = new ColorAnimation(Color.WHITE, new Color(200, 200, 200, 200), 250);
     private final ColorAnimation circle3 = new ColorAnimation(Color.WHITE, new Color(200, 200, 200, 200), 250);
-    private final Animation scale = new EaseOutCubic(4000, 1.0, Direction.BACKWARDS);
+    private final Animation scale = new EaseOutCubic(3500, 1.0, Direction.BACKWARDS);
 
     public LyricLeader() {
         super("[前奏]", 0, -1);
@@ -22,7 +22,7 @@ public class LyricLeader extends LyricLine {
     public void render(float time, int currentIndex) {
         if (match(time)) {
             scale.setDuration(4000);
-            scale.setEndPoint(0.5);
+            scale.setEndPoint(0.3);
             float percent = (time - startTime) / duration;
             if (percent >= 0.3f && circle1.getDirection().forwards()) circle1.changeDirection();
             if (percent >= 0.6f && circle2.getDirection().forwards()) circle2.changeDirection();

@@ -116,12 +116,10 @@ public class LyricLine {
 
     public void scrollDown(String text, int index) {
         int duration;
-        if (this.index < index) {
-            duration = Math.max(100, 300 - ((this.index - index) * 100));
-        } else if (this.index == index) {
-            duration = 300;
+        if (this.index <= index) {
+            duration = 350;
         } else {
-            duration = Math.min(800, 300 + ((this.index - index) * 100));
+            duration = Math.min(1000, 350 + ((this.index - index) * 100));
         }
         scrollAnim.setDuration(duration);
         scrollAnim.setEndPoint(scrollAnim.getEndPoint() + NanoFontLoader.pingfang.bold().calculateChunkHeight(text, maxWidth, 3, 3f, 20f) + 5f, true);
