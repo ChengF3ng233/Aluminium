@@ -1,5 +1,7 @@
 package net.minecraft.client.renderer;
 
+import cn.feng.aluminium.Aluminium;
+import cn.feng.aluminium.module.modules.visual.Camera;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.block.Block;
@@ -610,6 +612,10 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
     }
 
+    public double prevRenderX = 0d;
+    public double prevRenderY = 0d;
+    public double prevRenderZ = 0d;
+
     /**
      * sets up player's eye (or camera in third person mode)
      */
@@ -619,6 +625,12 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         double d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
         double d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks + (double) f;
         double d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
+
+        Camera module = (Camera) Aluminium.INSTANCE.moduleManager.getModule(Camera.class);
+
+        prevRenderX = prevRenderX + (d0 - prevRenderX) * module.motionInterpolation.getValue();
+        prevRenderY = prevRenderY + (d1 - prevRenderY) * module.motionInterpolation.getValue();
+        prevRenderZ = prevRenderZ + (d2 - prevRenderZ) * module.motionInterpolation.getValue();
 
         if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPlayerSleeping()) {
             f = (float) ((double) f + 1.0D);
@@ -683,6 +695,19 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.translate(0.0F, 0.0F, (float) (-d3));
                 GlStateManager.rotate(f1 - entity.rotationYaw, 0.0F, 1.0F, 0.0F);
                 GlStateManager.rotate(f2 - entity.rotationPitch, 1.0F, 0.0F, 0.0F);
+
+                if (module.isEnabled()) {
+                    // 旋转世界，使得坐标系与玩家朝向对齐
+                    GlStateManager.rotate(entity.rotationYaw, 0.0F, 1.0F, 0.0F);
+
+                    if (module.motion.getValue()) {
+                        // 在旋转后的坐标系中进行平移
+                        GlStateManager.translate(prevRenderX - d0, d1 - prevRenderY, prevRenderZ - d2);
+                    }
+
+                    // 反向旋转坐标系，恢复原始状态
+                    GlStateManager.rotate(-entity.rotationYaw, 0.0F, 1.0F, 0.0F);
+                }
             }
         } else {
             GlStateManager.translate(0.0F, 0.0F, -0.1F);
